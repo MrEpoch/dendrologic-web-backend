@@ -8,8 +8,11 @@ const fileSchema = z.string().base64();
 export async function POST(request: NextRequest) {
   console.log("Api hit", new Date());
   try {
+    console.log("after parsing -2");
     const formData = await request.formData();
+    console.log("after parsing -1");
     const file = formData.get("image") as string;
+    console.log("after parsing 0");
     const validatedFile = fileSchema.safeParse(file.replace(/^data:image\/\w+;base64,/, ""));
     console.log("after parsing 1");
 
