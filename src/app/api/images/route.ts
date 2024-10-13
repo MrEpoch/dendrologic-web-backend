@@ -11,29 +11,30 @@ export async function POST(request: NextRequest) {
     const formData = await request.formData();
     const file = formData.get("image") as string;
     const validatedFile = fileSchema.safeParse(file.replace(/^data:image\/\w+;base64,/, ""));
+    console.log("after parsing 1");
 
     if (!validatedFile.success) {
       console.log("file not valid", file);
       return NextResponse.json({ success: false });
     }
-    if (file == null) {
-      console.log("file is null");
-      return NextResponse.json({ success: false });
-    } else if (!validatedFile.data.includes("base64")) {
-      const fileName = crypto.randomUUID()
-      const imageBuffer = await convertToJPG(Buffer.from(validatedFile.data, "base64"));
-      const storageResponse = await writeIntoBucket(
-        "dendrologic-bucket",
-        fileName + ".jpg",
-        imageBuffer,
-      );
-      if (!storageResponse.success) {
-        console.log("file is not stored");
-        return NextResponse.json({ success: false });
-      }
+    console.log("after parsing 2");
 
-      return NextResponse.json({ success: true, fileName: fileName + ".jpg" });
+    const fileName = crypto.randomUUID()
+    const imageBuffer = await convertToJPG(Buffer.from(validatedFile.data, "base64"));
+    console.log("after parsing 3");
+    const storageResponse = await writeIntoBucket(
+      "dendrologic-bucket",
+      fileName + ".jpg",
+      imageBuffer,
+    );
+    console.log("after parsing 4");
+    if (!storageResponse.success) {
+      console.log("file is not stored");
+      return NextResponse.json({ success: false });
     }
+
+    console.log("after parsing 5");
+    return NextResponse.json({ success: true, fileName: fileName + ".jpg" });
   } catch {
     console.log("idk, simple catch");
     return NextResponse.json({ success: false });
