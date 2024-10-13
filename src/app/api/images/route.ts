@@ -12,9 +12,11 @@ export async function POST(request: NextRequest) {
     const validatedFile = fileSchema.safeParse(file);
 
     if (!validatedFile.success) {
+      console.log("file not valid");
       return NextResponse.json({ success: false });
     }
     if (file == null) {
+      console.log("file is null");
       return NextResponse.json({ success: false });
     } else if (!file.includes("base64")) {
       const fileName = crypto.randomUUID();
@@ -37,6 +39,7 @@ export async function POST(request: NextRequest) {
       imageBuffer,
     );
     if (!storageResponse.success) {
+      console.log("file is not stored");
       return NextResponse.json({ success: false });
     }
 
@@ -45,6 +48,7 @@ export async function POST(request: NextRequest) {
       fileName: fileName + "." + file.split(";")[0].split("/")[1],
     });
   } catch {
+    console.log("idk, simple catch");
     return NextResponse.json({ success: false });
   }
 }
