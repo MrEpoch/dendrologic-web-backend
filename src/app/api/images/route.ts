@@ -5,6 +5,7 @@ import { z } from "zod";
 const fileSchema = z.string().base64();
 
 export async function POST(request: NextRequest) {
+  console.log("Api hit", new Date());
   try {
     const formData = await request.formData();
     const file = formData.get("image") as string;
