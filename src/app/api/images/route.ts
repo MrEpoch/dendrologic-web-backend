@@ -10,11 +10,13 @@ export async function POST(request: NextRequest) {
   try {
     console.log("after parsing -2");
     console.log(request);
-    const formData = await request.formData();
+    const jsonFile = await request.json();
     console.log("after parsing -1");
-    const file = formData.get("image") as string;
+    const file = jsonFile.image;
     console.log("after parsing 0");
-    const validatedFile = fileSchema.safeParse(file.replace(/^data:image\/\w+;base64,/, ""));
+    const validatedFile = fileSchema.safeParse(
+      file.replace(/^data:image\/\w+;base64,/, ""),
+    );
     console.log("after parsing 1");
 
     if (!validatedFile.success) {
@@ -23,8 +25,10 @@ export async function POST(request: NextRequest) {
     }
     console.log("after parsing 2");
 
-    const fileName = crypto.randomUUID()
-    const imageBuffer = await convertToJPG(Buffer.from(validatedFile.data, "base64"));
+    const fileName = crypto.randomUUID();
+    const imageBuffer = await convertToJPG(
+      Buffer.from(validatedFile.data, "base64"),
+    );
     console.log("after parsing 3");
     const storageResponse = await writeIntoBucket(
       "dendrologic-bucket",
@@ -46,14 +50,14 @@ export async function POST(request: NextRequest) {
 }
 
 async function convertToJPG(imageBuffer: Buffer) {
-    try {
-        // Convert the image to JPG format using sharp
-        const jpgBuffer = await sharp(imageBuffer)
-            .jpeg({ quality: 90 })  // Adjust quality if needed
-            .toBuffer();
-        return jpgBuffer;
-    } catch (err) {
-        console.error('Error converting image to JPG:', err);
-        throw err;
-    }
+  try {
+    // Convert the image to JPG format using sharp
+    const jpgBuffer = await sharp(imageBuffer)
+      .jpeg({ quality: 90 }) // Adjust quality if needed
+      .toBuffer();
+    return jpgBuffer;
+  } catch (err) {
+    console.error("Error converting image to JPG:", err);
+    throw err;
+  }
 }
