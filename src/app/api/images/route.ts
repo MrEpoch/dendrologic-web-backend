@@ -14,7 +14,6 @@ export async function POST(request: NextRequest) {
     console.log("after parsing -1");
     const file = jsonFile.image;
     console.log("after parsing 0");
-    console.log(file);
     const validatedFile = fileSchema.safeParse(
       file.replace(/^data:image\/\w+;base64,/, ""),
     );
@@ -44,7 +43,8 @@ export async function POST(request: NextRequest) {
 
     console.log("after parsing 5");
     return NextResponse.json({ success: true, fileName: fileName + ".jpg" });
-  } catch {
+  } catch (e) {
+    console.error(e);
     console.log("idk, simple catch");
     return NextResponse.json({ success: false });
   }
