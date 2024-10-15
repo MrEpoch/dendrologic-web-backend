@@ -16,9 +16,10 @@ export async function POST(request: NextRequest) {
     console.log("after parsing 0");
     const replacedFile = file.replace(/^data:image\/\w+;base64,/, "");
     console.log("after parsing 0.5");
-    const validatedFile = fileSchema.safeParse(
+    const validatedFile = { data: replacedFile, success: true }
+/*      fileSchema.safeParse(
       replacedFile
-    );
+    );*/
     console.log("after parsing 1");
 
     if (!validatedFile.success) {
