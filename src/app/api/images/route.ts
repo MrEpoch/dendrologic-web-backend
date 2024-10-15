@@ -1,9 +1,9 @@
 import { writeIntoBucket } from "@/lib/minio";
 import { NextRequest, NextResponse } from "next/server";
-import { z } from "zod";
+// import { z } from "zod";
 import sharp from "sharp";
 
-const fileSchema = z.string().base64();
+// const fileSchema = z.string().base64();
 
 export async function POST(request: NextRequest) {
   console.log("Api hit", new Date());
