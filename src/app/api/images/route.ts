@@ -1,28 +1,28 @@
 import { writeIntoBucket } from "@/lib/minio";
 import { NextRequest, NextResponse } from "next/server";
-// import { z } from "zod";
+import { z } from "zod";
 import sharp from "sharp";
 
-// const fileSchema = z.string().base64();
+const fileSchema = z.string().base64();
 
 export async function POST(request: NextRequest) {
   console.log("Api hit", new Date());
   try {
     console.log("after parsing -2");
+    console.log(request);
     const jsonFile = await request.json();
     console.log("after parsing -1");
     const file = jsonFile.image;
     console.log("after parsing 0");
     const replacedFile = file.replace(/^data:image\/\w+;base64,/, "");
-    console.log("after parsing 0.5");
-    const validatedFile = { data: replacedFile, success: true }
-/*      fileSchema.safeParse(
+    console.log("after parsing 0");
+    const validatedFile = fileSchema.safeParse(
       replacedFile
-    );*/
+    );
     console.log("after parsing 1");
 
     if (!validatedFile.success) {
-      console.log("file is not valid");
+      console.log("file not valid", file);
       return NextResponse.json({ success: false });
     }
     console.log("after parsing 2");
