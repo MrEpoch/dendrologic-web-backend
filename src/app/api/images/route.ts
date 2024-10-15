@@ -15,6 +15,7 @@ export async function POST(request: NextRequest) {
     const file = jsonFile.image;
     console.log("after parsing 0");
     const replacedFile = file.replace(/^data:image\/\w+;base64,/, "");
+    console.log("after parsing 0.5");
     const validatedFile = fileSchema.safeParse(
       replacedFile
     );
