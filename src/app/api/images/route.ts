@@ -23,7 +23,7 @@ export async function POST(request: NextRequest) {
     console.log("after parsing 1");
 
     if (!validatedFile.success) {
-      console.log("file not valid", file);
+      console.log("file is not valid");
       return NextResponse.json({ success: false });
     }
     console.log("after parsing 2");
