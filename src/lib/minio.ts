@@ -70,7 +70,8 @@ export async function writeIntoBucket(
     }
     await minioClient.putObject(bucketName, fileName, file);
     return { success: true };
-  } catch {
+  } catch (e) {
+    console.error(e);
     return { success: false };
   }
 }
