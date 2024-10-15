@@ -9,7 +9,6 @@ export async function POST(request: NextRequest) {
   console.log("Api hit", new Date());
   try {
     console.log("after parsing -2");
-    console.log(request);
     const jsonFile = await request.json();
     console.log("after parsing -1");
     const file = jsonFile.image;
