@@ -10,13 +10,17 @@ COPY next.config.mjs tsconfig.json ./
 COPY tailwind.config.ts postcss.config.mjs ./
 
 # Install dependencies
+
 RUN npm install --arch=arm64 --platform=linux --libc=musl sharp
+
 RUN npm install
 
 # Copy the rest of the application
+
 COPY . .
 
-# Expose port 3000
+# Expose port 3752
+
 EXPOSE 3752
 
 RUN npm run build
