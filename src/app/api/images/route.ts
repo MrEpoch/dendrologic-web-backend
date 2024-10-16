@@ -9,9 +9,9 @@ export async function POST(request: NextRequest) {
   console.log("Api hit", new Date());
   try {
     console.log("after parsing -2");
-    const jsonFile = await request.formData();
+    const jsonFile = await request.json();
     console.log("after parsing -1");
-    const file = jsonFile.get("image") as string;
+    const file = jsonFile.image;
     console.log("after parsing 0");
     const replacedFile = file.replace(/^data:image\/\w+;base64,/, "");
     console.log("after parsing 0.5");
