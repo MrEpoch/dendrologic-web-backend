@@ -6,48 +6,35 @@ import sharp from "sharp";
 // const fileSchema = z.string().base64();
 
 export async function POST(request: NextRequest) {
-  console.log("Api hit", new Date());
   try {
-    console.log("after parsing -2");
     const jsonFile = await request.json();
-    console.log("after parsing -1");
     const file = jsonFile.image;
-    console.log("after parsing 0");
     const replacedFile = file.replace(/^data:image\/\w+;base64,/, "");
-    console.log("after parsing 0.5");
     const validatedFile = { data: replacedFile, success: true }
 /*      fileSchema.safeParse(
       replacedFile
     );*/
-    console.log("after parsing 1");
 
     if (!validatedFile.success) {
-      console.log("file is not valid");
       return NextResponse.json({ success: false });
     }
-    console.log("after parsing 2");
 
     const fileName = crypto.randomUUID();
     const imageBuffer = await convertToJPG(
       Buffer.from(validatedFile.data, "base64"),
     );
-    console.log("after parsing 3");
     const storageResponse = await writeIntoBucket(
       "dendrologic-bucket",
       fileName + ".jpg",
       imageBuffer,
     );
-    console.log("after parsing 4");
     if (!storageResponse.success) {
-      console.log("file is not stored");
       return NextResponse.json({ success: false });
     }
 
-    console.log("after parsing 5");
     return NextResponse.json({ success: true, fileName: fileName + ".jpg" });
   } catch (e) {
     console.error(e);
-    console.log("idk, simple catch");
     return NextResponse.json({ success: false });
   }
 }
