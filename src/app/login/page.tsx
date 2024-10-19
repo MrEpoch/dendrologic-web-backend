@@ -1,6 +1,6 @@
-import React from 'react'
-import { LoginComponent } from '@/components/auth/Login'
+import React from "react";
+import { LoginComponent } from "@/components/auth/Login";
 
-const LoginPage = () => <LoginComponent />
+const LoginPage = () => <LoginComponent />;
 
-export default LoginPage
+export default LoginPage;

@@ -1,41 +1,42 @@
 /* eslint-disable import/no-extraneous-dependencies */
 /* eslint-disable import/prefer-default-export */
 
-import { AUTH_MODE, IS_IN_PRODUCTION_ENVIRONMENT } from 'lib/utils/config'
-import SuperTokens from 'supertokens-node'
+import { AUTH_MODE, IS_IN_PRODUCTION_ENVIRONMENT } from "@/lib/config";
+import SuperTokens from "supertokens-node";
 
-import SessionNode from 'supertokens-node/recipe/session'
+import SessionNode from "supertokens-node/recipe/session";
 import {
   TypeInput,
   SuperTokensInfo,
   RecipeListFunction,
-} from 'supertokens-node/types'
-import ThirdPartyEmailPassword from 'supertokens-node/recipe/thirdpartyemailpassword'
-import EmailPassword from 'supertokens-node/recipe/emailpassword'
-import Passwordless from 'supertokens-node/recipe/passwordless'
-import ThirdParty from 'supertokens-node/recipe/thirdparty'
-import ThirdPartyPasswordless from 'supertokens-node/recipe/thirdpartypasswordless'
-import { appInfo } from './appInfo'
+} from "supertokens-node/types";
+import ThirdPartyEmailPassword from "supertokens-node/recipe/thirdpartyemailpassword";
+import Dashboard from "supertokens-node/recipe/dashboard";
+import EmailPassword from "supertokens-node/recipe/emailpassword";
+import Passwordless from "supertokens-node/recipe/passwordless";
+import ThirdParty from "supertokens-node/recipe/thirdparty";
+import ThirdPartyPasswordless from "supertokens-node/recipe/thirdpartypasswordless";
+import EmailVerification from "supertokens-node/recipe/emailverification";
+import { appInfo } from "./appInfo";
 
 const supertokens: SuperTokensInfo = {
-  // connectionURI: process.env.SUPERTOKENS_CONNECTION_URI as string,
-  // apiKey: process.env.SUPERTOKENS_API_KEY as string,
-  connectionURI: 'https://try.supertokens.com',
-}
+  connectionURI: process.env.SUPERTOKENS_CONNECTION_URI as string,
+  apiKey: process.env.SUPERTOKENS_API_KEY as string,
+};
 
-const isUsingJWTAuth = false
-const isInServerlessEnv: boolean = true
+const isUsingJWTAuth = false;
+const isInServerlessEnv: boolean = true;
 
-const framework = 'express'
+const framework = "express";
 
 const sessionInit: RecipeListFunction = SessionNode.init({
   // For localhost, we need to set sameSite to strict, due to no https
-  cookieSameSite: !IS_IN_PRODUCTION_ENVIRONMENT ? 'strict' : 'none',
+  cookieSameSite: !IS_IN_PRODUCTION_ENVIRONMENT ? "strict" : "none",
   // For cookie based auth, the access token is not available on the frontend by default: https://supertokens.com/docs/thirdpartyemailpassword/hasura-integration/with-jwt
   exposeAccessTokenToFrontendInCookieBasedAuth: isUsingJWTAuth,
   // For the apps we want to use header-based sessions: https://supertokens.com/docs/thirdparty/common-customizations/sessions/token-transfer-method
-  getTokenTransferMethod: () => 'any',
-})
+  getTokenTransferMethod: () => "any",
+});
 
 // This snippet could be relevant if redirect from apple to a deeplinked route does not work:
 // link to discussion: https://discord.com/channels/603466164219281420/1163389076217532487/1166228849919533146
@@ -62,39 +63,39 @@ const sessionInit: RecipeListFunction = SessionNode.init({
  */
 
 const appleClientInfo = {
-  thirdPartyId: 'apple',
+  thirdPartyId: "apple",
   clients: [
     {
-      clientId: '4398792-io.supertokens.example.service',
+      clientId: "4398792-io.supertokens.example.service",
       additionalConfig: {
-        keyId: '7M48Y4RYDL',
+        keyId: "7M48Y4RYDL",
         privateKey:
-          '-----BEGIN PRIVATE KEY-----\nMIGTAgEAMBMGByqGSM49AgEGCCqGSM49AwEHBHkwdwIBAQQgu8gXs+XYkqXD6Ala9Sf/iJXzhbwcoG5dMh1OonpdJUmgCgYIKoZIzj0DAQehRANCAASfrvlFbFCYqn3I2zeknYXLwtH30JuOKestDbSfZYxZNMqhF/OzdZFTV0zc5u5s3eN+oCWbnvl0hM+9IW0UlkdA\n-----END PRIVATE KEY-----',
-        teamId: 'YWQCXGJRJL',
+          "-----BEGIN PRIVATE KEY-----\nMIGTAgEAMBMGByqGSM49AgEGCCqGSM49AwEHBHkwdwIBAQQgu8gXs+XYkqXD6Ala9Sf/iJXzhbwcoG5dMh1OonpdJUmgCgYIKoZIzj0DAQehRANCAASfrvlFbFCYqn3I2zeknYXLwtH30JuOKestDbSfZYxZNMqhF/OzdZFTV0zc5u5s3eN+oCWbnvl0hM+9IW0UlkdA\n-----END PRIVATE KEY-----",
+        teamId: "YWQCXGJRJL",
       },
     },
   ],
-}
+};
 
 const googleClientInfo = {
-  thirdPartyId: 'google',
+  thirdPartyId: "google",
   clients: [
     {
       clientId: process.env.GOOGLE_CLIENT_ID as string,
       clientSecret: process.env.GOOGLE_CLIENT_SECRET as string,
     },
   ],
-}
+};
 
 const githubClientInfo = {
-  thirdPartyId: 'github',
+  thirdPartyId: "github",
   clients: [
     {
       clientId: process.env.GITHUB_CLIENT_ID as string,
       clientSecret: process.env.GITHUB_CLIENT_SECRET as string,
     },
   ],
-}
+};
 
 const thirdPartyEmailPasswordConfig = (): TypeInput => ({
   framework,
@@ -102,6 +103,10 @@ const thirdPartyEmailPasswordConfig = (): TypeInput => ({
   appInfo,
   isInServerlessEnv,
   recipeList: [
+    Dashboard.init(),
+    EmailVerification.init({
+      mode: "REQUIRED",
+    }),
     ThirdPartyEmailPassword.init({
       // override: overrideAppleThirdParty,
       providers: [
@@ -124,15 +129,22 @@ const thirdPartyEmailPasswordConfig = (): TypeInput => ({
     }),
     sessionInit,
   ],
-})
+});
 
 const emailPasswordConfig = (): TypeInput => ({
   framework,
   supertokens,
   appInfo,
   isInServerlessEnv,
-  recipeList: [EmailPassword.init(), sessionInit],
-})
+  recipeList: [
+    Dashboard.init(),
+    EmailVerification.init({
+      mode: "REQUIRED",
+    }),
+    EmailPassword.init(),
+    sessionInit,
+  ],
+});
 
 const passwordlessConfig = (): TypeInput => ({
   framework,
@@ -140,13 +152,14 @@ const passwordlessConfig = (): TypeInput => ({
   appInfo,
   isInServerlessEnv,
   recipeList: [
+    Dashboard.init(),
     Passwordless.init({
-      contactMethod: 'EMAIL',
-      flowType: 'USER_INPUT_CODE',
+      contactMethod: "EMAIL",
+      flowType: "USER_INPUT_CODE",
     }),
     sessionInit,
   ],
-})
+});
 
 const thirdPartyConfig = (): TypeInput => ({
   framework,
@@ -154,6 +167,7 @@ const thirdPartyConfig = (): TypeInput => ({
   appInfo,
   isInServerlessEnv,
   recipeList: [
+    Dashboard.init(),
     ThirdParty.init({
       signInAndUpFeature: {
         providers: [
@@ -178,7 +192,7 @@ const thirdPartyConfig = (): TypeInput => ({
 
     sessionInit,
   ],
-})
+});
 
 const thirdPartyPasswordlessConfig = (): TypeInput => ({
   framework,
@@ -186,10 +200,11 @@ const thirdPartyPasswordlessConfig = (): TypeInput => ({
   appInfo,
   isInServerlessEnv,
   recipeList: [
+    Dashboard.init(),
     ThirdPartyPasswordless.init({
       // override: overrideAppleThirdParty,
-      contactMethod: 'EMAIL',
-      flowType: 'USER_INPUT_CODE',
+      contactMethod: "EMAIL",
+      flowType: "USER_INPUT_CODE",
       providers: [
         {
           config: {
@@ -210,33 +225,33 @@ const thirdPartyPasswordlessConfig = (): TypeInput => ({
     }),
     sessionInit,
   ],
-})
+});
 
 export function getBackendConfig(): TypeInput {
-  if (AUTH_MODE === 'thirdpartyemailpassword') {
-    return thirdPartyEmailPasswordConfig()
+  if (AUTH_MODE === "thirdpartyemailpassword") {
+    return thirdPartyEmailPasswordConfig();
   }
 
-  if (AUTH_MODE === 'emailpassword') {
-    return emailPasswordConfig()
+  if (AUTH_MODE === "emailpassword") {
+    return emailPasswordConfig();
   }
 
-  if (AUTH_MODE === 'thirdparty') {
-    return thirdPartyConfig()
+  if (AUTH_MODE === "thirdparty") {
+    return thirdPartyConfig();
   }
 
-  if (AUTH_MODE === 'passwordless') {
-    return passwordlessConfig()
+  if (AUTH_MODE === "passwordless") {
+    return passwordlessConfig();
   }
 
-  return thirdPartyPasswordlessConfig()
+  return thirdPartyPasswordlessConfig();
 }
 
-let initialized = false
+let initialized = false;
 // This function is used in your APIs to make sure SuperTokens is initialised
 export function ensureSuperTokensInit() {
   if (!initialized) {
-    SuperTokens.init(getBackendConfig())
-    initialized = true
+    SuperTokens.init(getBackendConfig());
+    initialized = true;
   }
 }

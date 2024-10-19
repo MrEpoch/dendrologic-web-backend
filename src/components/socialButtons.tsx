@@ -1,7 +1,7 @@
-import FacebookIcon from './icons/FacebookIcon'
-import GoogleIcon from './icons/GoogleIcon'
-import AppleIcon from './icons/AppleIcon'
-import GithubIcon from './icons/GithubIcon'
+import FacebookIcon from "./icons/FacebookIcon";
+import GoogleIcon from "./icons/GoogleIcon";
+import AppleIcon from "./icons/AppleIcon";
+import GithubIcon from "./icons/GithubIcon";
 
 export const GoogleButton = ({ onClick }: { onClick: () => void }) => (
   <button
@@ -13,7 +13,7 @@ export const GoogleButton = ({ onClick }: { onClick: () => void }) => (
     <GoogleIcon />
     <span className="ml-2 font-medium text-xl">Continue with Google</span>
   </button>
-)
+);
 
 export const FacebookButton = ({ onClick }: { onClick: () => void }) => (
   <button
@@ -24,7 +24,7 @@ export const FacebookButton = ({ onClick }: { onClick: () => void }) => (
     <span className="sr-only">Continue with Facebook</span>
     <FacebookIcon />
   </button>
-)
+);
 
 export const AppleButton = ({ onClick }: { onClick: () => void }) => (
   <button
@@ -36,7 +36,7 @@ export const AppleButton = ({ onClick }: { onClick: () => void }) => (
     <AppleIcon />
     <span className="ml-2 font-medium text-xl">Continue with Apple</span>
   </button>
-)
+);
 
 export const GithubButton = ({ onClick }: { onClick: () => void }) => (
   <button
@@ -47,4 +47,4 @@ export const GithubButton = ({ onClick }: { onClick: () => void }) => (
     <GithubIcon />
     <span className="ml-2 font-medium text-xl">Continue with Github</span>
   </button>
-)
+);

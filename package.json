@@ -18,8 +18,8 @@
     "react-dom": "^18",
     "react-hook-form": "^7.53.0",
     "sharp": "^0.33.5",
-    "supertokens-auth-react": "^0.47.1",
-    "supertokens-node": "^20.1.5",
+    "supertokens-auth-react": "^0.35.6",
+    "supertokens-node": "^16.3.4",
     "tailwind-merge": "^2.5.4",
     "zod": "^3.23.8"
   },

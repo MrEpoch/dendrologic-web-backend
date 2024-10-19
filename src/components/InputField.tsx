@@ -1,30 +1,30 @@
-import React, { forwardRef } from 'react'
-import Input from '@/components/Input'
-import InputErrorMsg from '@/components/InputErrorMsg'
-import { Label } from '@/components/Label'
+import React, { forwardRef } from "react";
+import Input from "@/components/Input";
+import InputErrorMsg from "@/components/InputErrorMsg";
+import { Label } from "@/components/Label";
 
 export interface InputFieldProps
   extends React.InputHTMLAttributes<HTMLInputElement> {
-  name: string
-  errorMsg?: string
-  error?: any
-  label?: string
-  register: any
-  textarea?: boolean
-  rightAddon?: string
-  rightAddonId?: string
-  inputHelperMessage?: string
-  leftAddon?: string
-  altErrorMsg?: string
-  htmlForLabel?: string
-  smallLabelText?: string
-  className?: string
-  classNameContainer?: string
-  classNameInnerInputContainer?: string
-  rows?: number
-  tooltip?: string
+  name: string;
+  errorMsg?: string;
+  error?: any;
+  label?: string;
+  register: any;
+  textarea?: boolean;
+  rightAddon?: string;
+  rightAddonId?: string;
+  inputHelperMessage?: string;
+  leftAddon?: string;
+  altErrorMsg?: string;
+  htmlForLabel?: string;
+  smallLabelText?: string;
+  className?: string;
+  classNameContainer?: string;
+  classNameInnerInputContainer?: string;
+  rows?: number;
+  tooltip?: string;
 
-  withRequired?: boolean
+  withRequired?: boolean;
 }
 
 const InputField = forwardRef<
@@ -90,5 +90,5 @@ const InputField = forwardRef<
       ) : null}
     </div>
   ),
-)
-export default InputField
+);
+export default InputField;

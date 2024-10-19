@@ -1,22 +1,22 @@
-'use client'
+"use client";
 
-import { MouseEventHandler, useState } from 'react'
-import Head from 'next/head'
-import { AUTH_MODE } from '@/lib/config'
-import Link from 'next/link'
+import { MouseEventHandler, useState } from "react";
+import Head from "next/head";
+import { AUTH_MODE } from "@/lib/config";
+import Link from "next/link";
 import {
   EmailPasswordLoginForm,
   LoginForm,
   PasswordlessLoginForm,
-} from './forms/LoginForm'
-import { AuthLayout, AuthLogo } from '@/components/authLayout'
-import TextDivider from '@/components/textDivider'
-import { StackedSocialButtons } from './stackedSocialButtons'
+} from "./forms/LoginForm";
+import { AuthLayout, AuthLogo } from "@/components/authLayout";
+import TextDivider from "@/components/textDivider";
+import { StackedSocialButtons } from "./stackedSocialButtons";
 
 type HeaderWithBackButtonProps = {
-  hasRequestedCode: boolean
-  onChangeEmail: MouseEventHandler<HTMLButtonElement>
-}
+  hasRequestedCode: boolean;
+  onChangeEmail: MouseEventHandler<HTMLButtonElement>;
+};
 
 const HeaderWithBackButton = ({
   hasRequestedCode,
@@ -39,7 +39,7 @@ const HeaderWithBackButton = ({
     {/* // dummy link to make the logo centered */}
     {hasRequestedCode && <div className="w-6" />}
   </>
-)
+);
 
 const ThirdPartyEmailPasswordLogin = () => {
   return (
@@ -57,9 +57,7 @@ const ThirdPartyEmailPasswordLogin = () => {
         <div className="mt-12">
           <div>
             <div>
-              <StackedSocialButtons
-                buttons={['google', 'apple']}
-              />
+              <StackedSocialButtons buttons={["google", "apple"]} />
             </div>
 
             <div className="mt-6">
@@ -72,8 +70,8 @@ const ThirdPartyEmailPasswordLogin = () => {
         </div>
       </AuthLayout>
     </>
-  )
-}
+  );
+};
 
 const EmailPasswordLogin = () => (
   <>
@@ -84,18 +82,18 @@ const EmailPasswordLogin = () => (
       <div className="flex flex-col">
         <p className="mt-2 text-sm text-gray-700">
           <Link href="/" className=" text-orange-600 hover:underline">
-            Go back to home{' '}
-          </Link>{' '}
+            Go back to home{" "}
+          </Link>{" "}
         </p>
         <div className="mt-8">
           <h2 className="text-lg font-semibold text-gray-900">
             Sign in to your account
           </h2>
           <p className="mt-2 text-sm text-gray-700">
-            Or{' '}
+            Or{" "}
             <Link href="/register" className=" text-orange-600 hover:underline">
-              create a new account{' '}
-            </Link>{' '}
+              create a new account{" "}
+            </Link>{" "}
           </p>
         </div>
       </div>
@@ -105,10 +103,9 @@ const EmailPasswordLogin = () => (
       </div>
     </AuthLayout>
   </>
-)
+);
 
 const ThirdPartyLogin = () => {
-
   return (
     <>
       <Head>
@@ -124,25 +121,23 @@ const ThirdPartyLogin = () => {
         <div className="mt-8">
           <div>
             <div>
-              <StackedSocialButtons
-                buttons={['google', 'apple', 'github']}
-              />
+              <StackedSocialButtons buttons={["google", "apple", "github"]} />
             </div>
           </div>
         </div>
       </AuthLayout>
     </>
-  )
-}
+  );
+};
 
 const PasswordlessLogin = () => {
-  const [hasRequestedCode, setHasRequestedCode] = useState(false)
-  const [isGettingCode, setIsGettingCode] = useState<boolean>(false)
+  const [hasRequestedCode, setHasRequestedCode] = useState(false);
+  const [isGettingCode, setIsGettingCode] = useState<boolean>(false);
 
   const onChangeEmail = () => {
-    setHasRequestedCode(false)
-    setIsGettingCode(false)
-  }
+    setHasRequestedCode(false);
+    setIsGettingCode(false);
+  };
   return (
     <>
       <Head>
@@ -176,17 +171,17 @@ const PasswordlessLogin = () => {
         </div>
       </AuthLayout>
     </>
-  )
-}
+  );
+};
 
 const ThirdPartyPasswordlessLogin = () => {
-  const [hasRequestedCode, setHasRequestedCode] = useState(false)
-  const [isGettingCode, setIsGettingCode] = useState<boolean>(false)
+  const [hasRequestedCode, setHasRequestedCode] = useState(false);
+  const [isGettingCode, setIsGettingCode] = useState<boolean>(false);
 
   const onChangeEmail = () => {
-    setHasRequestedCode(false)
-    setIsGettingCode(false)
-  }
+    setHasRequestedCode(false);
+    setIsGettingCode(false);
+  };
 
   return (
     <>
@@ -231,9 +226,7 @@ const ThirdPartyPasswordlessLogin = () => {
                   <div className="my-10 mt-4">
                     <TextDivider text="Or" />
                   </div>
-                  <StackedSocialButtons
-                    buttons={['google', 'apple']}
-                  />{' '}
+                  <StackedSocialButtons buttons={["google", "apple"]} />{" "}
                 </div>
               )}
             </div>
@@ -241,25 +234,25 @@ const ThirdPartyPasswordlessLogin = () => {
         </div>
       </AuthLayout>
     </>
-  )
-}
+  );
+};
 
 export const LoginComponent = () => {
-  if (AUTH_MODE === 'emailpassword') {
-    return <EmailPasswordLogin />
+  if (AUTH_MODE === "emailpassword") {
+    return <EmailPasswordLogin />;
   }
 
-  if (AUTH_MODE === 'thirdparty') {
-    return <ThirdPartyLogin />
+  if (AUTH_MODE === "thirdparty") {
+    return <ThirdPartyLogin />;
   }
 
-  if (AUTH_MODE === 'passwordless') {
-    return <PasswordlessLogin />
+  if (AUTH_MODE === "passwordless") {
+    return <PasswordlessLogin />;
   }
 
-  if (AUTH_MODE === 'thirdpartypasswordless') {
-    return <ThirdPartyPasswordlessLogin />
+  if (AUTH_MODE === "thirdpartypasswordless") {
+    return <ThirdPartyPasswordlessLogin />;
   }
 
-  return <ThirdPartyEmailPasswordLogin />
-}
+  return <ThirdPartyEmailPasswordLogin />;
+};

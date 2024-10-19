@@ -1,32 +1,32 @@
-import React from 'react'
-import Tippy from '@tippyjs/react'
-import { InformationCircleIcon } from '@heroicons/react/24/outline'
+import React from "react";
+import Tippy from "@tippyjs/react";
+import { InformationCircleIcon } from "@heroicons/react/24/outline";
 
-export type As<Props = any> = React.ElementType<Props>
+export type As<Props = any> = React.ElementType<Props>;
 
 export const variants = {
-  inputLabel: 'text-sm font-medium text-gray-700',
-  inputLabelMedium: 'font-medium text-gray-700 text-md',
-  lightLabel: 'text-sm font-medium text-gray-500',
-  mediumLabel: 'font-medium text-gray-900',
-}
+  inputLabel: "text-sm font-medium text-gray-700",
+  inputLabelMedium: "font-medium text-gray-700 text-md",
+  lightLabel: "text-sm font-medium text-gray-500",
+  mediumLabel: "font-medium text-gray-900",
+};
 
 export const Label = ({
   htmlFor,
-  variant = 'inputLabel',
-  className = '',
-  HtmlElement = 'label',
+  variant = "inputLabel",
+  className = "",
+  HtmlElement = "label",
   children,
   smallLabelTextForInputs,
   tooltip,
 }: {
-  htmlFor?: string
-  className?: string
-  children: React.ReactNode
-  variant?: keyof typeof variants
-  HtmlElement?: As
-  smallLabelTextForInputs?: string
-  tooltip?: string
+  htmlFor?: string;
+  className?: string;
+  children: React.ReactNode;
+  variant?: keyof typeof variants;
+  HtmlElement?: As;
+  smallLabelTextForInputs?: string;
+  tooltip?: string;
 }) => (
   <HtmlElement
     htmlFor={htmlFor}
@@ -44,4 +44,4 @@ export const Label = ({
       </Tippy>
     )}
   </HtmlElement>
-)
+);

@@ -1,30 +1,30 @@
-'use client'
+"use client";
 
-import { useState } from 'react'
-import { useForm } from 'react-hook-form'
-import { useRouter } from 'next/navigation'
-import { emailPasswordSignIn } from 'supertokens-auth-react/recipe/thirdpartyemailpassword'
-import { doesSessionExist } from 'supertokens-auth-react/recipe/session'
-import EmailPassword from 'supertokens-auth-react/recipe/emailpassword'
+import { useState } from "react";
+import { useForm } from "react-hook-form";
+import { useRouter } from "next/navigation";
+import { emailPasswordSignIn } from "supertokens-auth-react/recipe/thirdpartyemailpassword";
+import { doesSessionExist } from "supertokens-auth-react/recipe/session";
+import EmailPassword from "supertokens-auth-react/recipe/emailpassword";
 import {
   consumePasswordlessCode,
   createPasswordlessCode,
-} from '@/lib/superTokenUtils'
-import { Button } from '@/components/Button'
-import { Spinner } from '@/components/ButtonSpinner'
-import InputErrorMsg from '@/components/InputErrorMsg'
+} from "@/lib/superTokenUtils";
+import { Button } from "@/components/Button";
+import { Spinner } from "@/components/ButtonSpinner";
+import InputErrorMsg from "@/components/InputErrorMsg";
 
 export function classNames(...classes: string[]) {
-  return classes.filter(Boolean).join(' ')
+  return classes.filter(Boolean).join(" ");
 }
 
 export type LoginFormVariables = {
-  email: string
-  password: string
-}
+  email: string;
+  password: string;
+};
 
 export const LoginForm = ({ redirectUri }: { redirectUri?: string }) => {
-  const router = useRouter()
+  const router = useRouter();
 
   //   const refreshUser = useRefreshUser()
 
@@ -34,47 +34,47 @@ export const LoginForm = ({ redirectUri }: { redirectUri?: string }) => {
     formState: { errors, isSubmitting },
     setError,
   } = useForm<LoginFormVariables>({
-    mode: 'onBlur',
-  })
+    mode: "onBlur",
+  });
 
   const onSubmit = async ({ email, password }: LoginFormVariables) => {
-    const emailLowerCase = email.toLocaleLowerCase().trim()
+    const emailLowerCase = email.toLocaleLowerCase().trim();
     // const previousPath = await getPreviousPath()
 
     // console.log({ pref: previousPath })
     const response = await emailPasswordSignIn({
       formFields: [
         {
-          id: 'email',
+          id: "email",
           value: emailLowerCase,
         },
         {
-          id: 'password',
+          id: "password",
           value: password,
         },
       ],
-    })
+    });
 
-    const validSession = await doesSessionExist()
-    console.log({ validSession }, 'valid')
-    console.log({ response })
+    const validSession = await doesSessionExist();
+    console.log({ validSession }, "valid");
+    console.log({ response });
 
-    if (!response || response.status !== 'OK') {
-      setError('password', {
-        message: 'Gebruikersnaam of wachtwoord is incorrect',
-      })
-      setError('email', {
-        message: 'Gebruikersnaam of wachtwoord is incorrect',
-      })
+    if (!response || response.status !== "OK") {
+      setError("password", {
+        message: "Gebruikersnaam of wachtwoord is incorrect",
+      });
+      setError("email", {
+        message: "Gebruikersnaam of wachtwoord is incorrect",
+      });
 
-      return
+      return;
     }
 
     // await refreshUser()
 
     if (redirectUri) {
-      router.push(redirectUri)
-      return
+      router.push(redirectUri);
+      return;
     }
 
     // if you want to redirect to the previous page after login, comment this out and make sure to add the previouspath:
@@ -93,8 +93,8 @@ export const LoginForm = ({ redirectUri }: { redirectUri?: string }) => {
     //     password: password,
     //   })
     // }
-    router.push('/login-result')
-  }
+    router.push("/login-result");
+  };
 
   return (
     <form onSubmit={handleSubmit(onSubmit)}>
@@ -106,7 +106,7 @@ export const LoginForm = ({ redirectUri }: { redirectUri?: string }) => {
           autoComplete="email"
           required
           className="px-4 py-3 rounded-full text-sm font-medium text-gray-900 placeholder-gray-500 border border-gray-300 shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 focus:z-10 sm:text-sm"
-          {...register('email')}
+          {...register("email")}
         />
         {errors && errors.email && (
           <div className="mt-1 flex">
@@ -121,7 +121,7 @@ export const LoginForm = ({ redirectUri }: { redirectUri?: string }) => {
             required
             autoComplete="current-password"
             className="px-4 py-3 rounded-full w-full text-sm font-medium text-gray-900 placeholder-gray-500 border border-gray-300 shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 focus:z-10 sm:text-sm"
-            {...register('password')}
+            {...register("password")}
           />
           {errors && errors.password && (
             <div className="mt-1 flex">
@@ -143,11 +143,11 @@ export const LoginForm = ({ redirectUri }: { redirectUri?: string }) => {
         </Button>
       </div>
     </form>
-  )
-}
+  );
+};
 
 export const EmailPasswordLoginForm = () => {
-  const router = useRouter()
+  const router = useRouter();
 
   const {
     register,
@@ -155,42 +155,42 @@ export const EmailPasswordLoginForm = () => {
     formState: { errors, isSubmitting },
     setError,
   } = useForm<LoginFormVariables>({
-    mode: 'onBlur',
-  })
+    mode: "onBlur",
+  });
 
   const onSubmit = async ({ email, password }: LoginFormVariables) => {
-    const emailLowerCase = email.toLocaleLowerCase().trim()
+    const emailLowerCase = email.toLocaleLowerCase().trim();
 
     const response = await EmailPassword.signIn({
       formFields: [
         {
-          id: 'email',
+          id: "email",
           value: emailLowerCase,
         },
         {
-          id: 'password',
+          id: "password",
           value: password,
         },
       ],
-    })
+    });
 
-    const validSession = await doesSessionExist()
-    console.log({ validSession }, 'valid')
-    console.log({ response })
+    const validSession = await doesSessionExist();
+    console.log({ validSession }, "valid");
+    console.log({ response });
 
-    if (!response || response.status !== 'OK') {
-      setError('password', {
-        message: 'Gebruikersnaam of wachtwoord is incorrect',
-      })
-      setError('email', {
-        message: 'Gebruikersnaam of wachtwoord is incorrect',
-      })
+    if (!response || response.status !== "OK") {
+      setError("password", {
+        message: "Gebruikersnaam of wachtwoord is incorrect",
+      });
+      setError("email", {
+        message: "Gebruikersnaam of wachtwoord is incorrect",
+      });
 
-      return
+      return;
     }
 
-    router.push('/login-result')
-  }
+    router.push("/login-result");
+  };
 
   return (
     <form onSubmit={handleSubmit(onSubmit)}>
@@ -202,7 +202,7 @@ export const EmailPasswordLoginForm = () => {
           autoComplete="email"
           required
           className="px-4 py-3 rounded-full text-sm font-medium text-gray-900 placeholder-gray-500 border border-gray-300 shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 focus:z-10 sm:text-sm"
-          {...register('email')}
+          {...register("email")}
         />
         {errors && errors.email && (
           <div className="mt-1 flex">
@@ -217,7 +217,7 @@ export const EmailPasswordLoginForm = () => {
             autoComplete="current-password"
             required
             className="px-4 py-3 rounded-full text-sm font-medium text-gray-900 placeholder-gray-500 border border-gray-300 shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 focus:z-10 sm:text-sm"
-            {...register('password')}
+            {...register("password")}
           />
           {errors && errors.password && (
             <div className="mt-1 flex">
@@ -239,8 +239,8 @@ export const EmailPasswordLoginForm = () => {
         </Button>
       </div>
     </form>
-  )
-}
+  );
+};
 
 export const PasswordlessLoginForm = ({
   hasRequestedCode,
@@ -248,17 +248,17 @@ export const PasswordlessLoginForm = ({
   isGettingCode,
   setIsGettingCode,
 }: {
-  hasRequestedCode: boolean
-  setHasRequestedCode: (value: boolean) => void
-  isGettingCode: boolean
-  setIsGettingCode: (value: boolean) => void
+  hasRequestedCode: boolean;
+  setHasRequestedCode: (value: boolean) => void;
+  isGettingCode: boolean;
+  setIsGettingCode: (value: boolean) => void;
 }) => {
-  const router = useRouter()
+  const router = useRouter();
 
   const [codeResponse, setCodeResponse] = useState<{
-    deviceId: string
-    preAuthSessionId: string
-  }>()
+    deviceId: string;
+    preAuthSessionId: string;
+  }>();
 
   const {
     register,
@@ -267,65 +267,65 @@ export const PasswordlessLoginForm = ({
     setError,
     watch,
   } = useForm<LoginFormVariables>({
-    mode: 'onBlur',
-  })
+    mode: "onBlur",
+  });
 
   const getPasswordlessCode = async ({ email }: LoginFormVariables) => {
-    if (email === undefined || email === '') {
-      return setError('email', {
-        message: 'Please enter an email',
-      })
+    if (email === undefined || email === "") {
+      return setError("email", {
+        message: "Please enter an email",
+      });
     }
 
-    setHasRequestedCode(true)
-    setIsGettingCode(true)
-    const emailLowerCase = email.toLocaleLowerCase().trim()
+    setHasRequestedCode(true);
+    setIsGettingCode(true);
+    const emailLowerCase = email.toLocaleLowerCase().trim();
 
-    const response = await createPasswordlessCode(emailLowerCase)
+    const response = await createPasswordlessCode(emailLowerCase);
 
-    if (response.status === 'SIGN_IN_UP_NOT_ALLOWED') {
-      return setError('email', {
-        message: 'Not allowed to sign in or sign up',
-      })
+    if (response.status === "SIGN_IN_UP_NOT_ALLOWED") {
+      return setError("email", {
+        message: "Not allowed to sign in or sign up",
+      });
     }
     setCodeResponse({
       deviceId: response.deviceId,
       preAuthSessionId: response.preAuthSessionId,
-    })
-    setIsGettingCode(false)
-  }
+    });
+    setIsGettingCode(false);
+  };
 
   const onSubmit = async ({ password }: LoginFormVariables) => {
     if (codeResponse === undefined) {
-      return
+      return;
     }
 
-    const response = await consumePasswordlessCode(password)
+    const response = await consumePasswordlessCode(password);
 
-    const validSession = await doesSessionExist()
-    console.log({ validSession }, 'valid')
-    console.log({ response })
+    const validSession = await doesSessionExist();
+    console.log({ validSession }, "valid");
+    console.log({ response });
 
-    if (response.status === 'RESTART_FLOW_ERROR') {
-      return window.location.reload()
+    if (response.status === "RESTART_FLOW_ERROR") {
+      return window.location.reload();
     }
 
-    if (response.status === 'EXPIRED_USER_INPUT_CODE_ERROR') {
-      return setError('password', {
-        message: 'Code expired',
-      })
+    if (response.status === "EXPIRED_USER_INPUT_CODE_ERROR") {
+      return setError("password", {
+        message: "Code expired",
+      });
     }
 
-    if (response.status === 'INCORRECT_USER_INPUT_CODE_ERROR') {
-      return setError('password', {
-        message: 'Incorrect code',
-      })
+    if (response.status === "INCORRECT_USER_INPUT_CODE_ERROR") {
+      return setError("password", {
+        message: "Incorrect code",
+      });
     }
 
-    router.push('/login-result')
-  }
+    router.push("/login-result");
+  };
 
-  const hasEnteredEmail = watch('email') !== undefined && watch('email') !== ''
+  const hasEnteredEmail = watch("email") !== undefined && watch("email") !== "";
 
   return (
     <form onSubmit={handleSubmit(onSubmit)}>
@@ -344,7 +344,7 @@ export const PasswordlessLoginForm = ({
           /> */}
           <input
             type="text"
-            {...register('email')}
+            {...register("email")}
             autoComplete="email"
             placeholder="Email"
             className="px-4 py-3 rounded-full text-sm font-medium text-gray-900 placeholder-gray-500 border border-gray-300 shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 focus:z-10 sm:text-sm"
@@ -359,9 +359,9 @@ export const PasswordlessLoginForm = ({
             onClick={handleSubmit(getPasswordlessCode)}
             className={classNames(
               !hasEnteredEmail && !isGettingCode
-                ? 'opacity-30 cursor-not-allowed'
-                : '',
-              'inline-flex items-center  justify-center px-4 py-3 text-sm font-medium bg-white border border-gray-300 rounded-full shadow-sm hover:bg-gray-50',
+                ? "opacity-30 cursor-not-allowed"
+                : "",
+              "inline-flex items-center  justify-center px-4 py-3 text-sm font-medium bg-white border border-gray-300 rounded-full shadow-sm hover:bg-gray-50",
             )}
           >
             {isGettingCode ? (
@@ -378,7 +378,7 @@ export const PasswordlessLoginForm = ({
         <div className="flex flex-col space-y-6">
           <input
             type="number"
-            {...register('password')}
+            {...register("password")}
             placeholder="Code"
             required
             className="px-4 py-4 rounded-full text-sm font-medium text-gray-900 placeholder-gray-500 border border-gray-300 shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 focus:z-10 sm:text-sm"
@@ -403,5 +403,5 @@ export const PasswordlessLoginForm = ({
         </div>
       )}
     </form>
-  )
-}
+  );
+};

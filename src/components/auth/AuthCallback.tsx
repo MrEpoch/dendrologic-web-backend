@@ -1,72 +1,72 @@
-'use client'
+"use client";
 
-import { useEffect, useState } from 'react'
-import { loginToThirdParty } from '@/lib/superTokenUtils'
-import { logError } from '@/lib/logError'
-import { useRouter, useSearchParams, usePathname } from 'next/navigation'
-import LoadingSpinnerPage from '@/components/LoadingSpinnerPage'
-import Error from '@/components/Error'
+import { useEffect, useState } from "react";
+import { loginToThirdParty } from "@/lib/superTokenUtils";
+import { logError } from "@/lib/logError";
+import { useRouter, useSearchParams, usePathname } from "next/navigation";
+import LoadingSpinnerPage from "@/components/LoadingSpinnerPage";
+import Error from "@/components/Error";
 
 type ErrorPage = {
-  type: 'SERVER' | 'REQUEST'
-  message?: string
-}
+  type: "SERVER" | "REQUEST";
+  message?: string;
+};
 
 export const AuthCallback = ({
   provider,
 }: {
-  provider: 'google' | 'apple'
+  provider: "google" | "apple";
 }) => {
-  const [error, setError] = useState<ErrorPage | any>(null)
-  const [loading, setLoading] = useState<boolean>(true)
+  const [error, setError] = useState<ErrorPage | any>(null);
+  const [loading, setLoading] = useState<boolean>(true);
 
-  const router = useRouter()
-  const windowIsReady = typeof window !== 'undefined'
-  const searchParams = useSearchParams()
-  const pathName = usePathname()
+  const router = useRouter();
+  const windowIsReady = typeof window !== "undefined";
+  const searchParams = useSearchParams();
+  const pathName = usePathname();
   useEffect(() => {
-    let errorTimeout: NodeJS.Timeout
+    let errorTimeout: NodeJS.Timeout;
 
     async function login() {
       try {
-        const loginResponse = await loginToThirdParty()
+        const loginResponse = await loginToThirdParty();
 
         if (!loginResponse) {
-          errorTimeout = setTimeout(() => setError({ type: 'SERVER' }), 10000)
-          return
+          errorTimeout = setTimeout(() => setError({ type: "SERVER" }), 10000);
+          return;
         }
 
-        if (loginResponse.status !== 'OK') {
+        if (loginResponse.status !== "OK") {
           errorTimeout = setTimeout(
-            () => setError({ type: 'REQUEST', message: loginResponse }),
+            () => setError({ type: "REQUEST", message: loginResponse }),
             10000,
-          )
-          return
+          );
+          return;
         }
 
-        router.push('/login-result')
+        router.push("/login-result");
       } catch (err) {
-        errorTimeout = setTimeout(() => setError(err), 10000)
+        errorTimeout = setTimeout(() => setError(err), 10000);
 
-        logError(err)
+        logError(err);
       } finally {
-        setLoading(false)
+        setLoading(false);
       }
     }
 
     if (searchParams && pathName) {
-      login()
+      login();
     }
     return () => {
       // added the timeout because supertokens was throwing an error on the first request, maybe because the router isnt ready, not sure how to fix this
-      if (errorTimeout) clearTimeout(errorTimeout)
-    }
-  }, [windowIsReady, pathName, searchParams])
-  if (loading) return <LoadingSpinnerPage />
+      if (errorTimeout) clearTimeout(errorTimeout);
+    };
+  }, [windowIsReady, pathName, searchParams]);
+  if (loading) return <LoadingSpinnerPage />;
 
-  if (error) return <Error title={`Something went wrong, ${error?.message}`} />
+  if (error) return <Error title={`Something went wrong, ${error?.message}`} />;
   // fix this later:
-  return <LoadingSpinnerPage />
-}
+  return <LoadingSpinnerPage />;
+};
 
-export default AuthCallback
+export default AuthCallback;

@@ -1,21 +1,21 @@
-import React, { forwardRef } from 'react'
+import React, { forwardRef } from "react";
 
 /*
  read: https://technology.blog.gov.uk/2020/02/24/why-the-gov-uk-design-system-team-changed-the-input-type-for-numbers/
  */
 
-export interface InputProps extends React.ComponentPropsWithoutRef<'input'> {
-  ref?: any
-  textarea?: boolean
-  rows?: number
-  error?: string
-  register?: any
-  leftAddon?: string
-  rightAddonId?: string
-  rightAddon?: string
-  inputHelperMessage?: string
-  transparent?: boolean
-  classNameInnerInputContainer?: string
+export interface InputProps extends React.ComponentPropsWithoutRef<"input"> {
+  ref?: any;
+  textarea?: boolean;
+  rows?: number;
+  error?: string;
+  register?: any;
+  leftAddon?: string;
+  rightAddonId?: string;
+  rightAddon?: string;
+  inputHelperMessage?: string;
+  transparent?: boolean;
+  classNameInnerInputContainer?: string;
 }
 
 const Input = forwardRef<HTMLInputElement, InputProps>(
@@ -34,14 +34,14 @@ const Input = forwardRef<HTMLInputElement, InputProps>(
     },
     ref,
   ) => {
-    const bg = transparent ? `bg-transparent` : `bg-white`
-    const isLeftAddon = leftAddon ? 'pl-7' : 'pl-3'
-    const isRightAddon = rightAddon ? 'pr-12' : 'pr-3'
+    const bg = transparent ? `bg-transparent` : `bg-white`;
+    const isLeftAddon = leftAddon ? "pl-7" : "pl-3";
+    const isRightAddon = rightAddon ? "pr-12" : "pr-3";
     const ring = error
       ? `focus:border-red-500  border-red-500 text-red-600  focus:invalid:ring-red-500`
-      : 'focus:ring-indigo-500 focus:border-indigo-500'
+      : "focus:ring-indigo-500 focus:border-indigo-500";
 
-    const cn = `block overflow-hidden mb-1 rounded-md shadow-sm w-full py-2 pr-12 text-gray-700 bg-white border border-gray-300 sm:text-sm ${isRightAddon} ${isLeftAddon} ${bg} ${ring} ${className}`
+    const cn = `block overflow-hidden mb-1 rounded-md shadow-sm w-full py-2 pr-12 text-gray-700 bg-white border border-gray-300 sm:text-sm ${isRightAddon} ${isLeftAddon} ${bg} ${ring} ${className}`;
     return textarea ? (
       <div className="relative mt-2">
         <textarea
@@ -75,10 +75,10 @@ const Input = forwardRef<HTMLInputElement, InputProps>(
           <div className="mt-2 text-sm text-gray-500">{inputHelperMessage}</div>
         )}
       </>
-    )
+    );
   },
-)
+);
 
-Input.displayName = 'Input'
+Input.displayName = "Input";
 
-export default Input
+export default Input;

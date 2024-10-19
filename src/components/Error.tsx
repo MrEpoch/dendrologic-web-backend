@@ -1,9 +1,9 @@
-import React from 'react'
-import Link from 'next/link'
+import React from "react";
+import Link from "next/link";
 
 type Props = {
-  title?: string
-}
+  title?: string;
+};
 
 const ErrorPage: React.FC<Props> = ({ title }) => (
   <div className="flex flex-col w-full h-full min-h-screen pt-16 pb-12 bg-white ">
@@ -14,7 +14,7 @@ const ErrorPage: React.FC<Props> = ({ title }) => (
             Oops something went wrong
           </p>
           <h1 className="mt-2 text-4xl font-extrabold tracking-tight text-gray-900 sm:text-5xl">
-            {title || 'Page didnt load'}
+            {title || "Page didnt load"}
           </h1>
           <p className="mt-2 text-base text-gray-500">
             Try again or contact us if the problem persists.
@@ -36,6 +36,6 @@ const ErrorPage: React.FC<Props> = ({ title }) => (
       </nav>
     </footer>
   </div>
-)
+);
 
-export default ErrorPage
+export default ErrorPage;

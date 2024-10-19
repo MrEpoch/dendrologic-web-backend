@@ -1,78 +1,79 @@
-import { useForm } from 'react-hook-form'
-import { useRouter } from 'next/navigation'
+import { useForm } from "react-hook-form";
+import { useRouter } from "next/navigation";
 import {
   signupWithEmailPassword,
   signinWithEmailPassword,
-} from '@/lib/superTokenUtils'
-import InputField from '@/components/InputField'
-import { Button } from '@/components/Button'
+} from "@/lib/superTokenUtils";
+import InputField from "@/components/InputField";
+import { Button } from "@/components/Button";
 // import { getPreviousPath } from 'lib/next-apps/shared/storage'
 // import { authPages } from 'lib/next-apps/platform/config'
 // import { SavePassword } from 'capacitor-ios-autofill-save-password'
 
 export type LoginFormVariables = {
-  email: string
-  password: string
-}
+  email: string;
+  password: string;
+};
 
 export const RegisterForm = ({ redirectUri }: { redirectUri?: string }) => {
-  const router = useRouter()
+  const router = useRouter();
 
   //   const refreshUser = useRefreshUser()
 
-  const registerType = 'emailpassword'
+  const registerType = "emailpassword";
   const {
     register,
     handleSubmit,
     formState: { errors, isSubmitting },
     setError,
   } = useForm<LoginFormVariables>({
-    mode: 'onBlur',
-  })
+    mode: "onBlur",
+  });
 
   const onSubmit = async ({ email, password }: LoginFormVariables) => {
-    const emailLowerCase = email.toLocaleLowerCase().trim()
+    const emailLowerCase = email.toLocaleLowerCase().trim();
     // const previousPath = await getPreviousPath()
 
     // console.log({ pref: previousPath })
     const superTokensResponse = await signupWithEmailPassword({
       email: emailLowerCase,
       password,
-    })
+    });
 
-    if (superTokensResponse.status !== 'OK') {
-      throw new Error('Error creating ST account')
+    if (superTokensResponse.status !== "OK") {
+      console.log(superTokensResponse);
+      throw new Error("Error creating ST account");
     }
 
-    console.log({ superTokensResponse }, 'valid')
+    console.log({ superTokensResponse }, "valid");
 
-    if (!superTokensResponse || superTokensResponse.status !== 'OK') {
-      setError('password', {
-        message: 'Gebruikersnaam of wachtwoord is incorrect',
-      })
-      setError('email', {
-        message: 'Gebruikersnaam of wachtwoord is incorrect',
-      })
+    if (!superTokensResponse || superTokensResponse.status !== "OK") {
+      setError("password", {
+        message: "Password is incorrect",
+      });
+      setError("email", {
+        message: "Email is incorrect",
+      });
 
-      return
+      return;
     }
 
     if (
-      registerType === 'emailpassword' &&
+      registerType === "emailpassword" &&
       !!password &&
-      superTokensResponse.status === 'OK'
+      superTokensResponse.status === "OK"
     ) {
       await signinWithEmailPassword({
         email: emailLowerCase,
         password,
-      })
+      });
     }
 
     // await refreshUser()
 
     if (redirectUri) {
-      router.push(redirectUri)
-      return
+      router.push(redirectUri);
+      return;
     }
 
     // if you want to redirect to the previous page after login, comment this out and make sure to add the previouspath:
@@ -91,8 +92,8 @@ export const RegisterForm = ({ redirectUri }: { redirectUri?: string }) => {
     //     password: password,
     //   })
     // }
-    router.push('/login-result')
-  }
+    router.push("/login-result");
+  };
 
   return (
     <form onSubmit={handleSubmit(onSubmit)}>
@@ -106,7 +107,7 @@ export const RegisterForm = ({ redirectUri }: { redirectUri?: string }) => {
           label="Email"
           required
           name="email"
-          register={register('email')}
+          register={register("email")}
         />
         <div className="space-y-2">
           <InputField
@@ -118,7 +119,7 @@ export const RegisterForm = ({ redirectUri }: { redirectUri?: string }) => {
             autoComplete="current-password"
             name="password"
             required
-            register={register('password')}
+            register={register("password")}
           />
           {/* <Link href="/forgot-password">
             <a className="text-sm font-medium text-indigo-600 hover:text-indigo-500">
@@ -134,5 +135,5 @@ export const RegisterForm = ({ redirectUri }: { redirectUri?: string }) => {
         </Button>
       </div>
     </form>
-  )
-}
+  );
+};

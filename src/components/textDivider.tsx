@@ -1,8 +1,8 @@
-import React from 'react'
+import React from "react";
 
 type Props = {
-  text: string
-}
+  text: string;
+};
 
 const TextDivider: React.FC<Props> = ({ text }) => (
   <div className="relative">
@@ -13,6 +13,6 @@ const TextDivider: React.FC<Props> = ({ text }) => (
       <span className="px-2 text-gray-500 bg-white">{text}</span>
     </div>
   </div>
-)
+);
 
-export default TextDivider
+export default TextDivider;

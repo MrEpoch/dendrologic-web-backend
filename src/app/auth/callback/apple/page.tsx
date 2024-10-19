@@ -1,6 +1,6 @@
-import { AuthCallback } from '@/components/auth/AuthCallback'
-import React from 'react'
+import { AuthCallback } from "@/components/auth/AuthCallback";
+import React from "react";
 
-const AppleCallback = () => <AuthCallback provider="apple" />
+const AppleCallback = () => <AuthCallback provider="apple" />;
 
-export default AppleCallback
+export default AppleCallback;

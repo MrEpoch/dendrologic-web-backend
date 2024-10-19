@@ -11,8 +11,8 @@
 // }
 
 export const logError = (err: any, extra?: Record<string, any>) => {
-  if (process.env.NEXT_PUBLIC_APP_STAGE === 'development') {
-    console.error(err)
+  if (process.env.NEXT_PUBLIC_APP_STAGE === "development") {
+    console.error(err);
   }
 
   // if (typeof window !== 'undefined') {
@@ -21,4 +21,4 @@ export const logError = (err: any, extra?: Record<string, any>) => {
   //   } else {
   //     captureExceptionNextJS(err, extra)
   //   }
-  }
+};

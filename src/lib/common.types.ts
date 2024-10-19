@@ -1,4 +1,4 @@
-export type Platform = 'WEB' | 'APP' | 'ALL'
+export type Platform = "WEB" | "APP" | "ALL";
 
 /**
  * Used to swap recipes that SuperTokens uses to provide auth functionality
@@ -10,10 +10,10 @@ export type Platform = 'WEB' | 'APP' | 'ALL'
  * thirdpartypasswordless: Combination of thirdparty and passwordless
  */
 export type AuthMode =
-  | 'thirdparty'
-  | 'passwordless'
-  | 'thirdpartypasswordless'
-  | 'emailpassword'
-  | 'thirdpartyemailpassword'
+  | "thirdparty"
+  | "passwordless"
+  | "thirdpartypasswordless"
+  | "emailpassword"
+  | "thirdpartyemailpassword";
 
 // todo: I have to change the registration flow to support email password, also requires lost pass flow

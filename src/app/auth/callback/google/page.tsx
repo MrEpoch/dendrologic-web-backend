@@ -1,6 +1,6 @@
-import { AuthCallback } from '@/components/auth/AuthCallback'
-import React from 'react'
+import { AuthCallback } from "@/components/auth/AuthCallback";
+import React from "react";
 
-const GoogleCallback = () => <AuthCallback provider="google" />
+const GoogleCallback = () => <AuthCallback provider="google" />;
 
-export default GoogleCallback
+export default GoogleCallback;
