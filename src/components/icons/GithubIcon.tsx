@@ -1,4 +1,4 @@
-function GithubIcon(props: React.SVGProps<SVGSVGElement>) {
+function GithubIcon() {
   return (
     <svg
       className="w-5 h-5"

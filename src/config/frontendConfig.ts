@@ -45,9 +45,9 @@ const configWindowHandler = (original: WindowHandlerInterface) => ({
   location: {
     ...original.location,
     getPathName: () => routerInfo.pathName!,
-    // @ts-ignore
+    // @ts-expect-error don't known url type
     assign: (url) => routerInfo.router!.push(url.toString()),
-    // @ts-ignore
+    // @ts-expect-error don't known url type
     setHref: (url) => routerInfo.router!.push(url.toString()),
   },
 });

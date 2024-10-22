@@ -1,6 +1,6 @@
 import { AuthCallback } from "@/components/auth/AuthCallback";
-import React from "react";
+import React, { Suspense } from "react";
 
-const GoogleCallback = () => <AuthCallback provider="google" />;
+const GoogleCallback = () => <Suspense fallback={<div>Loading...</div>}><AuthCallback /></Suspense>;
 
 export default GoogleCallback;

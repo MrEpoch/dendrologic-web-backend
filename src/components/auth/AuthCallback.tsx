@@ -12,12 +12,8 @@ type ErrorPage = {
   message?: string;
 };
 
-export const AuthCallback = ({
-  provider,
-}: {
-  provider: "google" | "apple";
-}) => {
-  const [error, setError] = useState<ErrorPage | any>(null);
+export const AuthCallback = () => {
+  const [error, setError] = useState<ErrorPage | unknown>(null);
   const [loading, setLoading] = useState<boolean>(true);
 
   const router = useRouter();
@@ -64,6 +60,7 @@ export const AuthCallback = ({
   }, [windowIsReady, pathName, searchParams]);
   if (loading) return <LoadingSpinnerPage />;
 
+  // @ts-expect-error unknown error type
   if (error) return <Error title={`Something went wrong, ${error?.message}`} />;
   // fix this later:
   return <LoadingSpinnerPage />;

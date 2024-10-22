@@ -10,7 +10,7 @@
 //   data?: any
 // }
 
-export const logError = (err: any, extra?: Record<string, any>) => {
+export const logError = (err: unknown) => {
   if (process.env.NEXT_PUBLIC_APP_STAGE === "development") {
     console.error(err);
   }

@@ -9,7 +9,7 @@ export const AuthLogo = () => (
   </h2>
 );
 
-export const AuthLayout = ({ children }: any) => (
+export const AuthLayout = ({ children }: { children: React.ReactNode }) => (
   <>
     <div
       className="absolute inset-x-0 top-0 -z-10 transform-gpu overflow-hidden blur-3xl"
