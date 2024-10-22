@@ -21,6 +21,8 @@ COPY . .
 
 # Expose port 3752
 
+EXPOSE 5432
+
 EXPOSE 3752
 
 RUN npm run build
