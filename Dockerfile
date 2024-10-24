@@ -11,7 +11,7 @@ COPY tailwind.config.ts postcss.config.mjs ./
 
 # Install dependencies
 
-RUN npm install --arch=arm64 --platform=linux --libc=musl sharp
+RUN npm install --os=linux --libc=musl --cpu=x64 sharp
 
 RUN npm install
 
@@ -23,9 +23,10 @@ COPY . .
 
 EXPOSE 5432
 
+
 EXPOSE 3752
 
-RUN npm run build
+# RUN npm run build
 
 # Run the Next.js application
-CMD ["npm", "run", "start"]
+CMD ["npm", "run", "dev"]

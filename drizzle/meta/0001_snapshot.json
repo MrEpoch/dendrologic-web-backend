@@ -1,11 +1,11 @@
 {
-  "id": "c9c88791-bcea-4f4f-80f9-0cf39adcdceb",
-  "prevId": "12d21880-b62e-43d7-8637-0dba20e90df4",
+  "id": "9fd61e94-03fc-4298-b4cb-7ebacba93920",
+  "prevId": "6c7508e5-353f-4d2f-af88-47a2787e5a29",
   "version": "7",
   "dialect": "postgresql",
   "tables": {
-    "public.users": {
-      "name": "users",
+    "public.geo_request": {
+      "name": "geo_request",
       "schema": "",
       "columns": {
         "id": {
@@ -52,19 +52,15 @@
       "foreignKeys": {},
       "compositePrimaryKeys": {},
       "uniqueConstraints": {
-        "users_id_unique": {
-          "name": "users_id_unique",
-          "nullsNotDistinct": false,
-          "columns": [
-            "id"
-          ]
+        "geo_request_id_unique": {
+          "name": "geo_request_id_unique",
+          "columns": ["id"],
+          "nullsNotDistinct": false
         },
-        "users_name_unique": {
-          "name": "users_name_unique",
-          "nullsNotDistinct": false,
-          "columns": [
-            "name"
-          ]
+        "geo_request_name_unique": {
+          "name": "geo_request_name_unique",
+          "columns": ["name"],
+          "nullsNotDistinct": false
         }
       },
       "checkConstraints": {}
@@ -72,8 +68,8 @@
   },
   "enums": {},
   "schemas": {},
-  "sequences": {},
   "views": {},
+  "sequences": {},
   "_meta": {
     "columns": {},
     "schemas": {},
