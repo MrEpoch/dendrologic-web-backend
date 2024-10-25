@@ -2,12 +2,13 @@ import {
   encodeBase32LowerCaseNoPadding,
   encodeHexLowerCase,
 } from "@oslojs/encoding";
-import { type User, type Session, sessionTable, userTable } from "../db/schema";
+import { sessionTable, userTable } from "../db/schema";
 import { db } from "@/db";
 import { sha256 } from "@oslojs/crypto/sha2";
 import { eq } from "drizzle-orm";
 import { cookies } from "next/headers";
 import { cache } from "react";
+import { User } from "./user";
 
 export function generateSessionToken(): string {
   const bytes = new Uint8Array(20);
@@ -18,16 +19,27 @@ export function generateSessionToken(): string {
 
 export async function createSession(
   token: string,
-  userId: number,
+  userId: string,
+  flags: SessionFlags,
 ): Promise<Session> {
   const sessionId = encodeHexLowerCase(sha256(new TextEncoder().encode(token)));
   const session: Session = {
     id: sessionId,
     userId,
+    twoFactorVerified: flags.twoFactorVerified,
     expiresAt: new Date(Date.now() + 1000 * 60 * 60 * 24 * 30),
   };
   await db.insert(sessionTable).values(session);
   return session;
+}
+
+export async function setSessionAs2FAVerified(
+  sessionId: string,
+): Promise<void> {
+  await db
+    .update(sessionTable)
+    .set({ twoFaVerified: true })
+    .where(eq(sessionTable.id, sessionId));
 }
 
 export async function validateSessionToken(
@@ -56,16 +68,27 @@ export async function validateSessionToken(
       })
       .where(eq(sessionTable.id, session.id));
   }
-  return { session, user };
+
+  const userV: User = {
+    id: user.id,
+    email: user.email,
+    username: user.username,
+    emailVerified: user.emailVerified,
+    registered2FA: Boolean(user.totpKey),
+  };
+
+  return {
+    session: {
+      twoFactorVerified: session.twoFaVerified,
+      ...session,
+    },
+    user: userV,
+  };
 }
 
 export async function invalidateSession(sessionId: string): Promise<void> {
   await db.delete(sessionTable).where(eq(sessionTable.id, sessionId));
 }
-
-export type SessionValidationResult =
-  | { session: Session; user: User }
-  | { session: null; user: null };
 
 export const sessionCookieConfig = (expiresAt?: Date) => {
   return {
@@ -77,6 +100,26 @@ export const sessionCookieConfig = (expiresAt?: Date) => {
   };
 };
 
+export function setSessionTokenCookie(token: string, expiresAt: Date): void {
+  cookies().set("session", token, {
+    httpOnly: true,
+    sameSite: "lax",
+    secure: process.env.NODE_ENV === "production",
+    path: "/",
+    expires: expiresAt,
+  });
+}
+
+export function deleteSessionTokenCookie(): void {
+  cookies().set("session", "", {
+    httpOnly: true,
+    sameSite: "lax",
+    secure: process.env.NODE_ENV === "production",
+    path: "/",
+    maxAge: 0,
+  });
+}
+
 export const getCurrentSession = cache(
   async (): Promise<SessionValidationResult> => {
     const token = cookies().get("session")?.value ?? null;
@@ -87,3 +130,21 @@ export const getCurrentSession = cache(
     return result;
   },
 );
+
+export async function invalidateUserSessions(userId: string): Promise<void> {
+  await db.delete(sessionTable).where(eq(sessionTable.userId, userId));
+}
+
+export interface SessionFlags {
+  twoFactorVerified: boolean;
+}
+
+export interface Session extends SessionFlags {
+  id: string;
+  expiresAt: Date;
+  userId: string;
+}
+
+type SessionValidationResult =
+  | { session: Session; user: User }
+  | { session: null; user: null };

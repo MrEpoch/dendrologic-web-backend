@@ -1,5 +1,11 @@
-import { verifyPasswordHash } from "@/lib/password";
-import { RefillingTokenBucket, Throttler } from "@/lib/rate-limit";
+import {
+  checkEmailAvailability,
+  createEmailVerificationRequest,
+  sendVerificationEmail,
+  setEmailRequestCookie,
+} from "@/lib/email";
+import { verifyPasswordStrength } from "@/lib/password";
+import { RefillingTokenBucket } from "@/lib/rate-limit";
 import { globalPOSTRateLimit } from "@/lib/request";
 import {
   createSession,
@@ -7,13 +13,12 @@ import {
   SessionFlags,
   setSessionTokenCookie,
 } from "@/lib/sessionTokens";
-import { getUserFromEmail, getUserPasswordHash } from "@/lib/user";
+import { createUser } from "@/lib/user";
 import { NextRequest, NextResponse } from "next/server";
 import requestIp from "request-ip";
 import { z } from "zod";
 
-const throttler = new Throttler<string>([1, 2, 4, 8, 16, 30, 60, 180, 300]);
-const ipBucket = new RefillingTokenBucket<string>(20, 1);
+const ipBucket = new RefillingTokenBucket<string>(5, 10);
 
 export async function POST(request: NextRequest) {
   try {
@@ -25,8 +30,10 @@ export async function POST(request: NextRequest) {
     if (clientIp !== null && !ipBucket.check(clientIp, 1)) {
       return NextResponse.json({ success: false, error: "TOO_MANY_REQUESTS" });
     }
+
     const zodValidated = z.object({
       email: z.string().email().min(1),
+      username: z.string().max(255).min(3),
       password: z.string().min(8).max(255),
     });
 
@@ -37,29 +44,40 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ success: false, error: "BAD_REQUEST" });
     }
 
-    const user = await getUserFromEmail(validated.data.email);
-    if (user === null) {
-      return NextResponse.json({ success: false, error: "UNAUTHORIZED" });
+    const emailAvailable = checkEmailAvailability(validated.data.email);
+    if (!emailAvailable) {
+      return NextResponse.json({
+        success: false,
+        error: "EMAIL_NOT_AVAILABLE",
+      });
     }
 
-    if (clientIp !== null && !ipBucket.consume(clientIp, 1)) {
-      return NextResponse.json({ success: false, error: "TOO_MANY_REQUESTS" });
-    }
-
-    if (!throttler.consume(user.id)) {
-      return NextResponse.json({ success: false, error: "TOO_MANY_REQUESTS" });
-    }
-
-    const passwordHash = await getUserPasswordHash(user.id);
-    const validPassword = await verifyPasswordHash(
+    const strongPassword = await verifyPasswordStrength(
       validated.data.password,
-      passwordHash,
     );
-    if (!validPassword) {
-      return NextResponse.json({ success: false, error: "UNAUTHORIZED" });
+    if (!strongPassword) {
+      return NextResponse.json({ success: false, error: "WEAK_PASSWORD" });
     }
 
-    throttler.reset(user.id);
+    if (clientIp && !ipBucket.consume(clientIp, 1)) {
+      return NextResponse.json({ success: false, error: "TOO_MANY_REQUESTS" });
+    }
+
+    const user = await createUser(
+      validated.data.email,
+      validated.data.username,
+      validated.data.password,
+    );
+
+    const emailVerificationRequest = await createEmailVerificationRequest(
+      user.id,
+      user.email,
+    );
+    sendVerificationEmail(
+      emailVerificationRequest.email,
+      emailVerificationRequest.code,
+    );
+    setEmailRequestCookie(emailVerificationRequest);
 
     const sessionFlags: SessionFlags = {
       twoFactorVerified: false,
@@ -69,27 +87,7 @@ export async function POST(request: NextRequest) {
     const session = await createSession(sessionToken, user.id, sessionFlags);
     setSessionTokenCookie(sessionToken, session.expiresAt);
 
-    if (!user.emailVerified) {
-      return NextResponse.json({
-        success: false,
-        error: "EMAIL_NOT_VERIFIED",
-        redirect: "/auth/verify-email",
-      });
-    }
-
-    if (!user.registered2FA) {
-      return NextResponse.json({
-        success: true,
-        error: "2FA_NOT_ENABLED",
-        redirect: "/auth/2fa/setup",
-      });
-    }
-
-    return NextResponse.json({
-      success: true,
-      error: null,
-      redirect: "/auth/2fa",
-    });
+    return NextResponse.json({ success: true, redirect: "/auth/2fa/setup" });
   } catch (e) {
     console.error(e);
     return NextResponse.json({ success: false, error: "BAD_REQUEST" });

@@ -11,11 +11,12 @@ import {
   uniqueIndex,
   AnyPgColumn,
   customType,
+  integer,
 } from "drizzle-orm/pg-core";
 import { createInsertSchema } from "drizzle-zod";
 import { z } from "zod";
 
-const bytea = customType<{ data: Uint8Array | string }>({
+const bytea = customType<{ data: Uint8Array }>({
   dataType() {
     return "bytea";
   },
@@ -55,6 +56,10 @@ export const userTable = pgTable(
       notNull: false,
       default: false,
     }).notNull(),
+    totpKey: bytea("totp_key", {
+      notNull: false,
+      default: false,
+    }),
     username: text("username").notNull().unique(),
     emailVerified: boolean("email_verified").notNull().default(false),
   },
@@ -68,7 +73,7 @@ export function lower(email: AnyPgColumn): SQL {
 }
 
 export const sessionTable = pgTable("session", {
-  id: text("id").primaryKey(),
+  id: uuid("id").defaultRandom().primaryKey().unique(),
   userId: uuid("user_id")
     .notNull()
     .references(() => userTable.id),
@@ -76,7 +81,45 @@ export const sessionTable = pgTable("session", {
     withTimezone: true,
     mode: "date",
   }).notNull(),
+  twoFaVerified: boolean("two_fa_verified").notNull().default(false),
 });
+
+export const emailVerificationRequestTable = pgTable(
+  "email_verification_request",
+  {
+    id: uuid("id").defaultRandom().primaryKey().unique(),
+    userId: uuid("user_id")
+      .notNull()
+      .references(() => userTable.id),
+    code: text("code").notNull(),
+    email: text("email").notNull(),
+    expiresAt: timestamp("expires_at", {
+      withTimezone: true,
+      mode: "date",
+    }).notNull(),
+  },
+  (table) => ({
+    emailUniqueIndex: uniqueIndex("email").on(lower(table.email)),
+  }),
+);
+
+export const passwordResetSessionTable = pgTable(
+  "password_reset_session",
+  {
+    id: text("id").primaryKey().unique(),
+    userId: uuid("user_id")
+      .notNull()
+      .references(() => userTable.id),
+    email: text("email").notNull(),
+    code: text("code").notNull(),
+    emailVerified: boolean("email_verified").notNull().default(false),
+    twoFaEnabled: boolean("two_fa_enabled").notNull().default(false),
+    expiresAt: integer("expires_at").notNull(),
+  },
+  (table) => ({
+    emailUniqueIndex: uniqueIndex("email").on(lower(table.email)),
+  }),
+);
 
 const insertUserSchema = createInsertSchema(userTable, {
   id: (schema) => schema.id.uuid(),
