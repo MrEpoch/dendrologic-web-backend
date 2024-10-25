@@ -1,6 +1,7 @@
 import { RefillingTokenBucket } from "./rate-limit";
 import requestIp from "request-ip";
 import { NextRequest } from "next/server";
+import { headers } from "next/headers";
 
 export const globalBucket = new RefillingTokenBucket<string>(100, 1);
 
@@ -11,6 +12,19 @@ export function globalGETRateLimit(req: NextRequest): boolean {
     return true;
   }
   return globalBucket.consume(clientIP, 1);
+}
+
+export function globalGETRateLimitNext(): boolean {
+  const fallBack = "0.0.0.0";
+  let ip = headers().get("x-forwarded-for");
+  if (!ip) {
+    ip = headers().get("x-real-ip") ?? fallBack;
+  } else ip.split(",")[0];
+
+  if (ip === null) {
+    return true;
+  }
+  return globalBucket.consume(ip, 1);
 }
 
 export function globalPOSTRateLimit(req: NextRequest): boolean {

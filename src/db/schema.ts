@@ -73,7 +73,7 @@ export function lower(email: AnyPgColumn): SQL {
 }
 
 export const sessionTable = pgTable("session", {
-  id: uuid("id").defaultRandom().primaryKey().unique(),
+  id: text("id").primaryKey().unique(),
   userId: uuid("user_id")
     .notNull()
     .references(() => userTable.id),
@@ -87,7 +87,7 @@ export const sessionTable = pgTable("session", {
 export const emailVerificationRequestTable = pgTable(
   "email_verification_request",
   {
-    id: uuid("id").defaultRandom().primaryKey().unique(),
+    id: text("id").primaryKey().unique(),
     userId: uuid("user_id")
       .notNull()
       .references(() => userTable.id),
@@ -98,28 +98,19 @@ export const emailVerificationRequestTable = pgTable(
       mode: "date",
     }).notNull(),
   },
-  (table) => ({
-    emailUniqueIndex: uniqueIndex("email").on(lower(table.email)),
-  }),
 );
 
-export const passwordResetSessionTable = pgTable(
-  "password_reset_session",
-  {
-    id: text("id").primaryKey().unique(),
-    userId: uuid("user_id")
-      .notNull()
-      .references(() => userTable.id),
-    email: text("email").notNull(),
-    code: text("code").notNull(),
-    emailVerified: boolean("email_verified").notNull().default(false),
-    twoFaEnabled: boolean("two_fa_enabled").notNull().default(false),
-    expiresAt: integer("expires_at").notNull(),
-  },
-  (table) => ({
-    emailUniqueIndex: uniqueIndex("email").on(lower(table.email)),
-  }),
-);
+export const passwordResetSessionTable = pgTable("password_reset_session", {
+  id: text("id").primaryKey().unique(),
+  userId: uuid("user_id")
+    .notNull()
+    .references(() => userTable.id),
+  email: text("email").notNull(),
+  code: text("code").notNull(),
+  emailVerified: boolean("email_verified").notNull().default(false),
+  twoFaEnabled: boolean("two_fa_enabled").notNull().default(false),
+  expiresAt: integer("expires_at").notNull(),
+});
 
 const insertUserSchema = createInsertSchema(userTable, {
   id: (schema) => schema.id.uuid(),
