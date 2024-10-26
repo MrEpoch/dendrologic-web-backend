@@ -30,6 +30,7 @@ export function decrypt(encrypted: Uint8Array): Uint8Array {
   decrypted.write(
     decipher.update(encrypted.slice(16, encrypted.byteLength - 16)),
   );
+  console.log(typeof decipher);
   decrypted.write(decipher.final());
   return decrypted.bytes();
 }

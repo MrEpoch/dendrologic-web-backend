@@ -20,16 +20,13 @@ const bytea = customType<{ data: Uint8Array }>({
   dataType() {
     return "bytea";
   },
-  toDriver(value: Uint8Array | string): string {
+  toDriver(value: Uint8Array): Uint8Array {
     // Convert Uint8Array to a base64 string for storage in PostgreSQL
-    if (value instanceof Uint8Array) {
-      return Buffer.from(value).toString("base64");
-    }
     return value;
   },
-  fromDriver(value: string): Uint8Array {
+  fromDriver(value: Uint8Array): Uint8Array {
     // Convert the base64 string back to a Uint8Array when reading from the database
-    return Buffer.from(value, "base64");
+    return new Uint8Array(value);
   },
 });
 

@@ -8,7 +8,9 @@ export function EmailVerificationForm() {
 
   const router = useRouter();
 
-  async function onSubmit() {
+  async function onSubmit(e) {
+    e.preventDefault();
+    console.log("sending", code);
     const response = await fetch("/api/auth/verify-email", {
       method: "POST",
       headers: {
@@ -23,6 +25,7 @@ export function EmailVerificationForm() {
     if (data.redirect) {
       router.push(data.redirect ? data.redirect : "/");
     }
+    router.push("/auth/settings");
   }
 
   return (

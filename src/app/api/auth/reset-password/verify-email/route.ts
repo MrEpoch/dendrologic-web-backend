@@ -3,12 +3,30 @@ import {
   validatePasswordResetSessionRequest,
 } from "@/lib/password-reset";
 import { ExpiringTokenBucket } from "@/lib/rate-limit";
-import { globalPOSTRateLimit } from "@/lib/request";
+import { globalGETRateLimit, globalPOSTRateLimit } from "@/lib/request";
 import { setUserAsEmailVerifiedIfEmailMatches } from "@/lib/user";
 import { NextRequest, NextResponse } from "next/server";
 import { z } from "zod";
 
 const emailVerificationBucket = new ExpiringTokenBucket<string>(5, 60 * 30);
+
+export async function GET(request: NextRequest) {
+	if (!globalGETRateLimit(request)) {
+    return NextResponse.json({ success: false, error: "TOO_MANY_REQUESTS" });
+	}
+	const { session } = await validatePasswordResetSessionRequest();
+	if (session === null) {
+    return NextResponse.json({ success: false, error: "UNAUTHORIZED", redirect: "/auth/forgot-password" });
+	}
+	if (session.emailVerified) {
+		if (!session.twoFactorVerified) {
+      return NextResponse.json({ success: false, error: "2FA_NOT_ENABLED", redirect: "/auth/reset-password/2fa" });
+		}
+    return NextResponse.json({ success: false, error: "2FA_NOT_ENABLED", redirect: "/auth/reset-password" });
+	}
+
+  return NextResponse.json({ success: true, session });
+}
 
 export async function POST(request: NextRequest) {
   try {

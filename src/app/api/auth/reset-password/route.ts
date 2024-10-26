@@ -4,7 +4,7 @@ import {
   invalidateUserPasswordResetSession,
   validatePasswordResetSessionRequest,
 } from "@/lib/password-reset";
-import { globalPOSTRateLimit } from "@/lib/request";
+import { globalGETRateLimit, globalPOSTRateLimit } from "@/lib/request";
 import {
   createSession,
   generateSessionToken,
@@ -15,6 +15,28 @@ import {
 import { updateUserPassword } from "@/lib/user";
 import { NextRequest, NextResponse } from "next/server";
 import { z } from "zod";
+
+export async function GET(request: NextRequest) {
+  try {
+    if (!globalGETRateLimit(request)) {
+      return NextResponse.json({ success: false, error: "TOO_MANY_REQUESTS" });
+    }
+    const { session, user } = await validatePasswordResetSessionRequest();
+    if (session === null) {
+      return NextResponse.json({ success: false, error: "UNAUTHORIZED", redirect: "/auth/forgot-password" });
+    }
+    if (!session.emailVerified) {
+      return NextResponse.json({ success: false, error: "EMAIL_NOT_VERIFIED", redirect: "/auth/reset-password/verify-email" });
+    }
+    if (user.registered2FA && !session.twoFactorVerified) {
+      return NextResponse.json({ success: false, error: "2FA_NOT_ENABLED", redirect: "/auth/reset-password/2fa" });
+    }
+
+    return NextResponse.json({ success: true });
+  } catch (e) {
+
+  }
+}
 
 export async function POST(request: NextRequest) {
   try {
@@ -30,7 +52,7 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({
         success: false,
         error: "EMAIL_NOT_VERIFIED",
-        redirect: "/auth/email-verify",
+        redirect: "/auth/verify-email",
       });
     }
     if (user.registered2FA && !passwordResetSession.twoFactorVerified) {

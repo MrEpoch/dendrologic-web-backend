@@ -69,7 +69,7 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({
       success: true,
       message: "The verification code was sent to your inbox.",
-      redirect: "/auth/email-verify",
+      redirect: "/auth/verify-email",
     });
   } catch (e) {
     console.log(e);

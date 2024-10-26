@@ -12,7 +12,6 @@ import { Input } from "../ui/input";
 import { z } from "zod";
 
 export function TwoFactorSetUpForm({ encodedTOTPKey }) {
-
   const [recoveryCode, setRecoveryCode] = useState("");
   const form = useForm<z.infer<typeof formSchemaCode>>({
     resolver: zodResolver(formSchemaCode),
@@ -30,10 +29,11 @@ export function TwoFactorSetUpForm({ encodedTOTPKey }) {
       },
       body: JSON.stringify({
         code: values.code,
-        encodedTOTPKey: encodedTOTPKey,
+        key: encodedTOTPKey,
       }),
     });
     const twoFactorRes = await twoFactor.json();
+    console.log(twoFactorRes);
     if (twoFactorRes.success) {
       console.log("Success", twoFactorRes);
       setRecoveryCode(twoFactorRes.recoveryCode);
@@ -53,7 +53,7 @@ export function TwoFactorSetUpForm({ encodedTOTPKey }) {
         />
         <Button type="submit">Submit</Button>
       </form>
-      {recoveryCode && <TwoFactorSetUpForm encodedTOTPKey={encodedTOTPKey} />}
+      {recoveryCode && <p>Recovery code: {recoveryCode}</p>}
     </Form>
   );
 }

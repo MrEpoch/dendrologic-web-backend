@@ -46,6 +46,7 @@ export function PasswordUpdateForm() {
         }),
       });
       const passwordResponse = await password.json();
+      if (passwordResponse.redirect) router.push(passwordResponse.redirect);
       if (passwordResponse.success) {
         console.log("Success", passwordResponse);
         router.push("/auth/settings");
@@ -98,6 +99,7 @@ export function EmailUpdateForm() {
         }),
       });
       const emailResponse = await email.json();
+      if (emailResponse.redirect) router.push(emailResponse.redirect);
       if (emailResponse.success) {
         console.log("Success", emailResponse);
         router.push("/auth/settings");

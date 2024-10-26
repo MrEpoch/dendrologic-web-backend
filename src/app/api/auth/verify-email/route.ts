@@ -7,13 +7,31 @@ import {
 } from "@/lib/email";
 import { invalidateUserPasswordResetSession } from "@/lib/password-reset";
 import { ExpiringTokenBucket } from "@/lib/rate-limit";
-import { globalPOSTRateLimit } from "@/lib/request";
+import { globalGETRateLimit, globalPOSTRateLimit } from "@/lib/request";
 import { getCurrentSession } from "@/lib/sessionTokens";
 import { updateUserEmailAndSetEmailAsVerified } from "@/lib/user";
+import { redirect } from "next/dist/server/api-utils";
 import { NextRequest, NextResponse } from "next/server";
 import { z } from "zod";
 
 const bucket = new ExpiringTokenBucket<string>(5, 60 * 30);
+
+export async function GET(req: NextRequest) {
+  if (!globalGETRateLimit(req)) {
+    return NextResponse.json({ success: false, error: "TOO_MANY_REQUESTS" });
+  }
+  const { user } = await getCurrentSession();
+  if (user === null) {
+    return NextResponse.json({ success: false, error: "UNAUTHORIZED", redirect: "/auth/login" });
+  }
+
+  const verificationRequest = await getUserEmailVerificationFromRequest();
+  if (verificationRequest === null && user.emailVerified) {
+    return NextResponse.json({ success: false, error: "EMAIL_ALREADY_VERIFIED", redirect: "/" });
+  }
+
+  return NextResponse.json({ success: true, verificationRequest, user });
+}
 
 export async function POST(request: NextRequest) {
   try {

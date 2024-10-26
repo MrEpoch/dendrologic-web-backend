@@ -7,7 +7,7 @@ export function RecoveryCodeForm({ recoveryCode }) {
 
   async function onSubmit(e) {
     e.preventDefault();
-    const recoveryCodeApi = await fetch("/api/settings/regenerate-recovery-code", {
+    const recoveryCodeApi = await fetch("/api/auth/settings/regenerate-recovery-code", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
