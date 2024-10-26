@@ -1,3 +1,4 @@
+import { EmailVerificationForm, ResendEmailVerificationForm } from "@/components/auth/EmailVerificationForm";
 import { getUserEmailVerificationFromRequest } from "@/lib/email";
 import { globalGETRateLimitNext } from "@/lib/request";
 import { getCurrentSession } from "@/lib/sessionTokens";
@@ -27,8 +28,8 @@ export default async function Page() {
         We sent an 8-digit code to {verificationRequest?.email ?? user.email}.
       </p>
       <EmailVerificationForm />
-      <ResendEmailVerificationCodeForm />
-      <Link href="/settings">Change your email</Link>
+      <ResendEmailVerificationForm />
+      <Link href="/auth/settings">Change your email</Link>
     </>
   );
 }

@@ -6,14 +6,15 @@ import { Button } from "@/components/ui/button";
 import { Form } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import CustomField from "./CustomField";
-import { redirect } from "next/navigation";
+import { useRouter } from "next/navigation";
 
 export const formSchema = z
   .object({
     username: z
       .string()
       .min(1, { message: "Musi být nejkratě 1 znak" })
-      .max(255, { message: "Musi být měně než 255 znaků" }),
+    .max(255, { message: "Musi být měně než 255 znaků" })
+    .optional(),
     email: z.string().email(),
     password: z
       .string()
@@ -38,12 +39,15 @@ export function AuthForm({
 }) {
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
-    defaultValues: {
+    defaultValues: authType === "register" ? {
       email: "",
       password: "",
       passwordConfirm: "",
-    },
+      username: "",
+    } : { email: "", password: "" },
   });
+
+    const router = useRouter();
 
   async function onSubmit(values: z.infer<typeof formSchema>) {
     console.log(values);
@@ -60,9 +64,12 @@ export function AuthForm({
         }),
       });
       const userResponse = await user.json();
+
+      if (userResponse.redirect) router.push(userResponse.redirect);
+
       if (userResponse.success) {
         console.log("Success", userResponse);
-        redirect("/auth/2fa/setup");
+        router.push("/auth/2fa/setup");
       }
     } else {
       const user = await fetch("/api/auth/login", {
@@ -76,6 +83,7 @@ export function AuthForm({
         }),
       });
       const userResponse = await user.json();
+      if (userResponse.redirect) router.push(userResponse.redirect);
       if (userResponse.success) {
         console.log("Success", userResponse);
       }
@@ -85,14 +93,16 @@ export function AuthForm({
   return (
     <Form {...form}>
       <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
-        <CustomField
-          control={form.control}
-          name="username"
-          formLabel={"Username"}
-          render={({ field }) => (
-            <Input type="text" value={field.value} {...field} />
-          )}
-        />
+        {authType === "register" && (
+          <CustomField
+            control={form.control}
+            name="username"
+            formLabel={"Username"}
+            render={({ field }) => (
+              <Input type="text" value={field.value} {...field} />
+            )}
+          />
+        )}
         <CustomField
           control={form.control}
           name="email"

@@ -11,7 +11,9 @@ export type errorTypes =
   | "INVALID_KEY"
   | "INVALID_CODE"
   | "INVALID_RECOVERY_CODE"
-  | "2FA_NOT_ENABLED";
+  | "2FA_NOT_ENABLED"
+  | "INTERNAL_SERVER_ERROR"
+;
 
 const routes = [
   "/auth/login",

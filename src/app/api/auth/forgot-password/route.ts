@@ -27,7 +27,6 @@ export async function POST(request: NextRequest) {
     }
     const zodValidated = z.object({
       email: z.string().email().min(1),
-      password: z.string().min(8).max(255),
     });
 
     const data = await request.json();

@@ -1,10 +1,12 @@
 "use client";
 
+import { useRouter } from "next/navigation";
 import { useState } from "react";
 
 export function EmailVerificationForm() {
-  const [state, setState] = useState("");
   const [code, setCode] = useState("");
+
+  const router = useRouter();
 
   async function onSubmit() {
     const response = await fetch("/api/auth/verify-email", {
@@ -18,8 +20,8 @@ export function EmailVerificationForm() {
     });
 
     const data = await response.json();
-    if (data.success) {
-      setState("Verified");
+    if (data.redirect) {
+      router.push(data.redirect ? data.redirect : "/");
     }
   }
 
@@ -35,13 +37,12 @@ export function EmailVerificationForm() {
       />
       <br />
       <button>Verify</button>
-      <p>{state}</p>
     </form>
   );
 }
 
 export function ResendEmailVerificationForm() {
-  const [state, setState] = useState("");
+  const router = useRouter();
 
   async function onSubmit() {
     const response = await fetch("/api/auth/verify-email/resend", {
@@ -52,15 +53,15 @@ export function ResendEmailVerificationForm() {
     });
 
     const data = await response.json();
-    if (data.success) {
-      setState("Resended");
+    if (data.redirect) {
+      router.push(data.redirect ? data.redirect : "/");
     }
+    if (data.success) router.push("/");
   }
 
   return (
     <form onSubmit={onSubmit}>
       <button>Resend code</button>
-      <p>{state}</p>
     </form>
   );
 }
