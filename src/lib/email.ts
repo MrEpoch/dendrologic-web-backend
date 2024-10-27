@@ -4,7 +4,7 @@ import { encodeBase32 } from "@oslojs/encoding";
 import { eq } from "drizzle-orm";
 import { generateRandomOTP } from "./recovery";
 import { sendMail } from "./nodemailer";
-import { cookies } from "next/headers";
+import { cookies, headers } from "next/headers";
 import { getCurrentSession } from "./sessionTokens";
 import { ExpiringTokenBucket } from "./rate-limit";
 
@@ -118,7 +118,13 @@ export async function getUserEmailVerificationFromRequest(): Promise<EmailVerifi
     return null;
   }
 
-  const id = cookies().get("email_verification")?.value ?? null;
+  let id = cookies().get("email_verification")?.value;
+  if (!id) {
+    if (headers().get("Authorization-Email") !== null) {
+      id = headers().get("Authorization-Email") ?? undefined;
+      id?.length === 0 && (id = undefined);
+    }
+  }
   if (!id) {
     return null;
   }

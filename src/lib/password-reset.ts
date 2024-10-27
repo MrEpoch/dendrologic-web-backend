@@ -5,7 +5,7 @@ import { passwordResetSessionTable, userTable } from "@/db/schema";
 import { db } from "@/db";
 import { eq } from "drizzle-orm";
 import { User } from "./user";
-import { cookies } from "next/headers";
+import { cookies, headers } from "next/headers";
 import { sendMail } from "./nodemailer";
 
 export async function createPasswordResetSession(
@@ -114,8 +114,16 @@ export async function invalidateUserPasswordResetSession(
 }
 
 export async function validatePasswordResetSessionRequest(): Promise<PasswordResetSessionValidationResult> {
-  const token = cookies().get("password_reset_session")?.value ?? null;
-  if (token === null) return { session: null, user: null };
+  let token = cookies().get("password_reset_session")?.value;
+  if (!token) {
+    if (headers().get("Authorization-Password-Session") !== null) {
+      token = headers().get("Authorization-Password-Session") ?? undefined;
+      token?.length === 0 && (token = undefined);
+    }
+  }
+  if (!token) {
+    return { session: null, user: null };
+  }
 
   const result = await validatePasswordResetSessionToken(token);
   if (result.session === null) {

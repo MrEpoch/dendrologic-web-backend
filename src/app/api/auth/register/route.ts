@@ -87,7 +87,12 @@ export async function POST(request: NextRequest) {
     const session = await createSession(sessionToken, user.id, sessionFlags);
     setSessionTokenCookie(sessionToken, session.expiresAt);
 
-    return NextResponse.json({ success: true, redirect: "/auth/2fa/setup" });
+    return NextResponse.json({
+      success: true,
+      redirect: "/auth/2fa/setup",
+      sessionToken,
+      emailRequestId: emailVerificationRequest.id,
+    });
   } catch (e) {
     console.error(e);
     return NextResponse.json({ success: false, error: "BAD_REQUEST" });

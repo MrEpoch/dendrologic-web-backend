@@ -1,6 +1,9 @@
 import { totpBucket } from "@/lib/2fa";
 import { globalGETRateLimit, globalPOSTRateLimit } from "@/lib/request";
-import { getCurrentSession, setSessionAs2FAVerified } from "@/lib/sessionTokens";
+import {
+  getCurrentSession,
+  setSessionAs2FAVerified,
+} from "@/lib/sessionTokens";
 import { getUserTOTPKey } from "@/lib/user";
 import { verifyTOTP } from "@oslojs/otp";
 import { NextRequest, NextResponse } from "next/server";
@@ -13,16 +16,32 @@ export async function GET(request: NextRequest) {
     }
     const { session, user } = await getCurrentSession();
     if (session === null) {
-      return NextResponse.json({ success: false, error: "UNAUTHORIZED", redirect: "/auth/login" });
+      return NextResponse.json({
+        success: false,
+        error: "UNAUTHORIZED",
+        redirect: "/auth/login",
+      });
     }
     if (!user.emailVerified) {
-      return NextResponse.json({ success: false, error: "EMAIL_NOT_VERIFIED", redirect: "/auth/verify-email" });
+      return NextResponse.json({
+        success: false,
+        error: "EMAIL_NOT_VERIFIED",
+        redirect: "/auth/verify-email",
+      });
     }
     if (!user.registered2FA) {
-      return NextResponse.json({ success: false, error: "2FA_NOT_ENABLED", redirect: "/auth/2fa/setup" });
+      return NextResponse.json({
+        success: false,
+        error: "2FA_NOT_ENABLED",
+        redirect: "/auth/2fa/setup",
+      });
     }
     if (session.twoFactorVerified) {
-      return NextResponse.json({ success: false, error: "2FA_VERIFIED", redirect: "/" });
+      return NextResponse.json({
+        success: false,
+        error: "2FA_VERIFIED",
+        redirect: "/",
+      });
     }
 
     return NextResponse.json({ success: true });
@@ -40,7 +59,11 @@ export async function POST(request: NextRequest) {
     if (session === null) {
       return NextResponse.json({ success: false, error: "UNAUTHORIZED" });
     }
-    if (!user.emailVerified || !user.registered2FA || session.twoFactorVerified) {
+    if (
+      !user.emailVerified ||
+      !user.registered2FA ||
+      session.twoFactorVerified
+    ) {
       return NextResponse.json({ success: false, error: "FORBIDDEN" });
     }
     if (!totpBucket.check(user.id, 1)) {
@@ -62,7 +85,10 @@ export async function POST(request: NextRequest) {
     }
     const totpKey = await getUserTOTPKey(user.id);
     if (totpKey === null) {
-      return NextResponse.json({ success: false, error: "INTERNAL_SERVER_ERROR" });
+      return NextResponse.json({
+        success: false,
+        error: "INTERNAL_SERVER_ERROR",
+      });
     }
     if (!verifyTOTP(totpKey, 30, 6, validatedData.data.code)) {
       return NextResponse.json({ success: false, error: "INVALID_CODE" });
@@ -72,6 +98,9 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({ success: true, redirect: "/" });
   } catch (e) {
     console.error(e);
-    return NextResponse.json({ success: false, error: "INTERNAL_SERVER_ERROR" });
+    return NextResponse.json({
+      success: false,
+      error: "INTERNAL_SERVER_ERROR",
+    });
   }
 }

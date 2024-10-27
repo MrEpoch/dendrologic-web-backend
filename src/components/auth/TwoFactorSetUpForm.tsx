@@ -93,7 +93,13 @@ export function TwoFactorVerificationForm() {
           name="code"
           formLabel={"Code"}
           render={({ field }) => (
-            <Input autoComplete="one-time-code" id="form-totp.code" type="text" value={field.value} {...field} />
+            <Input
+              autoComplete="one-time-code"
+              id="form-totp.code"
+              type="text"
+              value={field.value}
+              {...field}
+            />
           )}
         />
         <Button type="submit">Verify</Button>
@@ -137,7 +143,13 @@ export function TwoFactorResetForm() {
           name="code"
           formLabel={"Recovery Code"}
           render={({ field }) => (
-            <Input autoComplete="one-time-code" id="form-totp.code" type="text" value={field.value} {...field} />
+            <Input
+              autoComplete="one-time-code"
+              id="form-totp.code"
+              type="text"
+              value={field.value}
+              {...field}
+            />
           )}
         />
         <Button type="submit">Verify</Button>

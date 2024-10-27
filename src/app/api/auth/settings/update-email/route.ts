@@ -68,6 +68,7 @@ export async function POST(request: NextRequest) {
     setEmailRequestCookie(verificationRequest);
     return NextResponse.json({
       success: true,
+      emailVerificationRequestId: verificationRequest.id,
       message: "The verification code was sent to your inbox.",
       redirect: "/auth/verify-email",
     });

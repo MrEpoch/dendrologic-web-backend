@@ -75,7 +75,11 @@ export async function POST(request: NextRequest) {
     const newSession = await createSession(sessionToken, user.id, sessionFlags);
     setSessionTokenCookie(sessionToken, newSession.expiresAt);
 
-    return NextResponse.json({ success: true, error: null });
+    return NextResponse.json({
+      success: true,
+      error: null,
+      sessionToken,
+    });
   } catch (e) {
     console.log(e);
     return NextResponse.json({ success: false, error: "UNKNOWN_ERROR" });

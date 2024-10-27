@@ -27,8 +27,8 @@ export default async function Page() {
   return (
     <>
       <h1>Two-factor authentication</h1>
-			<p>Enter the code from your authenticator app.</p>
-			<TwoFactorVerificationForm />
+      <p>Enter the code from your authenticator app.</p>
+      <TwoFactorVerificationForm />
       <Link href="/auth/2fa/reset">Use recovery code</Link>
     </>
   );

@@ -1,4 +1,4 @@
-'use client';
+"use client";
 import { z } from "zod";
 import { formSchemaPassword } from "./UpdateForm";
 import { useForm } from "react-hook-form";
@@ -22,18 +22,19 @@ export function PasswordResetForm() {
 
   async function onSubmit(values: z.infer<typeof formSchemaPassword>) {
     console.log(values);
-      const password = await fetch("/api/auth/reset-password", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          password: values.password,
-          newPassword: values.newPassword,
-        }),
-      });
-      const passwordResponse = await password.json();
-      if (passwordResponse.redirect) router.push(passwordResponse.redirect); {
+    const password = await fetch("/api/auth/reset-password", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        password: values.password,
+        newPassword: values.newPassword,
+      }),
+    });
+    const passwordResponse = await password.json();
+    if (passwordResponse.redirect) router.push(passwordResponse.redirect);
+    {
       if (passwordResponse.success) {
         console.log("Success", passwordResponse);
         router.push("/auth/settings");
@@ -88,16 +89,17 @@ export function PasswordResetTOTPForm() {
   async function onSubmit(values: z.infer<typeof formSchemaCode>) {
     console.log(values);
     const password = await fetch("/api/auth/reset-password/2fa/totp-reset", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          code: values.code,
-        }),
-      });
-      const twoFactorRes = await password.json();
-      if (twoFactorRes.redirect) router.push(twoFactorRes.redirect); {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        code: values.code,
+      }),
+    });
+    const twoFactorRes = await password.json();
+    if (twoFactorRes.redirect) router.push(twoFactorRes.redirect);
+    {
       if (twoFactorRes.success) {
         console.log("Success", twoFactorRes);
         router.push("/auth/reset-password");
@@ -134,7 +136,9 @@ export function PasswordResetRecoveryCodeForm() {
 
   async function onSubmit(values: z.infer<typeof formSchemaCode>) {
     console.log(values);
-    const password = await fetch("/api/auth/reset-password/2fa/2fa-with-recovery-code", {
+    const password = await fetch(
+      "/api/auth/reset-password/2fa/2fa-with-recovery-code",
+      {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -142,9 +146,11 @@ export function PasswordResetRecoveryCodeForm() {
         body: JSON.stringify({
           code: values.code,
         }),
-      });
-      const twoFactorRes = await password.json();
-      if (twoFactorRes.redirect) router.push(twoFactorRes.redirect); {
+      },
+    );
+    const twoFactorRes = await password.json();
+    if (twoFactorRes.redirect) router.push(twoFactorRes.redirect);
+    {
       if (twoFactorRes.success) {
         console.log("Success", twoFactorRes);
         router.push("/auth/reset-password");
@@ -182,16 +188,17 @@ export function PasswordResetEmailVerificationForm() {
   async function onSubmit(values: z.infer<typeof formSchemaCode>) {
     console.log(values);
     const password = await fetch("/api/auth/reset-password/verify-email", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          code: values.code,
-        }),
-      });
-      const twoFactorRes = await password.json();
-      if (twoFactorRes.redirect) router.push(twoFactorRes.redirect); {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        code: values.code,
+      }),
+    });
+    const twoFactorRes = await password.json();
+    if (twoFactorRes.redirect) router.push(twoFactorRes.redirect);
+    {
       if (twoFactorRes.success) {
         console.log("Success", twoFactorRes);
         router.push("/auth/reset-password");

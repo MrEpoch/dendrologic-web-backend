@@ -1,7 +1,5 @@
 import { recoveryCodeBucket, resetUser2FAWithRecoveryCode } from "@/lib/2fa";
-import {
-  validatePasswordResetSessionRequest,
-} from "@/lib/password-reset";
+import { validatePasswordResetSessionRequest } from "@/lib/password-reset";
 import { globalPOSTRateLimit } from "@/lib/request";
 import { NextRequest, NextResponse } from "next/server";
 import { z } from "zod";
@@ -41,9 +39,15 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ success: false, error: "TOO_MANY_REQUESTS" });
     }
 
-    const valid = await resetUser2FAWithRecoveryCode(session.userId, dataValidated.data.code);
+    const valid = await resetUser2FAWithRecoveryCode(
+      session.userId,
+      dataValidated.data.code,
+    );
     if (!valid) {
-      return NextResponse.json({ success: false, error: "INVALID_RECOVERY_CODE" });
+      return NextResponse.json({
+        success: false,
+        error: "INVALID_RECOVERY_CODE",
+      });
     }
 
     return NextResponse.json({

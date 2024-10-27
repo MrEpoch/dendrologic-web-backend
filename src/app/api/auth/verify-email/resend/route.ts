@@ -62,6 +62,7 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({
       success: true,
       message: "The verification code was sent to your inbox.",
+      emailRequestId: verificationRequest.id,
     });
   } catch (error) {
     console.log(error);

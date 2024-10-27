@@ -7,13 +7,16 @@ export function RecoveryCodeForm({ recoveryCode }) {
 
   async function onSubmit(e) {
     e.preventDefault();
-    const recoveryCodeApi = await fetch("/api/auth/settings/regenerate-recovery-code", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
+    const recoveryCodeApi = await fetch(
+      "/api/auth/settings/regenerate-recovery-code",
+      {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({}),
       },
-      body: JSON.stringify({}),
-    });
+    );
     const codeResponse = await recoveryCodeApi.json();
     if (codeResponse.success && codeResponse.recoveryCode) {
       console.log("Success", codeResponse);
@@ -26,7 +29,9 @@ export function RecoveryCodeForm({ recoveryCode }) {
       <h2>Recovery code</h2>
       <p>{recoveryCodeState}</p>
       <form className="space-y-8">
-        <Button onClick={onSubmit} type="button">Generate new recovery code</Button>
+        <Button onClick={onSubmit} type="button">
+          Generate new recovery code
+        </Button>
       </form>
     </>
   );

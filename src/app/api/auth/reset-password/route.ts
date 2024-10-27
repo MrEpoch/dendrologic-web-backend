@@ -23,18 +23,33 @@ export async function GET(request: NextRequest) {
     }
     const { session, user } = await validatePasswordResetSessionRequest();
     if (session === null) {
-      return NextResponse.json({ success: false, error: "UNAUTHORIZED", redirect: "/auth/forgot-password" });
+      return NextResponse.json({
+        success: false,
+        error: "UNAUTHORIZED",
+        redirect: "/auth/forgot-password",
+      });
     }
     if (!session.emailVerified) {
-      return NextResponse.json({ success: false, error: "EMAIL_NOT_VERIFIED", redirect: "/auth/reset-password/verify-email" });
+      return NextResponse.json({
+        success: false,
+        error: "EMAIL_NOT_VERIFIED",
+        redirect: "/auth/reset-password/verify-email",
+      });
     }
     if (user.registered2FA && !session.twoFactorVerified) {
-      return NextResponse.json({ success: false, error: "2FA_NOT_ENABLED", redirect: "/auth/reset-password/2fa" });
+      return NextResponse.json({
+        success: false,
+        error: "2FA_NOT_ENABLED",
+        redirect: "/auth/reset-password/2fa",
+      });
     }
 
     return NextResponse.json({ success: true });
   } catch (e) {
-
+    return NextResponse.json({
+      success: false,
+      error: "INTERNAL_SERVER_ERROR",
+    });
   }
 }
 
@@ -96,7 +111,7 @@ export async function POST(request: NextRequest) {
     setSessionTokenCookie(sessionToken, session.expiresAt);
     deletePassResetSessionTokenCookie();
 
-    return NextResponse.json({ success: true, error: null });
+    return NextResponse.json({ success: true, error: null, sessionToken });
   } catch (error) {
     console.log(error);
     return NextResponse.json({ success: false, error: "UNKNOWN_ERROR" });

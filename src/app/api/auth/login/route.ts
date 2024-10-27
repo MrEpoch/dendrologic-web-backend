@@ -31,7 +31,6 @@ export async function POST(request: NextRequest) {
     });
 
     const data = await request.json();
-    console.log(data);
     const validated = zodValidated.safeParse(data);
     if (!validated.success) {
       return NextResponse.json({ success: false, error: "BAD_REQUEST" });
@@ -52,8 +51,8 @@ export async function POST(request: NextRequest) {
 
     const passwordHash = await getUserPasswordHash(user.id);
     const validPassword = await verifyPasswordHash(
-      validated.data.password,
       passwordHash,
+      validated.data.password,
     );
     if (!validPassword) {
       return NextResponse.json({ success: false, error: "UNAUTHORIZED" });
@@ -71,9 +70,10 @@ export async function POST(request: NextRequest) {
 
     if (!user.emailVerified) {
       return NextResponse.json({
-        success: false,
+        success: true,
         error: "EMAIL_NOT_VERIFIED",
         redirect: "/auth/verify-email",
+        sessionToken,
       });
     }
 
@@ -82,6 +82,7 @@ export async function POST(request: NextRequest) {
         success: true,
         error: "2FA_NOT_ENABLED",
         redirect: "/auth/2fa/setup",
+        sessionToken,
       });
     }
 
@@ -89,6 +90,7 @@ export async function POST(request: NextRequest) {
       success: true,
       error: null,
       redirect: "/auth/2fa",
+      sessionToken,
     });
   } catch (e) {
     console.error(e);

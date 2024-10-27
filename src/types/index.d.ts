@@ -12,8 +12,7 @@ export type errorTypes =
   | "INVALID_CODE"
   | "INVALID_RECOVERY_CODE"
   | "2FA_NOT_ENABLED"
-  | "INTERNAL_SERVER_ERROR"
-;
+  | "INTERNAL_SERVER_ERROR";
 
 const routes = [
   "/auth/login",
@@ -24,4 +23,15 @@ const routes = [
   "/auth/2fa",
   "/auth/reset-password/2fa",
   "/auth/reset-password/2fa",
+];
+
+const cookieRoutes = [
+  "/api/auth/login", // Creates normal session
+  "/api/auth/register", // Creates normal session
+  "/api/auth/reset-password", // Creates password-session
+  "/api/auth/forgot-password", // Creates normal session
+  "/api/auth/settings/update-password", // Creates normal session
+  "/api/auth/resend/verify-email", // Creates email session
+  "/api/auth/register", // Creates email session
+  "/api/auth/settings/update-email", // Creates email session
 ];

@@ -11,19 +11,31 @@ import { z } from "zod";
 const emailVerificationBucket = new ExpiringTokenBucket<string>(5, 60 * 30);
 
 export async function GET(request: NextRequest) {
-	if (!globalGETRateLimit(request)) {
+  if (!globalGETRateLimit(request)) {
     return NextResponse.json({ success: false, error: "TOO_MANY_REQUESTS" });
-	}
-	const { session } = await validatePasswordResetSessionRequest();
-	if (session === null) {
-    return NextResponse.json({ success: false, error: "UNAUTHORIZED", redirect: "/auth/forgot-password" });
-	}
-	if (session.emailVerified) {
-		if (!session.twoFactorVerified) {
-      return NextResponse.json({ success: false, error: "2FA_NOT_ENABLED", redirect: "/auth/reset-password/2fa" });
-		}
-    return NextResponse.json({ success: false, error: "2FA_NOT_ENABLED", redirect: "/auth/reset-password" });
-	}
+  }
+  const { session } = await validatePasswordResetSessionRequest();
+  if (session === null) {
+    return NextResponse.json({
+      success: false,
+      error: "UNAUTHORIZED",
+      redirect: "/auth/forgot-password",
+    });
+  }
+  if (session.emailVerified) {
+    if (!session.twoFactorVerified) {
+      return NextResponse.json({
+        success: false,
+        error: "2FA_NOT_ENABLED",
+        redirect: "/auth/reset-password/2fa",
+      });
+    }
+    return NextResponse.json({
+      success: false,
+      error: "2FA_NOT_ENABLED",
+      redirect: "/auth/reset-password",
+    });
+  }
 
   return NextResponse.json({ success: true, session });
 }

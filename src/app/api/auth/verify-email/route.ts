@@ -4,13 +4,13 @@ import {
   getUserEmailVerificationFromRequest,
   sendVerificationEmail,
   deleteEmailRequestCookie,
+  setEmailRequestCookie,
 } from "@/lib/email";
 import { invalidateUserPasswordResetSession } from "@/lib/password-reset";
 import { ExpiringTokenBucket } from "@/lib/rate-limit";
 import { globalGETRateLimit, globalPOSTRateLimit } from "@/lib/request";
 import { getCurrentSession } from "@/lib/sessionTokens";
 import { updateUserEmailAndSetEmailAsVerified } from "@/lib/user";
-import { redirect } from "next/dist/server/api-utils";
 import { NextRequest, NextResponse } from "next/server";
 import { z } from "zod";
 
@@ -22,15 +22,40 @@ export async function GET(req: NextRequest) {
   }
   const { user } = await getCurrentSession();
   if (user === null) {
-    return NextResponse.json({ success: false, error: "UNAUTHORIZED", redirect: "/auth/login" });
+    return NextResponse.json({
+      success: false,
+      error: "UNAUTHORIZED",
+      redirect: "/auth/login",
+    });
   }
 
-  const verificationRequest = await getUserEmailVerificationFromRequest();
+  let verificationRequest = await getUserEmailVerificationFromRequest();
   if (verificationRequest === null && user.emailVerified) {
-    return NextResponse.json({ success: false, error: "EMAIL_ALREADY_VERIFIED", redirect: "/" });
+    return NextResponse.json({
+      success: false,
+      error: "EMAIL_ALREADY_VERIFIED",
+      redirect: "/auth/2fa/setup",
+    });
   }
 
-  return NextResponse.json({ success: true, verificationRequest, user });
+  if (verificationRequest === null) {
+    verificationRequest = await createEmailVerificationRequest(
+      user.id,
+      user.email,
+    );
+    await sendVerificationEmail(
+      verificationRequest.email,
+      verificationRequest.code,
+    );
+    setEmailRequestCookie(verificationRequest);
+  }
+
+  return NextResponse.json({
+    success: true,
+    verificationRequest,
+    user,
+    emailRequestId: verificationRequest.id,
+  });
 }
 
 export async function POST(request: NextRequest) {
@@ -41,9 +66,11 @@ export async function POST(request: NextRequest) {
 
     const { session, user } = await getCurrentSession();
     if (session === null) {
+      console.log("session lack");
       return NextResponse.json({ success: false, error: "UNAUTHORIZED" });
     }
     if (user.registered2FA && !session.twoFactorVerified) {
+      console.log("2fa lack");
       return NextResponse.json({
         success: false,
         error: "2FA_NOT_ENABLED",
@@ -51,6 +78,7 @@ export async function POST(request: NextRequest) {
       });
     }
     if (!bucket.check(user.id, 1)) {
+      console.log("bucket lack");
       return NextResponse.json({ success: false, error: "TOO_MANY_REQUESTS" });
     }
 
@@ -99,7 +127,10 @@ export async function POST(request: NextRequest) {
     if (!user.registered2FA) {
       return NextResponse.json({ success: true, redirect: "/auth/2fa/setup" });
     }
-    return NextResponse.json({ success: true });
+    return NextResponse.json({
+      success: true,
+      emailRequestId: verificationRequest.id,
+    });
   } catch (error) {
     console.log(error);
     return NextResponse.json({ success: false, error: "UNKNOWN_ERROR" });

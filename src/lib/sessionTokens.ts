@@ -5,8 +5,8 @@ import {
 import { sessionTable, userTable } from "../db/schema";
 import { db } from "@/db";
 import { sha256 } from "@oslojs/crypto/sha2";
-import { eq } from "drizzle-orm";
-import { cookies } from "next/headers";
+import { eq, sql } from "drizzle-orm";
+import { cookies, headers } from "next/headers";
 import { cache } from "react";
 import { User } from "./user";
 
@@ -23,6 +23,24 @@ export async function createSession(
   flags: SessionFlags,
 ): Promise<Session> {
   const sessionId = encodeHexLowerCase(sha256(new TextEncoder().encode(token)));
+  // delete where there are more than 5 sessions for 1 user
+  await db.execute(sql`
+    WITH user_sessions AS (
+      SELECT ${sessionTable.id}
+      FROM ${sessionTable}
+      WHERE ${sessionTable.userId} = ${userId}
+      ORDER BY ${sessionTable.expiresAt} DESC
+      LIMIT 5
+    ),
+    delete_sessions AS (
+      DELETE FROM ${sessionTable}
+      WHERE ${sessionTable.userId} = ${userId}
+      AND ${sessionTable.id} NOT IN (SELECT ${sessionTable.id} FROM user_sessions)
+      RETURNING *
+    ),
+    SELECT * FROM delete_sessions;
+  `);
+
   const session: Session = {
     id: sessionId,
     userId,
@@ -122,11 +140,21 @@ export function deleteSessionTokenCookie(): void {
 
 export const getCurrentSession = cache(
   async (): Promise<SessionValidationResult> => {
-    const token = cookies().get("session")?.value ?? null;
-    if (token === null) {
+    let token = cookies().get("session")?.value;
+    console.log(headers().get("Authorization-Session"));
+    if (!token) {
+      if (headers().get("Authorization-Session") !== null) {
+        token = headers().get("Authorization-Session") ?? undefined;
+        console.log("token in", token);
+        token?.length === 0 && (token = undefined);
+      }
+    }
+    console.log("token", token);
+    if (!token) {
       return { session: null, user: null };
     }
     const result = await validateSessionToken(token);
+    console.log("Val res", result);
     return result;
   },
 );

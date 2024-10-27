@@ -1,5 +1,13 @@
-import { EmailVerificationForm, ResendEmailVerificationForm } from "@/components/auth/EmailVerificationForm";
-import { getUserEmailVerificationFromRequest } from "@/lib/email";
+import {
+  EmailVerificationForm,
+  ResendEmailVerificationForm,
+} from "@/components/auth/EmailVerificationForm";
+import {
+  createEmailVerificationRequest,
+  getUserEmailVerificationFromRequest,
+  sendVerificationEmail,
+  setEmailRequestCookie,
+} from "@/lib/email";
 import { globalGETRateLimitNext } from "@/lib/request";
 import { getCurrentSession } from "@/lib/sessionTokens";
 import Link from "next/link";
@@ -17,10 +25,23 @@ export default async function Page() {
 
   // TODO: Ideally we'd sent a new verification email automatically if the previous one is expired,
   // but we can't set cookies inside server components.
-  const verificationRequest = await getUserEmailVerificationFromRequest();
+  let verificationRequest = await getUserEmailVerificationFromRequest();
   if (verificationRequest === null && user.emailVerified) {
     return redirect("/");
   }
+
+  if (verificationRequest === null) {
+    verificationRequest = await createEmailVerificationRequest(
+      user.id,
+      user.email,
+    );
+    await sendVerificationEmail(
+      verificationRequest.email,
+      verificationRequest.code,
+    );
+    setEmailRequestCookie(verificationRequest);
+  }
+
   return (
     <>
       <h1>Verify your email address</h1>

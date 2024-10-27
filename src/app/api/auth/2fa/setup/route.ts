@@ -20,13 +20,25 @@ export async function GET(request: NextRequest) {
     }
     const { session, user } = await getCurrentSession();
     if (session === null) {
-      return NextResponse.json({ success: false, error: "UNAUTHORIZED", redirect: "/auth/login" });
+      return NextResponse.json({
+        success: false,
+        error: "UNAUTHORIZED",
+        redirect: "/auth/login",
+      });
     }
     if (!user.emailVerified) {
-      return NextResponse.json({ success: false, error: "EMAIL_NOT_VERIFIED", redirect: "/auth/verify-email" });
+      return NextResponse.json({
+        success: false,
+        error: "EMAIL_NOT_VERIFIED",
+        redirect: "/auth/verify-email",
+      });
     }
     if (user.registered2FA && !session.twoFactorVerified) {
-      return NextResponse.json({ success: false, error: "2FA_NOT_VERIFIED", redirect: "/auth/2fa" });
+      return NextResponse.json({
+        success: false,
+        error: "2FA_NOT_VERIFIED",
+        redirect: "/auth/2fa",
+      });
     }
 
     const totpKey = new Uint8Array(20);
@@ -37,7 +49,6 @@ export async function GET(request: NextRequest) {
     const qrCode = renderSVG(keyURI);
 
     return NextResponse.json({ success: true, keyURI, qrCode, encodedTOTPKey });
-
   } catch (e) {
     return NextResponse.json({ success: false, error: "UNKNOWN_ERROR" });
   }

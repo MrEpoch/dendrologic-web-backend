@@ -13,8 +13,8 @@ export const formSchema = z
     username: z
       .string()
       .min(1, { message: "Musi být nejkratě 1 znak" })
-    .max(255, { message: "Musi být měně než 255 znaků" })
-    .optional(),
+      .max(255, { message: "Musi být měně než 255 znaků" })
+      .optional(),
     email: z.string().email(),
     password: z
       .string()
@@ -39,15 +39,18 @@ export function AuthForm({
 }) {
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
-    defaultValues: authType === "register" ? {
-      email: "",
-      password: "",
-      passwordConfirm: "",
-      username: "",
-    } : { email: "", password: "" },
+    defaultValues:
+      authType === "register"
+        ? {
+            email: "",
+            password: "",
+            passwordConfirm: "",
+            username: "",
+          }
+        : { email: "", password: "" },
   });
 
-    const router = useRouter();
+  const router = useRouter();
 
   async function onSubmit(values: z.infer<typeof formSchema>) {
     console.log(values);

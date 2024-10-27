@@ -68,6 +68,7 @@ export async function POST(request: NextRequest) {
       success: true,
       error: null,
       redirect: "/auth/reset-password/verify-email",
+      sessionToken,
     });
   } catch (e) {
     console.error(e);
