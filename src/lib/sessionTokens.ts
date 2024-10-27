@@ -31,14 +31,10 @@ export async function createSession(
       WHERE ${sessionTable.userId} = ${userId}
       ORDER BY ${sessionTable.expiresAt} DESC
       LIMIT 5
-    ),
-    delete_sessions AS (
-      DELETE FROM ${sessionTable}
-      WHERE ${sessionTable.userId} = ${userId}
-      AND ${sessionTable.id} NOT IN (SELECT ${sessionTable.id} FROM user_sessions)
-      RETURNING *
-    ),
-    SELECT * FROM delete_sessions;
+    )
+    DELETE FROM ${sessionTable}
+    WHERE ${sessionTable.userId} = ${userId}
+    AND ${sessionTable.id} NOT IN (SELECT ${sessionTable.id} FROM user_sessions);
   `);
 
   const session: Session = {

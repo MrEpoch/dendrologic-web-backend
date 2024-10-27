@@ -40,7 +40,7 @@ export async function GET(request: NextRequest) {
       return NextResponse.json({
         success: false,
         error: "2FA_VERIFIED",
-        redirect: "/",
+        redirect: "/auth/settings",
       });
     }
 
@@ -95,7 +95,7 @@ export async function POST(request: NextRequest) {
     }
     totpBucket.reset(user.id);
     await setSessionAs2FAVerified(session.id);
-    return NextResponse.json({ success: true, redirect: "/" });
+    return NextResponse.json({ success: true, redirect: "/auth/settings" });
   } catch (e) {
     console.error(e);
     return NextResponse.json({
