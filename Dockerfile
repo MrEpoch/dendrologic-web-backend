@@ -47,6 +47,14 @@ RUN chown -R nextjs:nodejs .next
 # Copy the Next.js build output
 COPY --from=builder --chown=nextjs:nodejs /app/.next ./.next
 COPY . .
+
+RUN \
+  if [ -f yarn.lock ]; then yarn --frozen-lockfile; \
+  elif [ -f package-lock.json ]; then npm ci; \
+  elif [ -f pnpm-lock.yaml ]; then corepack enable pnpm && pnpm i --frozen-lockfile; \
+  else echo "Lockfile not found." && exit 1; \
+  fi
+
 RUN \
   if [ -f yarn.lock ]; then yarn run build; \
   elif [ -f package-lock.json ]; then npm run build; \
