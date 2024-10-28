@@ -23,10 +23,9 @@ COPY . .
 
 EXPOSE 5432
 
-
 EXPOSE 3752
 
-# RUN npm run build
+RUN npm run build
 
 # Run the Next.js application
-CMD ["npm", "run", "dev"]
+CMD ["npm", "run", "start"]
