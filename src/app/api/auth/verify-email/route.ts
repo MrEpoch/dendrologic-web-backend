@@ -129,7 +129,6 @@ export async function POST(request: NextRequest) {
     }
     return NextResponse.json({
       success: true,
-      emailRequestId: verificationRequest.id,
     });
   } catch (error) {
     console.log(error);
