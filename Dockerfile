@@ -45,7 +45,6 @@ RUN mkdir -p .next
 RUN chown -R nextjs:nodejs .next
 
 # Copy the Next.js build output
-COPY --from=builder --chown=nextjs:nodejs /app/.next ./.next
 COPY . .
 
 RUN \
