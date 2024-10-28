@@ -89,7 +89,7 @@ export async function POST(request: NextRequest) {
 
     return NextResponse.json({
       success: true,
-      redirect: "/auth/2fa/setup",
+      redirect: "/auth/verify-email",
       sessionToken,
       emailRequestId: emailVerificationRequest.id,
     });

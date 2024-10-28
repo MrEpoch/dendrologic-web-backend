@@ -2,9 +2,9 @@ import { drizzle } from "drizzle-orm/node-postgres";
 import { geoRequestTable } from "./schema";
 import { eq } from "drizzle-orm";
 import { Pool } from "pg";
-import "dotenv/config";
 
 // You can specify any property from the node-postgres connection options
+
 const pool = new Pool({
   connectionString: process.env.DATABASE_URL!,
 });
