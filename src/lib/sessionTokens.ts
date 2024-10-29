@@ -137,20 +137,16 @@ export function deleteSessionTokenCookie(): void {
 export const getCurrentSession = cache(
   async (): Promise<SessionValidationResult> => {
     let token = cookies().get("session")?.value;
-    console.log(headers().get("Authorization-Session"));
     if (!token) {
       if (headers().get("Authorization-Session") !== null) {
         token = headers().get("Authorization-Session") ?? undefined;
-        console.log("token in", token);
         token?.length === 0 && (token = undefined);
       }
     }
-    console.log("token", token);
     if (!token) {
       return { session: null, user: null };
     }
     const result = await validateSessionToken(token);
-    console.log("Val res", result);
     return result;
   },
 );

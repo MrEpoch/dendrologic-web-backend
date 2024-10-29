@@ -22,10 +22,9 @@ export function EmailVerificationForm() {
     });
 
     const data = await response.json();
-    if (data.redirect) {
-      router.push(data.redirect ? data.redirect : "/");
+    if (data.success) {
+      router.push("/auth/2fa/setup");
     }
-    router.push("/auth/settings");
   }
 
   return (

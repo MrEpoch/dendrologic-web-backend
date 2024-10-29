@@ -8,6 +8,25 @@ import { cookies, headers } from "next/headers";
 import { getCurrentSession } from "./sessionTokens";
 import { ExpiringTokenBucket } from "./rate-limit";
 
+export async function getEmailVerificationRequestFromUserId(
+  userId: string,
+): Promise<EmailVerificationRequest | null> {
+  const emailRequest = await db
+    .select()
+    .from(emailVerificationRequestTable)
+    .where(eq(emailVerificationRequestTable.userId, userId));
+  if (!emailRequest || emailRequest.length < 1) {
+    return null;
+  }
+  return {
+    id: emailRequest[0].id,
+    userId: emailRequest[0].userId,
+    code: emailRequest[0].code,
+    email: emailRequest[0].email,
+    expiresAt: emailRequest[0].expiresAt,
+  };
+}
+
 export async function checkEmailAvailability(email: string): Promise<boolean> {
   const emailDb = await db
     .select()

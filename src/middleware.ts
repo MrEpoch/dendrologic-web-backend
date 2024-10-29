@@ -62,7 +62,6 @@ export async function middleware(request: NextRequest): Promise<NextResponse> {
         secure: process.env.NODE_ENV === "production",
       });
     }
-    console.log(res);
     return res;
   }
 

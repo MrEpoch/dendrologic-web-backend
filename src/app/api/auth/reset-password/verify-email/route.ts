@@ -50,7 +50,7 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ success: false, error: "UNAUTHORIZED" });
     }
     if (session.emailVerified) {
-      return NextResponse.json({ success: false, error: "UNAUTHORIZED" });
+      return NextResponse.json({ success: false, error: "EMAIL_VERIFIED" });
     }
 
     if (!emailVerificationBucket.check(session.userId, 1)) {

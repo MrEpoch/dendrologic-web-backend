@@ -4,23 +4,23 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { useForm } from "react-hook-form";
-import { formSchemaCode } from "./PasswordResetForm";
 import { CustomFieldCode } from "./CustomField";
 import { Form } from "../ui/form";
 import { Button } from "../ui/button";
 import { Input } from "../ui/input";
 import { z } from "zod";
+import { formSchemaTOTPCode } from "./PasswordResetForm";
 
 export function TwoFactorSetUpForm({ encodedTOTPKey }) {
   const [recoveryCode, setRecoveryCode] = useState("");
-  const form = useForm<z.infer<typeof formSchemaCode>>({
-    resolver: zodResolver(formSchemaCode),
+  const form = useForm<z.infer<typeof formSchemaTOTPCode>>({
+    resolver: zodResolver(formSchemaTOTPCode),
     defaultValues: {
       code: "",
     },
   });
 
-  async function onSubmit(values: z.infer<typeof formSchemaCode>) {
+  async function onSubmit(values: z.infer<typeof formSchemaTOTPCode>) {
     console.log(values);
     const twoFactor = await fetch("/api/auth/2fa/setup", {
       method: "POST",
@@ -59,8 +59,8 @@ export function TwoFactorSetUpForm({ encodedTOTPKey }) {
 }
 
 export function TwoFactorVerificationForm() {
-  const form = useForm<z.infer<typeof formSchemaCode>>({
-    resolver: zodResolver(formSchemaCode),
+  const form = useForm<z.infer<typeof formSchemaTOTPCode>>({
+    resolver: zodResolver(formSchemaTOTPCode),
     defaultValues: {
       code: "",
     },
@@ -68,7 +68,7 @@ export function TwoFactorVerificationForm() {
 
   const router = useRouter();
 
-  async function onSubmit(values: z.infer<typeof formSchemaCode>) {
+  async function onSubmit(values: z.infer<typeof formSchemaTOTPCode>) {
     console.log(values);
     const twoFactor = await fetch("/api/auth/2fa", {
       method: "POST",
@@ -109,8 +109,8 @@ export function TwoFactorVerificationForm() {
 }
 
 export function TwoFactorResetForm() {
-  const form = useForm<z.infer<typeof formSchemaCode>>({
-    resolver: zodResolver(formSchemaCode),
+  const form = useForm<z.infer<typeof formSchemaTOTPCode>>({
+    resolver: zodResolver(formSchemaTOTPCode),
     defaultValues: {
       code: "",
     },
@@ -118,7 +118,7 @@ export function TwoFactorResetForm() {
 
   const router = useRouter();
 
-  async function onSubmit(values: z.infer<typeof formSchemaCode>) {
+  async function onSubmit(values: z.infer<typeof formSchemaTOTPCode>) {
     console.log(values);
     const twoFactor = await fetch("/api/auth/2fa/reset", {
       method: "POST",

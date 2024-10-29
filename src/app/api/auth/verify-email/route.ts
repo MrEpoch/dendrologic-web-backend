@@ -4,7 +4,7 @@ import {
   getUserEmailVerificationFromRequest,
   sendVerificationEmail,
   deleteEmailRequestCookie,
-  setEmailRequestCookie,
+  getEmailVerificationRequestFromUserId,
 } from "@/lib/email";
 import { invalidateUserPasswordResetSession } from "@/lib/password-reset";
 import { ExpiringTokenBucket } from "@/lib/rate-limit";
@@ -37,17 +37,55 @@ export async function GET(req: NextRequest) {
       redirect: "/auth/2fa/setup",
     });
   }
-
   if (verificationRequest === null) {
+    verificationRequest = await getEmailVerificationRequestFromUserId(user.id);
+    if (verificationRequest === null) {
+      verificationRequest = await createEmailVerificationRequest(
+        user.id,
+        user.email,
+      );
+      await sendVerificationEmail(
+        verificationRequest.email,
+        verificationRequest.code,
+      );
+    } else {
+      if (Date.now() >= verificationRequest.expiresAt.getTime()) {
+        verificationRequest = await createEmailVerificationRequest(
+          verificationRequest.userId,
+          verificationRequest.email,
+        );
+        await sendVerificationEmail(
+          verificationRequest.email,
+          verificationRequest.code,
+        );
+        return NextResponse.json({
+          emailRequestId: verificationRequest.id,
+          success: false,
+          error: "EXPIRED_CODE",
+          message:
+            "The verification code was expired. We sent another code to your inbox.",
+        });
+      }
+    }
+  }
+
+  console.log(verificationRequest);
+  if (Date.now() >= verificationRequest.expiresAt.getTime()) {
     verificationRequest = await createEmailVerificationRequest(
-      user.id,
-      user.email,
+      verificationRequest.userId,
+      verificationRequest.email,
     );
     await sendVerificationEmail(
       verificationRequest.email,
-      verificationRequest.code,
+      verificationRequest.id,
     );
-    setEmailRequestCookie(verificationRequest);
+    return NextResponse.json({
+      success: false,
+      error: "EXPIRED_CODE",
+      emailRequestId: verificationRequest.id,
+      message:
+        "The verification code was expired. We sent another code to your inbox.",
+    });
   }
 
   return NextResponse.json({
@@ -89,7 +127,7 @@ export async function POST(request: NextRequest) {
 
     const data = await request.json();
     const dataSchema = z.object({
-      code: z.string().min(1),
+      code: z.string().length(8),
     });
 
     const dataValidated = dataSchema.safeParse(data);
@@ -105,12 +143,14 @@ export async function POST(request: NextRequest) {
         verificationRequest.userId,
         verificationRequest.email,
       );
-      sendVerificationEmail(
+      await sendVerificationEmail(
         verificationRequest.email,
         verificationRequest.code,
       );
       return NextResponse.json({
-        success: true,
+        success: false,
+        error: "EXPIRED_CODE",
+        emailRequestId: verificationRequest.id,
         message:
           "The verification code was expired. We sent another code to your inbox.",
       });
@@ -119,15 +159,19 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ success: false, error: "BAD_REQUEST" });
     }
 
-    deleteUserVerificationRequest(user.id);
-    invalidateUserPasswordResetSession(user.id);
-    updateUserEmailAndSetEmailAsVerified(user.id, verificationRequest.email);
+    await deleteUserVerificationRequest(user.id);
+    await invalidateUserPasswordResetSession(user.id);
+    await updateUserEmailAndSetEmailAsVerified(
+      user.id,
+      verificationRequest.email,
+    );
     deleteEmailRequestCookie();
 
     if (!user.registered2FA) {
       return NextResponse.json({ success: true, redirect: "/auth/2fa/setup" });
     }
     return NextResponse.json({
+      redirect: "/auth/settings",
       success: true,
     });
   } catch (error) {
