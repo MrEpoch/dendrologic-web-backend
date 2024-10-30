@@ -13,7 +13,7 @@ export const db = drizzle({ client: pool });
 async function main() {
   const request: typeof geoRequestTable.$inferInsert = {
     name: "Geo request 1",
-    location: { x: 0, y: 0 },
+    location: { x: 49.601647948761716, y: 13.567165911748164 },
     geojson: {
       type: "FeatureCollection",
       features: [
