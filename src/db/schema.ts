@@ -58,7 +58,8 @@ export const userTable = pgTable(
       default: false,
     }),
     username: text("username").notNull().unique(),
-    emailVerified: boolean("email_verified").notNull().default(false),
+    emailVerified: boolean("email_verified").default(false).notNull(),
+    images: text("images").array().default([]).notNull(),
   },
   (table) => ({
     emailUniqueIndex: uniqueIndex("email").on(lower(table.email)),
@@ -132,7 +133,8 @@ const insertGeoRequestSchema = createInsertSchema(geoRequestTable, {
         properties: z.object({
           name: z.string(),
           id: z.string(),
-          hasImage: z.boolean(),
+          image: z.array(z.string()).max(3),
+          imageTakenLast: z.string().optional(),
         }),
         geometry: z.object({
           type: z.literal("Polygon"),

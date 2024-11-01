@@ -1,0 +1,1 @@
+ALTER TABLE "user" ADD COLUMN "images" text[] DEFAULT '{}' NOT NULL;

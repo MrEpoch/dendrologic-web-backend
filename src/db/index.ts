@@ -20,9 +20,11 @@ async function main() {
         {
           type: "Feature",
           properties: {
-            name: "Polygon",
+            name: "Polygon 1",
             id: "e7d0a0a8-7b0f-11ed-ae05-0242ac120003",
-            hasImage: false,
+            // Create folder in images in which will these be stored, folder name is id above
+            image: [],
+            imageTakenLast: "",
           },
           geometry: {
             type: "Polygon",
@@ -100,9 +102,10 @@ async function main() {
         {
           type: "Feature",
           properties: {
-            name: "Polygon",
+            name: "Polygon 2",
             id: "q9f5c9f6c8-7b0f-11ed-ae05-0242ac120003",
-            hasImage: false,
+            image: [],
+            imageTakenLast: "",
           },
           geometry: {
             coordinates: [
@@ -120,9 +123,10 @@ async function main() {
         {
           type: "Feature",
           properties: {
-            name: "Polygon",
+            name: "Polygon 3",
             id: "l7d0a0a8-7b0f-11ed-ae05-0242ac120003",
-            hasImage: false,
+            image: [],
+            imageTakenLast: "",
           },
           geometry: {
             coordinates: [
