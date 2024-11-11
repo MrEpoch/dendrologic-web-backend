@@ -21,7 +21,6 @@ export async function POST(request: NextRequest, params: { params: { id: string 
 
     const clientIp = requestIp.getClientIp(request);
     if (clientIp !== null && !ipBucket.check(clientIp, 1)) {
-      console.log("ip");
       return NextResponse.json({ success: false, error: "TOO_MANY_REQUESTS" });
     }
 
@@ -34,7 +33,6 @@ export async function POST(request: NextRequest, params: { params: { id: string 
     const id = z.string().length(36).safeParse(params?.params?.id);
 
     if (!id.success) {
-      console.log("bad parsing", params);
       return NextResponse.json({
         success: false,
         error: "UNKNOWN_GEO_REQUEST",
@@ -59,7 +57,6 @@ export async function POST(request: NextRequest, params: { params: { id: string 
       .where(eq(geoRequestTable.id, id.data))
 
     if (geoRequest.length === 0) {
-      console.log("bad length", console.log, id.data, params);
       return NextResponse.json({
         success: false,
         error: "UNKNOWN_GEO_REQUEST",
@@ -72,26 +69,15 @@ export async function POST(request: NextRequest, params: { params: { id: string 
       return NextResponse.json({ success: false, error: "FILE_UPLOAD_ERROR" });
     }
 
-    if (!geoRequest[0]?.geojson || typeof geoRequest[0]?.geojson !== "string") {
+    const newGeoJson = geoRequest[0]?.geojson;
+    if (!newGeoJson || !newGeoJson?.features) {
       return NextResponse.json({ success: false, error: "FILE_UPLOAD_ERROR" });
     }
-    const newGeoJson = JSON.parse(geoRequest[0]?.geojson)
-
-    newGeoJson.features = newGeoJson.features.map((feature: any) => {
-      return {
-        ...feature,
-        properties: {
-          ...feature.properties,
-          image: file.fileName
-        }
-      }
-    })
-
 
     const dbRequestGeoAdd = await db
       .update(geoRequestTable)
       .set({
-        geojson: JSON.stringify(newGeoJson.geojson.features.map((feature: any) => {
+        geojson: JSON.stringify(newGeoJson.features.map((feature: any) => {
           if (feature.properties.id === validated.data.featureId) {
             return {
               ...feature,
@@ -118,7 +104,7 @@ export async function POST(request: NextRequest, params: { params: { id: string 
 
     const userImageAdd = await db.execute(sql`
       UPDATE ${userTable}
-      SET image = array_append(image, ${file.fileName})
+      SET images = array_append(images, ${file.fileName})
       WHERE id = ${validateUser.user.id}
       RETURNING *
     `);

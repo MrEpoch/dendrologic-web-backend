@@ -6,7 +6,6 @@ import { z } from "zod";
 const minioClient = new Minio.Client({
   endPoint: process.env.S3_END_POINT ?? "",
   useSSL: process.env.S3_USE_SSL ? true : false,
-  port: process.env.S3_PORT ? parseInt(process.env.S3_PORT) : 9000,
   accessKey: process.env.S3_ACCESS_KEY ?? "", // This is username
   secretKey: process.env.S3_SECRET_KEY ?? "", // This is user password
 });

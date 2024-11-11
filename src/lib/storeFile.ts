@@ -27,7 +27,7 @@ export async function InsertImageIntoBucket(file, id) {
 
   return {
     success: true,
-    fileName: fileName + "/" + id + ".jpg",
+    fileName: id + "/" + fileName + ".jpg",
   };
 }
 
