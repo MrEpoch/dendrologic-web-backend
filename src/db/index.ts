@@ -180,5 +180,3 @@ async function main() {
   console.log('Request deleted!')
   */
 }
-
-main();
