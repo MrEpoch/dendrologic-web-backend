@@ -77,7 +77,9 @@ export async function POST(request: NextRequest, params: { params: { id: string 
     const dbRequestGeoAdd = await db
       .update(geoRequestTable)
       .set({
-        geojson: JSON.stringify(newGeoJson.features.map((feature: any) => {
+        geojson: {
+          type: "FeatureCollection",
+          features: newGeoJson.features.map((feature: any) => {
           if (feature.properties.id === validated.data.featureId) {
             return {
               ...feature,
@@ -89,7 +91,8 @@ export async function POST(request: NextRequest, params: { params: { id: string 
             }
           }
           return feature
-        })),
+        })
+        }
       })
       .where(eq(geoRequestTable.id, id.data))
       .returning()

@@ -10,9 +10,9 @@ const pool = new Pool({
 });
 export const db = drizzle({ client: pool });
 
-async function main() {
-  const request: typeof geoRequestTable.$inferInsert = {
-    name: "Geo request 1",
+function idSeedRequest(id: string, iter: number) {
+  return {
+    name: "Geo request " + " - " + iter,
     location: { x: 49.601647948761716, y: 13.567165911748164 },
     geojson: {
       type: "FeatureCollection",
@@ -144,22 +144,29 @@ async function main() {
     },
   };
 
-  const check = await db
-    .select()
-    .from(geoRequestTable)
-    .where(eq(geoRequestTable.name, "Geo request 1"));
-  console.log("check", check);
-  if (check && check.length > 0) {
-    console.log("Geo request 1 already exists!");
-    return;
+}
+
+async function main() {
+  for (let i = 0; i < 10; i++) {
+    const request: typeof geoRequestTable.$inferInsert = idSeedRequest("", i);
+    const check = await db
+        .select()
+        .from(geoRequestTable)
+        .where(eq(geoRequestTable.name, "Geo request 1"));
+      console.log("check", check);
+      if (check && check.length > 0) {
+        console.log("Geo request 1 already exists!");
+        return;
+      }
+
+      await db.insert(geoRequestTable).values(request);
+      console.log("New requests created!");
+
+      const geoRequests = await db.select().from(geoRequestTable);
+      console.log("Getting all requests from the database: ", geoRequests);
   }
 
-  await db.insert(geoRequestTable).values(request);
-  console.log("New requests created!");
-
-  const geoRequests = await db.select().from(geoRequestTable);
-  console.log("Getting all requests from the database: ", geoRequests);
-
+  
   /*
   await db
     .update(geoRequestTable)
