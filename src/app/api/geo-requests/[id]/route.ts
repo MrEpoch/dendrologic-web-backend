@@ -39,7 +39,6 @@ export async function GET(request: NextRequest, { params }: { params: Promise<{ 
       .select()
       .from(geoRequestTable)
       .where(eq(geoRequestTable.id, validatedParams.data.id))
-    console.log(geoRequests);
 
     return NextResponse.json({ success: true, geoRequests: geoRequests[0] });
   } catch (e) {

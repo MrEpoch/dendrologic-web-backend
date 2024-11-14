@@ -37,7 +37,6 @@ export async function GET(request: NextRequest) {
       .from(geoRequestTable)
       .limit(10)
       .offset((parseInt(page) - 1) * 10);
-    console.log(geoRequests);
 
     return NextResponse.json({ success: true, geoRequests });
   } catch (e) {
