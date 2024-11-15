@@ -28,6 +28,7 @@ export async function middleware(request: NextRequest): Promise<NextResponse> {
   const originHeader =
     request.headers.get("Origin") ?? request.headers.get("X-Forwarded-Host");
   const hostHeader = request.headers.get("Host");
+  console.log(originHeader, hostHeader);
   if (originHeader === null || hostHeader === null) {
     return new NextResponse(null, {
       status: 403,
