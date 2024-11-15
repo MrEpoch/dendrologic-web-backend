@@ -63,6 +63,7 @@ export async function POST(request: NextRequest, params: { params: { id: string 
       });
     }
 
+    console.log("upload");
     const file = await InsertImageIntoBucket(validated.data.image, geoRequest[0].id);
 
     if (!file.success) {

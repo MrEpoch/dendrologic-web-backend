@@ -98,7 +98,7 @@ export function AuthForm({
       <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
         {authType === "register" && (
           <CustomField
-            control={form.control}
+            control={form.control}packa
             name="username"
             formLabel={"Username"}
             render={({ field }) => (

@@ -22,6 +22,7 @@ const ipBucket = new RefillingTokenBucket<string>(5, 10);
 
 export async function POST(request: NextRequest) {
   try {
+    console.log("hit");
     if (!globalPOSTRateLimit(request)) {
       return NextResponse.json({ success: false, error: "TOO_MANY_REQUESTS" });
     }
