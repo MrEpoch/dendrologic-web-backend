@@ -1,32 +1,78 @@
 import { NextRequest, NextResponse } from "next/server";
 import { z } from "zod";
-import { db } from "@/db/index";
-import { geoRequestTable } from "@/db/schema";
+import { RefillingTokenBucket } from "@/lib/rate-limit";
+import { globalPOSTRateLimit } from "@/lib/request";
+import { getCurrentSession } from "@/lib/sessionTokens";
+import { InsertImageIntoBucket } from "@/lib/storeFile";
+import { addDendrologicImage } from "@/lib/dendrologic-image";
+import requestIp from "request-ip";
 
-export async function GET(request: NextRequest) {
+// const fileSchema = z.string().base64();
+
+const ipBucket = new RefillingTokenBucket<string>(20, 1);
+
+export async function POST(request: NextRequest) {
   try {
-    const searchParams = request.nextUrl.searchParams;
-    const searchParamsValidationZod = z.object({
-      page: z.string().optional(),
-    });
+    // Rate limiting validation
 
-    const validatedSearchParams =
-      searchParamsValidationZod.safeParse(searchParams);
-
-    if (!validatedSearchParams.success) {
-      return NextResponse.json({ success: false });
+    if (!globalPOSTRateLimit(request)) {
+      return NextResponse.json({ success: false, error: "TOO_MANY_REQUESTS" });
     }
 
-    const page = validatedSearchParams.data.page || "1";
-    const geoRequests = await db
-      .select()
-      .from(geoRequestTable)
-      .limit(10)
-      .offset((parseInt(page) - 1) * 10);
+    const clientIp = requestIp.getClientIp(request);
+    if (clientIp !== null && !ipBucket.check(clientIp, 1)) {
+      return NextResponse.json({ success: false, error: "TOO_MANY_REQUESTS" });
+    }
 
-    return NextResponse.json({ success: true, geoRequests });
+    // User session validation
+
+    const validateUser = await getCurrentSession();
+    if (!validateUser.session || !validateUser.user) {
+      return NextResponse.json({ success: false, error: "UNAUTHORIZED" });
+    }
+
+    // Schema of request JSON data
+
+    const validationSchema = z.object({
+      image: z.string(),
+      kod: z.string().min(1),
+    });
+
+    // It can fail if JSON is missing
+
+    const jsonFile = await request.json();
+
+    const validated = validationSchema.safeParse(jsonFile);
+    if (!validated.success) {
+      return NextResponse.json({ success: false, error: "BAD_REQUEST" });
+    }
+
+    // Writes file into storage bucket and returns filename
+
+    const file = await InsertImageIntoBucket(validated.data.image);
+
+    if (!file.success) {
+      return NextResponse.json({ success: false, error: "FILE_ERROR" });
+    }
+
+    if (!file.fileName) {
+      return NextResponse.json({ success: false, error: "FILE_NAME_MISSING" });
+    }
+
+    // Adds filename to database
+
+    const savedImage = await addDendrologicImage(
+      file.fileName,
+      validated.data.kod,
+    );
+
+    if (!savedImage.success) {
+      return NextResponse.json({ success: false, error: "DATABASE_ERROR" });
+    }
+
+    return NextResponse.json({ success: true, data: savedImage });
   } catch (e) {
     console.error(e);
-    return NextResponse.json({ success: false });
+    return NextResponse.json({ success: false, error: "BAD_REQUEST" });
   }
 }

@@ -13,6 +13,10 @@ export type errorTypes =
   | "INVALID_RECOVERY_CODE"
   | "2FA_NOT_ENABLED"
   | "INTERNAL_SERVER_ERROR"
+  | "ERROR_ADDING_GEO_IMAGE"
+  | "FILE_ERROR"
+  | "FILE_NAME_MISSING"
+  | "DATABASE_ERROR"
   | "EXPIRED_CODE";
 
 const routes = [

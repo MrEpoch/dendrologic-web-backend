@@ -72,7 +72,7 @@ export async function POST(request: NextRequest) {
 
     const data = await request.json();
     const dataSchema = z.object({
-      code: z.string().min(1),
+      code: z.string().min(6),
     });
 
     const validatedData = dataSchema.safeParse(data);

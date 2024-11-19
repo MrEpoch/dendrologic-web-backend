@@ -69,7 +69,6 @@ export async function GET(req: NextRequest) {
     }
   }
 
-  console.log(verificationRequest);
   if (Date.now() >= verificationRequest.expiresAt.getTime()) {
     verificationRequest = await createEmailVerificationRequest(
       verificationRequest.userId,

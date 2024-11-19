@@ -1,7 +1,7 @@
 import sharp from "sharp";
 import { writeIntoBucket } from "./minio";
 
-export async function InsertImageIntoBucket(file, id) {
+export async function InsertImageIntoBucket(file) {
   const replacedFile = file.replace(/^data:image\/\w+;base64,/, "");
   const validatedFile = { data: replacedFile, success: true };
   /*      fileSchema.safeParse(
@@ -18,7 +18,7 @@ export async function InsertImageIntoBucket(file, id) {
   );
   const storageResponse = await writeIntoBucket(
     "dendrologic-bucket",
-    id + "/" + fileName + ".jpg",
+    fileName + ".jpg",
     imageBuffer,
   );
   if (!storageResponse.success) {
@@ -27,7 +27,7 @@ export async function InsertImageIntoBucket(file, id) {
 
   return {
     success: true,
-    fileName: id + "/" + fileName + ".jpg",
+    fileName: fileName + ".jpg",
   };
 }
 

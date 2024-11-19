@@ -1,11 +1,8 @@
 import { InferSelectModel, sql, SQL } from "drizzle-orm";
 import {
   pgTable,
-  varchar,
   uuid,
   timestamp,
-  geometry,
-  json,
   text,
   boolean,
   uniqueIndex,
@@ -30,17 +27,12 @@ const bytea = customType<{ data: Uint8Array }>({
   },
 });
 
-export const geoRequestTable = pgTable("geo_request", {
+export const geoImageTable = pgTable("geo_image", {
   id: uuid("id").defaultRandom().primaryKey().unique(),
-  name: varchar({ length: 255 }).notNull().unique(),
+  kod: text("kod").unique().notNull(),
   created_at: timestamp("created_at").notNull().defaultNow(),
   updated_at: timestamp("updated_at").notNull().defaultNow(),
-  location: geometry("location", {
-    type: "point",
-    mode: "xy",
-    srid: 4326,
-  }).notNull(),
-  geojson: json("geojson").notNull(),
+  images: text("images").array().default([]).notNull(),
 });
 
 export const userTable = pgTable(
@@ -65,10 +57,6 @@ export const userTable = pgTable(
     emailUniqueIndex: uniqueIndex("email").on(lower(table.email)),
   }),
 );
-
-export function lower(email: AnyPgColumn): SQL {
-  return sql`lower(${email})`;
-}
 
 export const sessionTable = pgTable("session", {
   id: text("id").primaryKey().unique(),
@@ -110,6 +98,10 @@ export const passwordResetSessionTable = pgTable("password_reset_session", {
   expiresAt: integer("expires_at").notNull(),
 });
 
+export function lower(email: AnyPgColumn): SQL {
+  return sql`lower(${email})`;
+}
+
 const insertUserSchema = createInsertSchema(userTable, {
   id: (schema) => schema.id.uuid(),
   email: (schema) => schema.email.email(),
@@ -117,32 +109,6 @@ const insertUserSchema = createInsertSchema(userTable, {
   emailVerified: (schema) => schema.emailVerified,
   passwordHash: (schema) => schema.passwordHash,
   recoveryCode: (schema) => schema.recoveryCode,
-});
-
-const insertGeoRequestSchema = createInsertSchema(geoRequestTable, {
-  id: (schema) => schema.id.uuid(),
-  name: (schema) => schema.name,
-  created_at: (schema) => schema.created_at,
-  updated_at: (schema) => schema.updated_at,
-  location: (schema) => schema.location,
-  geojson: z.object({
-    type: z.literal("FeatureCollection"),
-    features: z.array(
-      z.object({
-        type: z.literal("Feature"),
-        properties: z.object({
-          name: z.string(),
-          id: z.string(),
-          image: z.array(z.string()).max(3),
-          imageTakenLast: z.string().optional(),
-        }),
-        geometry: z.object({
-          type: z.literal("Polygon"),
-          coordinates: z.array(z.array(z.number())),
-        }),
-      }),
-    ),
-  }),
 });
 
 export type User = InferSelectModel<typeof userTable>;
