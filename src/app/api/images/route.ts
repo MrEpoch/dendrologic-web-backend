@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { z } from "zod";
 import { RefillingTokenBucket } from "@/lib/rate-limit";
-import { globalPOSTRateLimit } from "@/lib/request";
+import { globalGETRateLimit, globalPOSTRateLimit } from "@/lib/request";
 import { getCurrentSession } from "@/lib/sessionTokens";
 import { InsertImageIntoBucket } from "@/lib/storeFile";
 import { addDendrologicImage } from "@/lib/dendrologic-image";
@@ -34,22 +34,25 @@ export async function POST(request: NextRequest) {
     // Schema of request JSON data
 
     const validationSchema = z.object({
-      image: z.string(),
+      image: z.any(),
       kod: z.string().min(1),
     });
 
     // It can fail if JSON is missing
 
     const jsonFile = await request.json();
+    console.log(jsonFile.kod, "jsonFile");
 
     const validated = validationSchema.safeParse(jsonFile);
     if (!validated.success) {
+      console.log("fail validation");
       return NextResponse.json({ success: false, error: "BAD_REQUEST" });
     }
 
     // Writes file into storage bucket and returns filename
 
     const file = await InsertImageIntoBucket(validated.data.image);
+    console.log("after upload");
 
     if (!file.success) {
       return NextResponse.json({ success: false, error: "FILE_ERROR" });
@@ -62,14 +65,16 @@ export async function POST(request: NextRequest) {
     // Adds filename to database
 
     const savedImage = await addDendrologicImage(
-      file.fileName,
       validated.data.kod,
+      file.fileName,
     );
+    console.log(savedImage);
 
     if (!savedImage.success) {
       return NextResponse.json({ success: false, error: "DATABASE_ERROR" });
     }
 
+    console.log("after upload");
     return NextResponse.json({ success: true, data: savedImage });
   } catch (e) {
     console.error(e);

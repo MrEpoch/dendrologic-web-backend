@@ -9,7 +9,7 @@ export async function addDendrologicImage(kod: string, image_url: string) {
       .from(geoImageTable)
       .where(eq(geoImageTable.kod, kod));
 
-    if (!check_if_exists) {
+    if (!check_if_exists[0]) {
       const dendrologic_image = await db
         .insert(geoImageTable)
         .values({
@@ -37,6 +37,7 @@ export async function addDendrologicImage(kod: string, image_url: string) {
       return { success: true, dendrologic_image };
     }
   } catch (e) {
+        console.log(e);
     return { success: false, error: "ERROR_ADDING_GEO_IMAGE" };
   }
 }

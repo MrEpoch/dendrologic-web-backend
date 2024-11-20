@@ -334,4 +334,21 @@ export const GET_API_ROUTES = {
   },
 
   // Geo
+  
+  IMAGES_ID: {
+    route: "/api/images/:id",
+    json_data: {},
+    required: [required.REQ_ORIGIN, required.SESSION, required.IP_ADDRESS],
+    response_success: {
+      success: true,
+      images: {
+        kod: z.string(),
+        id: z.string(),
+        images: z.array(z.string()),
+        created_at: z.date(),
+        updated_at: z.date(),
+      },
+    },
+  },
+
 };
