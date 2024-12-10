@@ -1,18 +1,11 @@
 // middleware.ts
 import { NextResponse } from "next/server";
-
 import type { NextRequest } from "next/server";
 
 const allowedOrigins = [
   "http://localhost:8100",
   "http://localhost:3752",
   "https://dendrologic-web.stencukpage.com",
-];
-
-const allowedHeaderOriginHosts = [
-  "localhost:8100",
-  "localhost:3752",
-  "dendrologic-web.stencukpage.com",
 ];
 
 const allowedAccessControlAllowHeaders = [
@@ -25,32 +18,49 @@ const allowedAccessControlAllowHeaders = [
 const allowedAccessControlAllowMethods = ["GET", "POST", "OPTIONS"];
 
 export async function middleware(request: NextRequest): Promise<NextResponse> {
-  const originHeader =
-    request.headers.get("Origin") ?? request.headers.get("X-Forwarded-Host");
-  const hostHeader = request.headers.get("Host");
-  console.log(originHeader, hostHeader);
+  const res = NextResponse.next();
+  const originHeader = request.headers.get("Origin");
+  const hostHeader = request.headers.get("Host") ?? request.headers.get("X-Forwarded-Host");
+
+  console.log(originHeader, request.headers.get("Host"), request.headers.get("X-Forwarded-Host"));
+
   if (originHeader === null || hostHeader === null) {
     return new NextResponse(null, {
       status: 403,
-    });
+      statusText: "Bad Request",
+    })
   }
 
-  if (request.method === "GET") {
-    const res = NextResponse.next();
-    if (allowedOrigins.includes(originHeader)) {
-      res.headers.append("Access-Control-Allow-Origin", originHeader);
-    }
+  let origin: URL;
 
-    // add the remaining CORS headers to the response
-    res.headers.append("Access-Control-Allow-Credentials", "true");
-    res.headers.append(
-      "Access-Control-Allow-Methods",
-      allowedAccessControlAllowMethods.join(","),
-    );
-    res.headers.append(
-      "Access-Control-Allow-Headers",
-      allowedAccessControlAllowHeaders.join(",").toLowerCase(),
-    );
+  try {
+    origin = new URL(originHeader);
+  } catch {
+    return new NextResponse(null, {
+      status: 403,
+      statusText: "Bad Request",
+    })
+  }
+
+
+  res.headers.append("Access-Control-Allow-Methods", allowedAccessControlAllowMethods.join(","));
+  res.headers.append(
+    "Access-Control-Allow-Headers",
+    allowedAccessControlAllowHeaders.join(",").toLowerCase(),
+  );
+
+
+  if (allowedOrigins.includes(originHeader)) {
+    res.headers.append("Access-Control-Allow-Origin", originHeader); 
+  } else {
+    return new NextResponse(null, {
+      status: 403,
+      statusText: "Bad Request",
+    })
+  }
+  res.headers.append("Access-Control-Allow-Credentials", "true");
+
+  if (request.method === "GET") {
     const token = request.cookies.get("session")?.value ?? null;
     if (token !== null) {
       // Only extend cookie expiration on GET requests since we can be sure
@@ -65,39 +75,6 @@ export async function middleware(request: NextRequest): Promise<NextResponse> {
     }
     return res;
   }
-
-  // NOTE: You may need to use `X-Forwarded-Host` instead
-  let origin: URL;
-  try {
-    origin = new URL(originHeader);
-  } catch {
-    return new NextResponse(null, {
-      status: 403,
-    });
-  }
-  if (!allowedHeaderOriginHosts.includes(origin.host)) {
-    return new NextResponse(null, {
-      status: 403,
-    });
-  }
-
-  const res = NextResponse.next();
-  // if the origin is an allowed one,
-  // add it to the 'Access-Control-Allow-Origin' header
-  if (allowedOrigins.includes(originHeader)) {
-    res.headers.append("Access-Control-Allow-Origin", originHeader);
-  }
-
-  // add the remaining CORS headers to the response
-  res.headers.append("Access-Control-Allow-Credentials", "true");
-  res.headers.append(
-    "Access-Control-Allow-Methods",
-    allowedAccessControlAllowMethods.join(","),
-  );
-  res.headers.append(
-    "Access-Control-Allow-Headers",
-    allowedAccessControlAllowHeaders.join(",").toLowerCase(),
-  );
 
   return res;
 }
