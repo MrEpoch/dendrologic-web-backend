@@ -15,6 +15,18 @@ export async function GET(request: NextRequest) {
       redirect: "/auth/login",
     });
   }
+
+  console.log(user);
+
+
+  if (!user.emailVerified) {
+    return NextResponse.json({
+      success: false,
+      error: "EMAIL_NOT_VERIFIED",
+      redirect: "/auth/verify-email",
+    });
+  }
+
   if (user.registered2FA && !session.twoFactorVerified) {
     return NextResponse.json({
       success: false,
@@ -22,6 +34,7 @@ export async function GET(request: NextRequest) {
       redirect: "/auth/2fa",
     });
   }
+
   let recoveryCode: string | null = null;
   if (user.registered2FA) {
     recoveryCode = await getUserRecoveryCode(user.id);
