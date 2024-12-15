@@ -34,6 +34,8 @@ export async function middleware(request: NextRequest): Promise<NextResponse> {
     });
   }
 
+
+  res.headers.set("Access-Control-Allow-Origin", "*");
   res.headers.append(
     "Access-Control-Allow-Methods",
     allowedAccessControlAllowMethods.join(","),
