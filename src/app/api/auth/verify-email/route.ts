@@ -76,7 +76,7 @@ export async function GET(req: NextRequest) {
     );
     await sendVerificationEmail(
       verificationRequest.email,
-      verificationRequest.id,
+      verificationRequest.code,
     );
     return NextResponse.json({
       success: false,
