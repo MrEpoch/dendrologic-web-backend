@@ -5,7 +5,7 @@ import { z } from "zod";
 
 const minioClient = new Minio.Client({
   endPoint: process.env.S3_END_POINT ?? "",
-  useSSL: false,
+  useSSL: true,
   accessKey: process.env.S3_ACCESS_KEY ?? "", // This is username
   secretKey: process.env.S3_SECRET_KEY ?? "", // This is user password
 });
@@ -18,11 +18,11 @@ interface Bucket {
 const mainBucket = "dendrologic-bucket";
 
 export async function getFullDiaryBucket() {
-  const fullBucket = await minioClient.listObjects(mainBucket, "", true);
+  const fullBucket = minioClient.listObjects(mainBucket, "", true);
   const stringPaths: Bucket[] = [];
   fullBucket.on("data", async (obj) => {
     if (obj.prefix) {
-      const folder = await minioClient.listObjects(
+      const folder = minioClient.listObjects(
         mainBucket,
         obj.prefix,
         true,
