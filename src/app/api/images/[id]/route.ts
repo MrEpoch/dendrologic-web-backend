@@ -9,7 +9,10 @@ import { z } from "zod";
 
 const ipBucket = new RefillingTokenBucket<string>(20, 1);
 
-export async function GET(request: NextRequest, params: { params: { id: string } }) {
+export async function GET(
+  request: NextRequest,
+  params: { params: { id: string } },
+) {
   try {
     if (!globalGETRateLimit(request)) {
       return NextResponse.json({ success: false, error: "TOO_MANY_REQUESTS" });
@@ -37,8 +40,10 @@ export async function GET(request: NextRequest, params: { params: { id: string }
     }
 
     return NextResponse.json({ success: true, images: images });
-
   } catch (e) {
-    return NextResponse.json({ success: false, error: "INTERNAL_SERVER_ERROR" });
+    return NextResponse.json({
+      success: false,
+      error: "INTERNAL_SERVER_ERROR",
+    });
   }
 }

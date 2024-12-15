@@ -334,7 +334,7 @@ export const GET_API_ROUTES = {
   },
 
   // Geo
-  
+
   IMAGES_ID: {
     route: "/api/images/:id",
     json_data: {},
@@ -350,5 +350,4 @@ export const GET_API_ROUTES = {
       },
     },
   },
-
 };

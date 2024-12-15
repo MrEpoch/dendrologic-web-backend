@@ -37,7 +37,7 @@ export async function addDendrologicImage(kod: string, image_url: string) {
       return { success: true, dendrologic_image };
     }
   } catch (e) {
-        console.log(e);
+    console.log(e);
     return { success: false, error: "ERROR_ADDING_GEO_IMAGE" };
   }
 }
