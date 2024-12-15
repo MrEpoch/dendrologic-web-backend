@@ -8,6 +8,7 @@ const minioClient = new Minio.Client({
   useSSL: true,
   accessKey: process.env.S3_ACCESS_KEY ?? "", // This is username
   secretKey: process.env.S3_SECRET_KEY ?? "", // This is user password
+  port: parseInt(process.env.S3_PORT ?? "9000"),
 });
 
 interface Bucket {
