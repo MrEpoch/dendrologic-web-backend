@@ -69,10 +69,11 @@ body {
 }
 
 @layer base {
-  * {
-    @apply border-border;
+  .h-view-container {
+    @apply min-h-screen w-full flex flex-col;
   }
-  body {
-    @apply bg-background text-foreground;
+
+  .max-w-container {
+    @apply mx-auto max-w-screen-xl w-full container sm:px-6 lg:px-8 py-24;
   }
 }

@@ -22,11 +22,7 @@ export async function getFullDiaryBucket() {
   const stringPaths: Bucket[] = [];
   fullBucket.on("data", async (obj) => {
     if (obj.prefix) {
-      const folder = minioClient.listObjects(
-        mainBucket,
-        obj.prefix,
-        true,
-      );
+      const folder = minioClient.listObjects(mainBucket, obj.prefix, true);
       folder.on("data", async (obj) => {
         const stringPath = obj.name;
         stringPaths.push({

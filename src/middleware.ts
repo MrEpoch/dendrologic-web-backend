@@ -2,12 +2,6 @@
 import { NextResponse } from "next/server";
 import type { NextRequest } from "next/server";
 
-const allowedOrigins = [
-  "http://localhost:8100",
-  "http://localhost:3752",
-  "https://dendrologic-web.stencukpage.com",
-];
-
 const allowedAccessControlAllowHeaders = [
   "Content-Type",
   "Authorization-Session",
@@ -22,18 +16,12 @@ export async function middleware(request: NextRequest): Promise<NextResponse> {
   const hostHeader =
     request.headers.get("Host") ?? request.headers.get("X-Forwarded-Host");
 
-  console.log(
-    request.headers.get("Host"),
-    request.headers.get("X-Forwarded-Host"),
-  );
-
   if (hostHeader === null) {
     return new NextResponse(null, {
       status: 403,
       statusText: "Bad Request",
     });
   }
-
 
   res.headers.set("Access-Control-Allow-Origin", "*");
   res.headers.append(
