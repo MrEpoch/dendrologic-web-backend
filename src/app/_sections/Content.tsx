@@ -10,12 +10,10 @@ export default function Content() {
           </div>
           <div className="flex flex-wrap sm:flex-row flex-col py-6 mb-12">
             <h1 className="sm:w-2/5 text-gray-900 font-medium title-font text-2xl mb-2 sm:mb-0">
-              Space The Final Frontier
+              Popis projektu
             </h1>
             <p className="sm:w-3/5 leading-relaxed text-base sm:pl-10 pl-0">
-              Street art subway tile salvia four dollar toast bitters selfies
-              quinoa yuccie synth meditation iPhone intelligentsia prism tofu.
-              Viral gochujang bitters dreamcatcher.
+    Hlavní funkce projektu zajímací se tématikou dendrologického mapování
             </p>
           </div>
         </div>
@@ -29,15 +27,13 @@ export default function Content() {
               />
             </div>
             <h2 className="text-xl font-medium title-font text-gray-900 mt-5">
-              Shooting Stars
+    Databáze 100k+
             </h2>
             <p className="text-base leading-relaxed mt-2">
-              Swag shoivdigoitch literally meditation subway tile tumblr
-              cold-pressed. Gastropub street art beard dreamcatcher neutra,
-              ethical XOXO lumbersexual.
+    Při vývoji byla použita databáze památných stromů s obsahem více jak 100 000 stromů, které jsou umístěny na mapě ČR.
             </p>
             <a className="text-green-500 inline-flex items-center mt-3">
-              Learn More
+    Zjistit více
               <svg
                 fill="none"
                 stroke="currentColor"
@@ -60,15 +56,13 @@ export default function Content() {
               />
             </div>
             <h2 className="text-xl font-medium title-font text-gray-900 mt-5">
-              The Catalyzer
+    Ukládání obrázků stromů
             </h2>
             <p className="text-base leading-relaxed mt-2">
-              Swag shoivdigoitch literally meditation subway tile tumblr
-              cold-pressed. Gastropub street art beard dreamcatcher neutra,
-              ethical XOXO lumbersexual.
+    Uživatelé mohou přidávat fotografie stromů, které chtějí zdokumentavot ve svém okolí, nebo vytvořit nové stromy.
             </p>
             <a className="text-green-500 inline-flex items-center mt-3">
-              Learn More
+    Zjistit více
               <svg
                 fill="none"
                 stroke="currentColor"
@@ -91,15 +85,13 @@ export default function Content() {
               />
             </div>
             <h2 className="text-xl font-medium title-font text-gray-900 mt-5">
-              The 400 Blows
+    Uživatelské funkce
             </h2>
             <p className="text-base leading-relaxed mt-2">
-              Swag shoivdigoitch literally meditation subway tile tumblr
-              cold-pressed. Gastropub street art beard dreamcatcher neutra,
-              ethical XOXO lumbersexual.
+    Uživatelé se mohou lze přihlasit a sledovat své vlastní fotografie a záznamy stromů co přidali, lze vytvářet menší mapky.
             </p>
             <a className="text-green-500 inline-flex items-center mt-3">
-              Learn More
+    Zjistit více
               <svg
                 fill="none"
                 stroke="currentColor"

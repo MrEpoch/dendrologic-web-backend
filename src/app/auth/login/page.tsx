@@ -3,7 +3,7 @@ import React from "react";
 
 export default function Page() {
   return (
-    <div>
+    <div className="max-w-container flex flex-col justify-center">
       <AuthForm />
     </div>
   );

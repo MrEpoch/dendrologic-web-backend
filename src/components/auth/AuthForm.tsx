@@ -95,7 +95,7 @@ export function AuthForm({
 
   return (
     <Form {...form}>
-      <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
+      <form onSubmit={form.handleSubmit(onSubmit)} className="bg-gray-50 shadow-lg rounded-lg p-6 space-y-8">
         {authType === "register" && (
           <CustomField
             control={form.control}
