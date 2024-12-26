@@ -16,10 +16,12 @@ export default function Hero() {
             Dendrologické mapování oblastí
           </h1>
           <p className="mb-8 leading-relaxed">
-            Projekt určen k mapování památných stromů v české republice, je mobilní android verze a webová aplikace, kterou lze použít při mapování.
+            Projekt určen k mapování památných stromů v české republice, je
+            mobilní android verze a webová aplikace, kterou lze použít při
+            mapování.
           </p>
           <div className="flex lg:flex-row md:flex-col">
-            <button className="bg-green-100 inline-flex py-3 px-5 rounded-lg items-center hover:bg-green-200 focus:outline-none">
+            <button className="bg-main-background-200 inline-flex py-3 px-5 rounded-lg items-center hover:bg-main-background-300 focus:outline-none">
               <svg
                 xmlns="http://www.w3.org/2000/svg"
                 fill="currentColor"

@@ -38,7 +38,18 @@ body {
     --chart-3: 197 37% 24%;
     --chart-4: 43 74% 66%;
     --chart-5: 27 87% 67%;
-    --radius: 0.5rem;
+    --radius: 0.3rem;
+
+    --primary-100: #272343;
+    --primary-200: #788e98;
+    --primary-300: #f0f5f9;
+    --accent-100: #788189;
+    --accent-200: #e1e4e6;
+    --text-100: #1e2022;
+    --text-200: #52616b;
+    --bg-100: #ffffff;
+    --bg-200: #e3f6f5;
+    --bg-300: #bae8e8;
   }
   .dark {
     --background: 0 0% 3.9%;

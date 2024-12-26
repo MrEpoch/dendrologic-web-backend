@@ -6,14 +6,15 @@ export default function Content() {
       <div className="container px-5 py-24 mx-auto">
         <div className="flex flex-col">
           <div className="h-1 bg-gray-200 rounded overflow-hidden">
-            <div className="w-24 h-full bg-green-500"></div>
+            <div className="w-24 h-full bg-main-background-300"></div>
           </div>
           <div className="flex flex-wrap sm:flex-row flex-col py-6 mb-12">
             <h1 className="sm:w-2/5 text-gray-900 font-medium title-font text-2xl mb-2 sm:mb-0">
               Popis projektu
             </h1>
             <p className="sm:w-3/5 leading-relaxed text-base sm:pl-10 pl-0">
-    Hlavní funkce projektu zajímací se tématikou dendrologického mapování
+              Hlavní funkce projektu zajímací se tématikou dendrologického
+              mapování
             </p>
           </div>
         </div>
@@ -27,19 +28,20 @@ export default function Content() {
               />
             </div>
             <h2 className="text-xl font-medium title-font text-gray-900 mt-5">
-    Databáze 100k+
+              Databáze 100k+
             </h2>
             <p className="text-base leading-relaxed mt-2">
-    Při vývoji byla použita databáze památných stromů s obsahem více jak 100 000 stromů, které jsou umístěny na mapě ČR.
+              Při vývoji byla použita databáze památných stromů s obsahem více
+              jak 100 000 stromů, které jsou umístěny na mapě ČR.
             </p>
-            <a className="text-green-500 inline-flex items-center mt-3">
-    Zjistit více
+            <a className="text-main-100 inline-flex items-center mt-3">
+              Zjistit více
               <svg
                 fill="none"
                 stroke="currentColor"
-                stroke-linecap="round"
-                stroke-linejoin="round"
-                stroke-width="2"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth="2"
                 className="w-4 h-4 ml-2"
                 viewBox="0 0 24 24"
               >
@@ -56,19 +58,20 @@ export default function Content() {
               />
             </div>
             <h2 className="text-xl font-medium title-font text-gray-900 mt-5">
-    Ukládání obrázků stromů
+              Ukládání obrázků stromů
             </h2>
             <p className="text-base leading-relaxed mt-2">
-    Uživatelé mohou přidávat fotografie stromů, které chtějí zdokumentavot ve svém okolí, nebo vytvořit nové stromy.
+              Uživatelé mohou přidávat fotografie stromů, které chtějí
+              zdokumentavot ve svém okolí, nebo vytvořit nové stromy.
             </p>
-            <a className="text-green-500 inline-flex items-center mt-3">
-    Zjistit více
+            <a className="text-main-100 inline-flex items-center mt-3">
+              Zjistit více
               <svg
                 fill="none"
                 stroke="currentColor"
-                stroke-linecap="round"
-                stroke-linejoin="round"
-                stroke-width="2"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth="2"
                 className="w-4 h-4 ml-2"
                 viewBox="0 0 24 24"
               >
@@ -85,19 +88,20 @@ export default function Content() {
               />
             </div>
             <h2 className="text-xl font-medium title-font text-gray-900 mt-5">
-    Uživatelské funkce
+              Uživatelské funkce
             </h2>
             <p className="text-base leading-relaxed mt-2">
-    Uživatelé se mohou lze přihlasit a sledovat své vlastní fotografie a záznamy stromů co přidali, lze vytvářet menší mapky.
+              Uživatelé se mohou lze přihlasit a sledovat své vlastní fotografie
+              a záznamy stromů co přidali, lze vytvářet menší mapky.
             </p>
-            <a className="text-green-500 inline-flex items-center mt-3">
-    Zjistit více
+            <a className="text-main-100 inline-flex items-center mt-3">
+              Zjistit více
               <svg
                 fill="none"
                 stroke="currentColor"
-                stroke-linecap="round"
-                stroke-linejoin="round"
-                stroke-width="2"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth="2"
                 className="w-4 h-4 ml-2"
                 viewBox="0 0 24 24"
               >

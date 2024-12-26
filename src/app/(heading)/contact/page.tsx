@@ -6,5 +6,5 @@ export default function Page() {
     <div className="max-w-container">
       <ContactForm />
     </div>
-  )
+  );
 }

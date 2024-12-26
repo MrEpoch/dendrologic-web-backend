@@ -7,6 +7,13 @@ import { Form } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import CustomField from "./CustomField";
 import { useRouter } from "next/navigation";
+import { MuseoModerno } from "next/font/google";
+
+const museoModerno = MuseoModerno({
+  subsets: ["latin"],
+  weight: "400",
+  variable: "--font-museo-moderno",
+});
 
 export const formSchema = z
   .object({
@@ -95,45 +102,76 @@ export function AuthForm({
 
   return (
     <Form {...form}>
-      <form onSubmit={form.handleSubmit(onSubmit)} className="bg-gray-50 shadow-lg rounded-lg p-6 space-y-8">
+      <form
+        onSubmit={form.handleSubmit(onSubmit)}
+        className="max-w-[500px] w-full flex flex-col items-center p-6 space-y-8"
+      >
         {authType === "register" && (
           <CustomField
             control={form.control}
-            packa
+            className="w-full"
             name="username"
             formLabel={"Username"}
             render={({ field }) => (
-              <Input type="text" value={field.value} {...field} />
+              <Input
+                type="text"
+                className="bg-main-background-100 shadow border border-main-accent-100"
+                value={field.value}
+                {...field}
+              />
             )}
           />
         )}
         <CustomField
           control={form.control}
+          className="w-full"
           name="email"
           formLabel={"Email"}
           render={({ field }) => (
-            <Input type="email" value={field.value} {...field} />
+            <Input
+              type="email"
+              className="bg-main-background-100 shadow border border-main-accent-100"
+              value={field.value}
+              {...field}
+            />
           )}
         />
         <CustomField
           control={form.control}
           name="password"
+          className="w-full"
           formLabel={"password"}
           render={({ field }) => (
-            <Input type="password" value={field.value} {...field} />
+            <Input
+              type="password"
+              className="bg-main-background-100 shadow border border-main-accent-100"
+              value={field.value}
+              {...field}
+            />
           )}
         />
         {authType === "register" && (
           <CustomField
             control={form.control}
             name="passwordConfirm"
+            className="w-full"
             formLabel={"password confirm"}
             render={({ field }) => (
-              <Input type="password" value={field.value} {...field} />
+              <Input
+                type="password"
+                className="bg-main-background-100 shadow border border-main-accent-100"
+                value={field.value}
+                {...field}
+              />
             )}
           />
         )}
-        <Button type="submit">Submit</Button>
+        <Button
+          className={`bg-main-background-300 px-10 ${museoModerno.className} font-medium border py-5 text-main-text-100 hover:bg-transparent hover:text-black hover:border-main-100 hover:border rounded-[--radius] text-lg shadow`}
+          type="submit"
+        >
+          Submit
+        </Button>
       </form>
     </Form>
   );
