@@ -28,7 +28,7 @@ export default function Content() {
               />
             </div>
             <h2 className="text-xl font-medium title-font text-gray-900 mt-5">
-              Databáze 100k+
+              Databáze 10k+
             </h2>
             <p className="text-base leading-relaxed mt-2">
               Při vývoji byla použita databáze památných stromů s obsahem více

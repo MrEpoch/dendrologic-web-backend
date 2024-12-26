@@ -19,7 +19,7 @@ export const formSchema = z
   .object({
     username: z
       .string()
-      .min(1, { message: "Musi být nejkratě 1 znak" })
+      .min(3, { message: "Musi být nejkratě 1 znak" })
       .max(255, { message: "Musi být měně než 255 znaků" })
       .optional(),
     email: z.string().email(),
@@ -111,7 +111,7 @@ export function AuthForm({
             control={form.control}
             className="w-full"
             name="username"
-            formLabel={"Username"}
+            formLabel={"Uživatelské jméno (min 3 znaky)*"}
             render={({ field }) => (
               <Input
                 type="text"
@@ -126,7 +126,7 @@ export function AuthForm({
           control={form.control}
           className="w-full"
           name="email"
-          formLabel={"Email"}
+          formLabel={"Email*"}
           render={({ field }) => (
             <Input
               type="email"
@@ -140,7 +140,7 @@ export function AuthForm({
           control={form.control}
           name="password"
           className="w-full"
-          formLabel={"password"}
+          formLabel={"Heslo*"}
           render={({ field }) => (
             <Input
               type="password"
@@ -155,7 +155,7 @@ export function AuthForm({
             control={form.control}
             name="passwordConfirm"
             className="w-full"
-            formLabel={"password confirm"}
+            formLabel={"Potvrzení hesla*"}
             render={({ field }) => (
               <Input
                 type="password"
@@ -170,7 +170,7 @@ export function AuthForm({
           className={`bg-main-background-300 px-10 ${museoModerno.className} font-medium border py-5 text-main-text-100 hover:bg-transparent hover:text-black hover:border-main-100 hover:border rounded-[--radius] text-lg shadow`}
           type="submit"
         >
-          Submit
+          {authType === "register" ? "Registrovat" : "Přihlásit"}
         </Button>
       </form>
     </Form>
