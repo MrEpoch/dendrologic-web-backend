@@ -94,6 +94,15 @@ export function AuthForm({
         }),
       });
       const userResponse = await user.json();
+      if (userResponse?.redirect === "EMAIL_NOT_VERIFIED") {
+        await fetch("/api/auth/verify-email/resend", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+        });
+        router.push("/auth/verify-email");
+      }
       if (userResponse.redirect) router.push(userResponse.redirect);
       if (userResponse.success) {
         console.log("Success", userResponse);

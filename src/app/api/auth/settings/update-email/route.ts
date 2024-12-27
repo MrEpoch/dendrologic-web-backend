@@ -2,9 +2,9 @@ import {
   checkEmailAvailability,
   createEmailVerificationRequest,
   sendVerificationEmail,
-  sendVerificationEmailBucket,
   setEmailRequestCookie,
 } from "@/lib/email";
+import { sendVerificationEmailBucket } from "@/lib/rate-buckets";
 import { globalPOSTRateLimit } from "@/lib/request";
 import { getCurrentSession } from "@/lib/sessionTokens";
 import { NextRequest, NextResponse } from "next/server";
@@ -65,7 +65,7 @@ export async function POST(request: NextRequest) {
       verificationRequest.email,
       verificationRequest.code,
     );
-    setEmailRequestCookie(verificationRequest);
+    await setEmailRequestCookie(verificationRequest);
     return NextResponse.json({
       success: true,
       emailVerificationRequestId: verificationRequest.id,

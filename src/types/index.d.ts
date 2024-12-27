@@ -40,3 +40,11 @@ const cookieRoutes = [
   "/api/auth/register", // Creates email session
   "/api/auth/settings/update-email", // Creates email session
 ];
+
+export interface EmailVerificationRequest {
+  id: string;
+  userId: string;
+  code: string;
+  email: string;
+  expiresAt: Date;
+}

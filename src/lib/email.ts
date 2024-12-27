@@ -6,7 +6,7 @@ import { generateRandomOTP } from "./recovery";
 import { sendMail } from "./nodemailer";
 import { cookies, headers } from "next/headers";
 import { getCurrentSession } from "./sessionTokens";
-import { ExpiringTokenBucket } from "./rate-limit";
+import { EmailVerificationRequest } from "@/types";
 
 export async function getEmailVerificationRequestFromUserId(
   userId: string,
@@ -63,7 +63,7 @@ export async function createEmailVerificationRequest(
   userId: string,
   email: string,
 ): Promise<EmailVerificationRequest> {
-  deleteUserVerificationRequest(userId);
+  await deleteUserVerificationRequest(userId);
   const idBytes = new Uint8Array(20);
 
   crypto.getRandomValues(idBytes);
@@ -113,8 +113,9 @@ export async function sendVerificationEmail(
 
 export async function setEmailRequestCookie(
   request: EmailVerificationRequest,
-): void {
-  cookies().set("email_verification", request.id, {
+): Promise<void> {
+  console.log("called");
+  await cookies().set("email_verification", request.id, {
     httpOnly: true,
     path: "/",
     secure: process.env.NODE_ENV === "production",
@@ -123,8 +124,8 @@ export async function setEmailRequestCookie(
   });
 }
 
-export async function deleteEmailRequestCookie(): void {
-  cookies().set("email_verification", "", {
+export async function deleteEmailRequestCookie(): Promise<void> {
+  await cookies().set("email_verification", "", {
     httpOnly: true,
     path: "/",
     secure: process.env.NODE_ENV === "production",
@@ -135,14 +136,16 @@ export async function deleteEmailRequestCookie(): void {
 
 export async function getUserEmailVerificationFromRequest(): Promise<EmailVerificationRequest | null> {
   const { user } = await getCurrentSession();
+  console.log("user ", user);
   if (user === null) {
     return null;
   }
 
-  let id = cookies().get("email_verification")?.value;
+  let id = await cookies().get("email_verification")?.value;
+  console.log("id ", cookies());
   if (!id) {
-    if (headers().get("Authorization-Email") !== null) {
-      id = headers().get("Authorization-Email") ?? undefined;
+    if (await headers().get("Authorization-Email") !== null) {
+      id = await headers().get("Authorization-Email") ?? undefined;
       id?.length === 0 && (id = undefined);
     }
   }
@@ -157,15 +160,4 @@ export async function getUserEmailVerificationFromRequest(): Promise<EmailVerifi
   return request;
 }
 
-export const sendVerificationEmailBucket = new ExpiringTokenBucket<string>(
-  5,
-  60 * 10,
-);
 
-export interface EmailVerificationRequest {
-  id: string;
-  userId: string;
-  code: string;
-  email: string;
-  expiresAt: Date;
-}

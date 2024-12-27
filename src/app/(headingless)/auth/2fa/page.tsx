@@ -6,7 +6,7 @@ import { redirect } from "next/navigation";
 import React from "react";
 
 export default async function Page() {
-  if (!globalGETRateLimitNext()) {
+  if (!(await globalGETRateLimitNext())) {
     return <div>Too many requests</div>;
   }
   const { session, user } = await getCurrentSession();

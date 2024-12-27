@@ -4,7 +4,7 @@ import { getCurrentSession } from "@/lib/sessionTokens";
 import { redirect } from "next/navigation";
 
 export default async function Page() {
-  if (!globalGETRateLimitNext()) {
+  if (!(await globalGETRateLimitNext())) {
     return "Too many requests";
   }
   const { session, user } = await getCurrentSession();

@@ -1,6 +1,6 @@
 "use server";
 
-import { globalPOSTRateLimit } from "@/lib/request";
+import { globalGETRateLimit } from "@/lib/request";
 import {
   deleteSessionTokenCookie,
   getCurrentSession,
@@ -9,15 +9,15 @@ import {
 import { NextRequest, NextResponse } from "next/server";
 
 export async function GET(request: NextRequest) {
-  if (!globalPOSTRateLimit(request)) {
+  if (!globalGETRateLimit(request)) {
     return NextResponse.json({ success: false, error: "TOO_MANY_REQUESTS" });
   }
   const { session } = await getCurrentSession();
   if (session === null) {
     return NextResponse.json({ success: false, error: "UNAUTHORIZED" });
   }
-  invalidateSession(session.id);
-  deleteSessionTokenCookie();
+  await invalidateSession(session.id);
+  await deleteSessionTokenCookie();
 
   return NextResponse.json({ success: true, redirect: "/" });
 }

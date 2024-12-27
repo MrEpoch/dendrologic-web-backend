@@ -11,6 +11,7 @@ import {
 import { globalGETRateLimitNext } from "@/lib/request";
 import { getCurrentSession } from "@/lib/sessionTokens";
 import { Anton, MuseoModerno } from "next/font/google";
+import { cookies, headers } from "next/headers";
 import Link from "next/link";
 
 import { redirect } from "next/navigation";
@@ -28,7 +29,7 @@ const anton = Anton({
 });
 
 export default async function Page() {
-  if (!globalGETRateLimitNext()) {
+  if (!(await globalGETRateLimitNext())) {
     return <div>Too many requests</div>;
   }
   const { user } = await getCurrentSession();
@@ -36,24 +37,25 @@ export default async function Page() {
     return redirect("/auth/login");
   }
 
-  // TODO: Ideally we'd sent a new verification email automatically if the previous one is expired,
-  // but we can't set cookies inside server components.
   let verificationRequest = await getUserEmailVerificationFromRequest();
   if (verificationRequest === null && user.emailVerified) {
     return redirect("/");
   }
 
+   // TODO: Ideally we'd sent a new verification email automatically if the previous one is expired,
+  // but we can't set cookies inside server components.
+ 
+    /*
   if (verificationRequest === null) {
-    verificationRequest = await createEmailVerificationRequest(
-      user.id,
-      user.email,
-    );
-    await sendVerificationEmail(
-      verificationRequest.email,
-      verificationRequest.code,
-    );
-    setEmailRequestCookie(verificationRequest);
+    await fetch((process.env.NODE_ENV === "development" ? "http://localhost:3752" : "https://dendrologic-web.stencukpage.com") + "/api/auth/verify-email/resend", {
+      method: "POST",
+      headers: {
+        "Cookie": cookies().toString(),
+        "Content-Type": "application/json",
+      },
+    })
   }
+    */
 
   return (
     <div className="relative flex h-full min-h-screen">

@@ -21,7 +21,7 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ success: false, error: "TOO_MANY_REQUESTS" });
     }
 
-    const clientIp = requestIp.getClientIp(request);
+    const clientIp = await requestIp.getClientIp(request);
     if (clientIp !== null && !ipBucket.check(clientIp, 1)) {
       return NextResponse.json({ success: false, error: "TOO_MANY_REQUESTS" });
     }
@@ -66,7 +66,7 @@ export async function POST(request: NextRequest) {
 
     const sessionToken = generateSessionToken();
     const session = await createSession(sessionToken, user.id, sessionFlags);
-    setSessionTokenCookie(sessionToken, session.expiresAt);
+    await setSessionTokenCookie(sessionToken, session.expiresAt);
 
     if (!user.emailVerified) {
       return NextResponse.json({

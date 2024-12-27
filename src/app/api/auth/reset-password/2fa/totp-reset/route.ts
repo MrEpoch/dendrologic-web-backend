@@ -55,7 +55,7 @@ export async function POST(request: NextRequest) {
     }
 
     totpBucket.reset(session.userId);
-    setPasswordResetSessionAs2FAVerified(session.id);
+    await setPasswordResetSessionAs2FAVerified(session.id);
 
     return NextResponse.json({
       success: true,

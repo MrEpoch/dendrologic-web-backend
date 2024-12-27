@@ -73,7 +73,7 @@ export async function POST(request: NextRequest) {
       twoFactorVerified: session.twoFactorVerified,
     };
     const newSession = await createSession(sessionToken, user.id, sessionFlags);
-    setSessionTokenCookie(sessionToken, newSession.expiresAt);
+    await setSessionTokenCookie(sessionToken, newSession.expiresAt);
 
     return NextResponse.json({
       success: true,

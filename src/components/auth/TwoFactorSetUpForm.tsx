@@ -10,6 +10,14 @@ import { Button } from "../ui/button";
 import { Input } from "../ui/input";
 import { z } from "zod";
 import { formSchemaTOTPCode } from "./PasswordResetForm";
+import Link from "next/link";
+import { MuseoModerno } from "next/font/google";
+
+const museoModerno = MuseoModerno({
+  subsets: ["latin"],
+  weight: "400",
+  variable: "--font-museo-moderno",
+});
 
 export function TwoFactorSetUpForm({ encodedTOTPKey }) {
   const [recoveryCode, setRecoveryCode] = useState("");
@@ -42,18 +50,38 @@ export function TwoFactorSetUpForm({ encodedTOTPKey }) {
 
   return (
     <Form {...form}>
+      {recoveryCode ? (
+        <>
+        <p>
+          Záchraný klíč: <span className="text-red-500">{recoveryCode}</span>
+        </p>
+        <Link href="/auth/settings"
+          className={`bg-main-background-300 px-10 ${museoModerno.className} font-medium border py-2 text-main-text-100 hover:bg-transparent hover:text-black hover:border-main-100 hover:border rounded-[--radius] text-lg shadow`}
+        >
+        Pokračovat
+        </Link>
+
+      </>
+      ) : (
       <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
         <CustomFieldCode
           control={form.control}
           name="code"
-          formLabel={"Code"}
+          formLabel={"Kód"}
           render={({ field }) => (
             <Input type="text" value={field.value} {...field} />
           )}
         />
-        <Button type="submit">Submit</Button>
+        <Button type="submit">Ověřit</Button>
+ <Button
+          className={`bg-main-background-300 px-10 ${museoModerno.className} font-medium border py-5 text-main-text-100 hover:bg-transparent hover:text-black hover:border-main-100 hover:border rounded-[--radius] text-lg shadow`}
+        type="submit"
+        >
+        Ověřit
+        </Button>
+
       </form>
-      {recoveryCode && <p>Recovery code: {recoveryCode}</p>}
+      )}
     </Form>
   );
 }
@@ -91,7 +119,7 @@ export function TwoFactorVerificationForm() {
         <CustomFieldCode
           control={form.control}
           name="code"
-          formLabel={"Code"}
+          formLabel={"Kód"}
           render={({ field }) => (
             <Input
               autoComplete="one-time-code"
@@ -102,7 +130,7 @@ export function TwoFactorVerificationForm() {
             />
           )}
         />
-        <Button type="submit">Verify</Button>
+        <Button type="submit">Ověřit</Button>
       </form>
     </Form>
   );
@@ -141,7 +169,7 @@ export function TwoFactorResetForm() {
         <CustomFieldCode
           control={form.control}
           name="code"
-          formLabel={"Recovery Code"}
+          formLabel={"Záchraný klíč"}
           render={({ field }) => (
             <Input
               autoComplete="one-time-code"
@@ -152,7 +180,7 @@ export function TwoFactorResetForm() {
             />
           )}
         />
-        <Button type="submit">Verify</Button>
+        <Button type="submit">Ověřit</Button>
       </form>
     </Form>
   );

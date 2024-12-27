@@ -4,7 +4,7 @@ import { globalGETRateLimitNext } from "@/lib/request";
 import { redirect } from "next/navigation";
 
 export default async function Page() {
-  if (!globalGETRateLimitNext()) {
+  if (!(await globalGETRateLimitNext())) {
     return <div>Too many requests</div>;
   }
   const { session, user } = await validatePasswordResetSessionRequest();

@@ -95,8 +95,8 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ success: false, error: "WEAK_PASSWORD" });
     }
 
-    invalidateUserPasswordResetSession(passwordResetSession.userId);
-    invalidateUserSessions(passwordResetSession.userId);
+    await invalidateUserPasswordResetSession(passwordResetSession.userId);
+    await invalidateUserSessions(passwordResetSession.userId);
 
     await updateUserPassword(
       passwordResetSession.userId,
@@ -108,8 +108,8 @@ export async function POST(request: NextRequest) {
     };
     const sessionToken = generateSessionToken();
     const session = await createSession(sessionToken, user.id, sessionFlags);
-    setSessionTokenCookie(sessionToken, session.expiresAt);
-    deletePassResetSessionTokenCookie();
+    await setSessionTokenCookie(sessionToken, session.expiresAt);
+    await deletePassResetSessionTokenCookie();
 
     return NextResponse.json({ success: true, error: null, sessionToken });
   } catch (error) {

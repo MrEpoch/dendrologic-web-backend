@@ -21,7 +21,7 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ success: false, error: "TOO_MANY_REQUESTS" });
     }
 
-    const clientIp = requestIp.getClientIp(request);
+    const clientIp = await requestIp.getClientIp(request);
     if (clientIp !== null && !passwordResetEmailIPBucket.check(clientIp, 1)) {
       return NextResponse.json({ success: false, error: "TOO_MANY_REQUESTS" });
     }
@@ -62,7 +62,7 @@ export async function POST(request: NextRequest) {
     );
 
     await sendPasswordResetEmail(session.email, session.code);
-    setPasswordResetSessionTokenCookie(sessionToken, session.expiresAt);
+    await setPasswordResetSessionTokenCookie(sessionToken, session.expiresAt);
 
     return NextResponse.json({
       success: true,

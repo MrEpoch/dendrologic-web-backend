@@ -114,10 +114,10 @@ export async function invalidateUserPasswordResetSession(
 }
 
 export async function validatePasswordResetSessionRequest(): Promise<PasswordResetSessionValidationResult> {
-  let token = cookies().get("password_reset_session")?.value;
+  let token = await cookies().get("password_reset_session")?.value;
   if (!token) {
-    if (headers().get("Authorization-Password-Session") !== null) {
-      token = headers().get("Authorization-Password-Session") ?? undefined;
+    if (await headers().get("Authorization-Password-Session") !== null) {
+      token = await headers().get("Authorization-Password-Session") ?? undefined;
       token?.length === 0 && (token = undefined);
     }
   }
@@ -127,16 +127,16 @@ export async function validatePasswordResetSessionRequest(): Promise<PasswordRes
 
   const result = await validatePasswordResetSessionToken(token);
   if (result.session === null) {
-    deletePassResetSessionTokenCookie();
+    await deletePassResetSessionTokenCookie();
   }
   return result;
 }
 
-export function setPasswordResetSessionTokenCookie(
+export async function setPasswordResetSessionTokenCookie(
   token: string,
   expiresAt: Date,
-): void {
-  cookies().set("password_reset_session", token, {
+): Promise<void> {
+  await cookies().set("password_reset_session", token, {
     expires: expiresAt,
     sameSite: "lax",
     httpOnly: true,
@@ -145,8 +145,8 @@ export function setPasswordResetSessionTokenCookie(
   });
 }
 
-export function deletePassResetSessionTokenCookie(): void {
-  cookies().set("password_reset_session", "", {
+export async function deletePassResetSessionTokenCookie(): Promise<void> {
+  await cookies().set("password_reset_session", "", {
     maxAge: 0,
     sameSite: "lax",
     httpOnly: true,

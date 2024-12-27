@@ -2,8 +2,8 @@ import { ForgotPasswordForm } from "@/components/auth/ForgotPasswordForm";
 import { globalGETRateLimitNext } from "@/lib/request";
 import Link from "next/link";
 
-export default function Page() {
-  if (!globalGETRateLimitNext()) {
+export default async function Page() {
+  if (!(await globalGETRateLimitNext())) {
     return <div>Too many requests</div>;
   }
   return (

@@ -2,19 +2,25 @@ import {
   createEmailVerificationRequest,
   getUserEmailVerificationFromRequest,
   sendVerificationEmail,
-  sendVerificationEmailBucket,
   setEmailRequestCookie,
 } from "@/lib/email";
+import { sendVerificationEmailBucket } from "@/lib/rate-buckets";
 import { getCurrentSession } from "@/lib/sessionTokens";
+import { cookies, headers } from "next/headers";
 import { NextRequest, NextResponse } from "next/server";
 
-export async function POST(request: NextRequest) {
+export async function POST(req: NextRequest) {
   try {
+    console.log("resend cookies", await cookies());
+    console.log("resend request cookies", await req.cookies);
+    console.log("resend header cookies", headers().get("cookie"));
     const { session, user } = await getCurrentSession();
     if (session === null) {
+      console.log("session lack");
       return NextResponse.json({ success: false, error: "UNAUTHORIZED" });
     }
     if (user.registered2FA && !session.twoFactorVerified) {
+      console.log("2fa err resend");
       return NextResponse.json({
         success: false,
         error: "2FA_NOT_ENABLED",
@@ -58,7 +64,7 @@ export async function POST(request: NextRequest) {
       verificationRequest.email,
       verificationRequest.code,
     );
-    setEmailRequestCookie(verificationRequest);
+    await setEmailRequestCookie(verificationRequest);
     return NextResponse.json({
       success: true,
       message: "The verification code was sent to your inbox.",

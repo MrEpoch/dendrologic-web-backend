@@ -121,6 +121,7 @@ export async function POST(request: NextRequest) {
 
     let verificationRequest = await getUserEmailVerificationFromRequest();
     if (verificationRequest === null) {
+      console.log("no req");
       return NextResponse.json({ success: false, error: "UNAUTHORIZED" });
     }
 
@@ -164,7 +165,7 @@ export async function POST(request: NextRequest) {
       user.id,
       verificationRequest.email,
     );
-    deleteEmailRequestCookie();
+    await deleteEmailRequestCookie();
 
     if (!user.registered2FA) {
       return NextResponse.json({ success: true, redirect: "/auth/2fa/setup" });

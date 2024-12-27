@@ -11,7 +11,7 @@ import { redirect } from "next/navigation";
 import React from "react";
 
 export default async function Page() {
-  if (!globalGETRateLimitNext()) {
+  if (!(await globalGETRateLimitNext())) {
     return <div>Too many requests</div>;
   }
   const { session, user } = await getCurrentSession();
@@ -27,7 +27,7 @@ export default async function Page() {
   }
 
   return (
-    <div>
+    <div className="max-w-container">
       <header>
         <Link href="/">Home</Link>
         <Link href="/auth/settings">Settings</Link>
