@@ -74,6 +74,7 @@ export function AuthForm({
         }),
       });
       const userResponse = await user.json();
+      console.log(userResponse);
 
       if (userResponse.redirect) router.push(userResponse.redirect);
 

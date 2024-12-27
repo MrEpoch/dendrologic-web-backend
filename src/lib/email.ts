@@ -111,7 +111,9 @@ export async function sendVerificationEmail(
   console.log("sendVerificationEmail", email, code);
 }
 
-export function setEmailRequestCookie(request: EmailVerificationRequest): void {
+export async function setEmailRequestCookie(
+  request: EmailVerificationRequest,
+): void {
   cookies().set("email_verification", request.id, {
     httpOnly: true,
     path: "/",
@@ -121,7 +123,7 @@ export function setEmailRequestCookie(request: EmailVerificationRequest): void {
   });
 }
 
-export function deleteEmailRequestCookie(): void {
+export async function deleteEmailRequestCookie(): void {
   cookies().set("email_verification", "", {
     httpOnly: true,
     path: "/",

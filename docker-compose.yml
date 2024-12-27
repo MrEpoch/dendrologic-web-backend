@@ -11,3 +11,4 @@ services:
     volumes:
       - ./src:/app/src
       - ./public:/app/public
+      - /node_modules

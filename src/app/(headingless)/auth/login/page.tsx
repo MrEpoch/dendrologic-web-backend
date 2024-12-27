@@ -35,7 +35,7 @@ export default function Page() {
         width={1920}
         height={1080}
         className="w-full max-h-full brightness-75 h-screen hidden md:block object-cover"
-    />
+      />
       <div className="w-full min-h-full flex flex-col  gap-8 items-center justify-center">
         <h1 className={`text-3xl font-bold ${anton.className}`}>Přihlášení</h1>
         <AuthForm />
