@@ -13,7 +13,7 @@ const anton = Anton({
   subsets: ["latin"],
   weight: "400",
   variable: "--font-anton",
-})
+});
 
 const museoModerno = MuseoModerno({
   subsets: ["latin"],
@@ -63,22 +63,24 @@ export default async function Page() {
       />
       <div className="w-full min-h-full flex flex-col  gap-8 items-center justify-center">
         <h1 className={`text-3xl font-bold ${anton.className}`}>
-    Nastavte si 2-fázové ověření
+          Nastavte si 2-fázové ověření
         </h1>
-      <div
-        style={{
-          width: "200px",
-          height: "200px",
-        }}
-        dangerouslySetInnerHTML={{
-          __html: qrcode,
-        }}
-      ></div>
-      <TwoFactorSetUpForm encodedTOTPKey={encodedTOTPKey} />
-      <Link 
-    href="/guide/2fa" 
-    className="text-sm text-gray-700 transition hover:opacity-75"
-    >Návod k nastavení 2-fazové ověření</Link>
+        <div
+          style={{
+            width: "200px",
+            height: "200px",
+          }}
+          dangerouslySetInnerHTML={{
+            __html: qrcode,
+          }}
+        ></div>
+        <TwoFactorSetUpForm encodedTOTPKey={encodedTOTPKey} />
+        <Link
+          href="/guide/2fa"
+          className="text-sm text-gray-700 transition hover:opacity-75"
+        >
+          Návod k nastavení 2-fazové ověření
+        </Link>
       </div>
     </div>
   );

@@ -1,6 +1,13 @@
 "use client";
 import { Button } from "@/components/ui/button";
+import { MuseoModerno } from "next/font/google";
 import React, { useState } from "react";
+
+const museoModerno = MuseoModerno({
+  subsets: ["latin"],
+  weight: "400",
+  variable: "--font-museo-moderno",
+});
 
 export function RecoveryCodeForm({ recoveryCode }) {
   const [recoveryCodeState, setRecoveryCodeState] = useState(recoveryCode);
@@ -25,14 +32,18 @@ export function RecoveryCodeForm({ recoveryCode }) {
   }
 
   return (
-    <>
-      <h2>Recovery code</h2>
+    <div className="flex flex-col py-8 gap-4">
+      <h2 className="text-2xl">Záchraný kód</h2>
       <p>{recoveryCodeState}</p>
       <form className="space-y-8">
-        <Button onClick={onSubmit} type="button">
-          Generate new recovery code
+        <Button
+          className={`bg-main-background-300 px-10 ${museoModerno.className} font-medium border py-5 text-main-text-100 hover:bg-transparent hover:text-black hover:border-main-100 hover:border rounded-[--radius] text-lg shadow`}
+          onClick={onSubmit}
+          type="button"
+        >
+          Vygenerovat nový záchraný kód
         </Button>
       </form>
-    </>
+    </div>
   );
 }

@@ -144,8 +144,8 @@ export async function getUserEmailVerificationFromRequest(): Promise<EmailVerifi
   let id = await cookies().get("email_verification")?.value;
   console.log("id ", cookies());
   if (!id) {
-    if (await headers().get("Authorization-Email") !== null) {
-      id = await headers().get("Authorization-Email") ?? undefined;
+    if ((await headers().get("Authorization-Email")) !== null) {
+      id = (await headers().get("Authorization-Email")) ?? undefined;
       id?.length === 0 && (id = undefined);
     }
   }
@@ -159,5 +159,3 @@ export async function getUserEmailVerificationFromRequest(): Promise<EmailVerifi
   }
   return request;
 }
-
-

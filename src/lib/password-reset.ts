@@ -116,8 +116,9 @@ export async function invalidateUserPasswordResetSession(
 export async function validatePasswordResetSessionRequest(): Promise<PasswordResetSessionValidationResult> {
   let token = await cookies().get("password_reset_session")?.value;
   if (!token) {
-    if (await headers().get("Authorization-Password-Session") !== null) {
-      token = await headers().get("Authorization-Password-Session") ?? undefined;
+    if ((await headers().get("Authorization-Password-Session")) !== null) {
+      token =
+        (await headers().get("Authorization-Password-Session")) ?? undefined;
       token?.length === 0 && (token = undefined);
     }
   }

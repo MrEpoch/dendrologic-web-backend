@@ -68,7 +68,9 @@ const ContactForm = () => {
                 </button>
               </div>
               <div className="p-2 w-full pt-8 mt-8 border-t border-gray-200 text-center">
-                <a className="text-green-500">dendrologic@stencukpage.com</a>
+                <a className="text-main-text-200">
+                  dendrologic@stencukpage.com
+                </a>
               </div>
             </div>
           </div>

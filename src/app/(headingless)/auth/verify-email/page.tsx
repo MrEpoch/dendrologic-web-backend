@@ -42,10 +42,10 @@ export default async function Page() {
     return redirect("/");
   }
 
-   // TODO: Ideally we'd sent a new verification email automatically if the previous one is expired,
+  // TODO: Ideally we'd sent a new verification email automatically if the previous one is expired,
   // but we can't set cookies inside server components.
- 
-    /*
+
+  /*
   if (verificationRequest === null) {
     await fetch((process.env.NODE_ENV === "development" ? "http://localhost:3752" : "https://dendrologic-web.stencukpage.com") + "/api/auth/verify-email/resend", {
       method: "POST",

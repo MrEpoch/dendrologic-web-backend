@@ -7,6 +7,7 @@ import { Form } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { CustomFieldEmail, CustomFieldPassword } from "./CustomField";
 import { useRouter } from "next/navigation";
+import { MuseoModerno } from "next/font/google";
 
 export const formSchemaEmail = z.object({
   email: z.string().email(),
@@ -20,6 +21,12 @@ export const formSchemaPassword = z.object({
     .string()
     .min(8, { message: "Musi být nejkratě 8 znaků" })
     .max(255, { message: "Musi být měně než 255 znaků" }),
+});
+
+const museoModerno = MuseoModerno({
+  subsets: ["latin"],
+  weight: "400",
+  variable: "--font-museo-moderno",
 });
 
 export function PasswordUpdateForm() {
@@ -59,7 +66,7 @@ export function PasswordUpdateForm() {
         <CustomFieldPassword
           control={form.control}
           name="password"
-          formLabel={"Password"}
+          formLabel={"Heslo"}
           render={({ field }) => (
             <Input type="password" value={field.value} {...field} />
           )}
@@ -67,12 +74,17 @@ export function PasswordUpdateForm() {
         <CustomFieldPassword
           control={form.control}
           name="newPassword"
-          formLabel={"New Password"}
+          formLabel={"Nové heslo"}
           render={({ field }) => (
             <Input type="password" value={field.value} {...field} />
           )}
         />
-        <Button type="submit">Submit</Button>
+        <Button
+          className={`bg-main-background-300 px-10 ${museoModerno.className} font-medium border py-2 text-main-text-100 hover:bg-transparent hover:text-black hover:border-main-100 hover:border rounded-[--radius] text-lg shadow`}
+          type="submit"
+        >
+          Změnit heslo
+        </Button>
       </form>
     </Form>
   );
@@ -117,7 +129,12 @@ export function EmailUpdateForm() {
             <Input type="email" value={field.value} {...field} />
           )}
         />
-        <Button type="submit">Submit</Button>
+        <Button
+          className={`bg-main-background-300 px-10 ${museoModerno.className} font-medium border py-2 text-main-text-100 hover:bg-transparent hover:text-black hover:border-main-100 hover:border rounded-[--radius] text-lg shadow`}
+          type="submit"
+        >
+          Změnit email
+        </Button>
       </form>
     </Form>
   );

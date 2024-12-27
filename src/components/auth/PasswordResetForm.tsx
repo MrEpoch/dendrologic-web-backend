@@ -48,7 +48,7 @@ export function PasswordResetForm() {
         <CustomFieldPassword
           control={form.control}
           name="password"
-          formLabel={"Password"}
+          formLabel={"Heslo"}
           render={({ field }) => (
             <Input type="password" value={field.value} {...field} />
           )}
@@ -56,7 +56,7 @@ export function PasswordResetForm() {
         <CustomFieldPassword
           control={form.control}
           name="newPassword"
-          formLabel={"New password"}
+          formLabel={"Nové heslo"}
           render={({ field }) => (
             <Input type="password" value={field.value} {...field} />
           )}
@@ -116,7 +116,7 @@ export function PasswordResetTOTPForm() {
         <CustomFieldCode
           control={form.control}
           name="code"
-          formLabel={"Code"}
+          formLabel={"Kód"}
           render={({ field }) => (
             <Input type="text" value={field.value} {...field} />
           )}
@@ -167,7 +167,7 @@ export function PasswordResetRecoveryCodeForm() {
         <CustomFieldCode
           control={form.control}
           name="code"
-          formLabel={"Recovery Code"}
+          formLabel={"Záchraný klíč"}
           render={({ field }) => (
             <Input type="text" value={field.value} {...field} />
           )}

@@ -114,7 +114,10 @@ export const sessionCookieConfig = (expiresAt?: Date) => {
   };
 };
 
-export async function setSessionTokenCookie(token: string, expiresAt: Date): Promise<void> {
+export async function setSessionTokenCookie(
+  token: string,
+  expiresAt: Date,
+): Promise<void> {
   await cookies().set("session", token, {
     httpOnly: true,
     sameSite: "lax",
@@ -138,8 +141,8 @@ export const getCurrentSession = cache(
   async (): Promise<SessionValidationResult> => {
     let token = await cookies().get("session")?.value;
     if (!token) {
-      if (await headers().get("Authorization-Session") !== null) {
-        token = await headers().get("Authorization-Session") ?? undefined;
+      if ((await headers().get("Authorization-Session")) !== null) {
+        token = (await headers().get("Authorization-Session")) ?? undefined;
         token?.length === 0 && (token = undefined);
       }
     }

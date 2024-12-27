@@ -18,7 +18,7 @@ export async function globalGETRateLimitNext(): Promise<boolean> {
   const fallBack = "0.0.0.0";
   let ip = await headers().get("x-forwarded-for");
   if (!ip) {
-    ip = await headers().get("x-real-ip") ?? fallBack;
+    ip = (await headers().get("x-real-ip")) ?? fallBack;
   } else ip.split(",")[0];
 
   if (ip === null) {

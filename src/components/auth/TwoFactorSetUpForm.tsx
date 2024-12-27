@@ -52,35 +52,34 @@ export function TwoFactorSetUpForm({ encodedTOTPKey }) {
     <Form {...form}>
       {recoveryCode ? (
         <>
-        <p>
-          Záchraný klíč: <span className="text-red-500">{recoveryCode}</span>
-        </p>
-        <Link href="/auth/settings"
-          className={`bg-main-background-300 px-10 ${museoModerno.className} font-medium border py-2 text-main-text-100 hover:bg-transparent hover:text-black hover:border-main-100 hover:border rounded-[--radius] text-lg shadow`}
-        >
-        Pokračovat
-        </Link>
-
-      </>
+          <p>
+            Záchraný klíč: <span className="text-red-500">{recoveryCode}</span>
+          </p>
+          <Link
+            href="/auth/settings"
+            className={`bg-main-background-300 px-10 ${museoModerno.className} font-medium border py-2 text-main-text-100 hover:bg-transparent hover:text-black hover:border-main-100 hover:border rounded-[--radius] text-lg shadow`}
+          >
+            Pokračovat
+          </Link>
+        </>
       ) : (
-      <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
-        <CustomFieldCode
-          control={form.control}
-          name="code"
-          formLabel={"Kód"}
-          render={({ field }) => (
-            <Input type="text" value={field.value} {...field} />
-          )}
-        />
-        <Button type="submit">Ověřit</Button>
- <Button
-          className={`bg-main-background-300 px-10 ${museoModerno.className} font-medium border py-5 text-main-text-100 hover:bg-transparent hover:text-black hover:border-main-100 hover:border rounded-[--radius] text-lg shadow`}
-        type="submit"
-        >
-        Ověřit
-        </Button>
-
-      </form>
+        <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
+          <CustomFieldCode
+            control={form.control}
+            name="code"
+            formLabel={"Kód"}
+            render={({ field }) => (
+              <Input type="text" value={field.value} {...field} />
+            )}
+          />
+          <Button type="submit">Ověřit</Button>
+          <Button
+            className={`bg-main-background-300 px-10 ${museoModerno.className} font-medium border py-5 text-main-text-100 hover:bg-transparent hover:text-black hover:border-main-100 hover:border rounded-[--radius] text-lg shadow`}
+            type="submit"
+          >
+            Ověřit
+          </Button>
+        </form>
       )}
     </Form>
   );
