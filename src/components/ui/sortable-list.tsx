@@ -3,7 +3,7 @@
 // npx shadcn-ui@latest add checkbox
 // npm  i react-use-measure
 import { Dispatch, ReactNode, SetStateAction, useState } from "react";
-import { Trash } from "lucide-react";
+import { LocateFixed, Navigation, Trash } from "lucide-react";
 import {
   AnimatePresence,
   LayoutGroup,
@@ -15,6 +15,7 @@ import useMeasure from "react-use-measure";
 
 import { cn } from "@/lib/utils";
 import { Checkbox } from "@/components/ui/checkbox";
+import Link from "next/link";
 
 export type Item = {
   text: string;
@@ -66,7 +67,7 @@ function SortableListItem({
           value={item}
           className={cn(
             "relative z-auto grow",
-            "h-full rounded-xl bg-[#161716]/80",
+            "h-full rounded-xl bg-main-background-300",
             "shadow-[0px_1px_0px_0px_hsla(0,0%,100%,.03)_inset,0px_0px_0px_1px_hsla(0,0%,100%,.03)_inset,0px_0px_0px_1px_rgba(0,0,0,.1),0px_2px_2px_0px_rgba(0,0,0,.1),0px_4px_4px_0px_rgba(0,0,0,.1),0px_8px_8px_0px_rgba(0,0,0,.1)]",
             item.checked ? "cursor-not-allowed" : "cursor-grab",
             item.checked && !isDragging ? "w-7/10" : "w-full",
@@ -114,7 +115,7 @@ function SortableListItem({
           <div ref={ref} className={cn(isExpanded ? "" : "", "z-20 ")}>
             <motion.div
               layout="position"
-              className="flex items-center justify-center "
+              className="flex items-center justify-start px-32 py-4"
             >
               <AnimatePresence>
                 {!isExpanded ? (
@@ -123,8 +124,14 @@ function SortableListItem({
                     animate={{ opacity: 1, filter: "blur(0px)" }}
                     exit={{ opacity: 0, filter: "blur(4px)" }}
                     transition={{ duration: 0.001 }}
-                    className="flex  items-center space-x-2 "
+                    className="flex items-center space-x-2 "
                   >
+                    <Link
+                      className="flex text-main-text-200 items-center p-4"
+                      href={`/auth/dashboard/requests/read/${item.id}`}
+                    >
+                      <LocateFixed />
+                    </Link>
                     {/* List Remove Actions */}
                     <Checkbox
                       checked={item.checked}
@@ -134,9 +141,7 @@ function SortableListItem({
                       className=" ml-3 h-5 w-5 rounded-md border-white/20 bg-black/30 data-[state=checked]:bg-black data-[state=checked]:text-red-200"
                     />
                     {/* List Order */}
-                    <p className="font-mono text-xs pl-1 text-white/50">
-                      {order + 1}
-                    </p>
+                    <p className="font-mono text-xs pl-1">{order + 1}</p>
 
                     {/* List Title */}
                     <motion.div
@@ -156,7 +161,7 @@ function SortableListItem({
                       <h4
                         className={cn(
                           "tracking-tighter text-base md:text-lg ",
-                          item.checked ? "text-red-400" : "text-white/70",
+                          item.checked ? "text-red-400" : "text-main-text-100",
                         )}
                       >
                         {item.checked ? "Delete" : ` ${item.text}`}
@@ -202,7 +207,7 @@ function SortableListItem({
                   bounce: 0,
                 },
               }}
-              className="-ml-[1px] h-[1.5rem] w-3 rounded-l-none  rounded-r-none border-y  border-y-white/5 border-r-white/10 bg-[#161716] "
+              className="-ml-[1px] h-[1.5rem] w-3 rounded-l-none  rounded-r-none border-y  border-y-white/5 border-r-white/10 bg-main-background-300 "
             />
           ) : null}
         </AnimatePresence>
@@ -228,7 +233,7 @@ function SortableListItem({
                 x: -10,
                 transition: { delay: 0, duration: 0.12 },
               }}
-              className="inset-0 z-0 border-spacing-1  rounded-r-xl rounded-l-sm border-r-2   border-r-red-300/60 bg-[#161716]/80 shadow-[0_1px_0_0_rgba(255,255,255,0.03)_inset,0_0_0_1px_rgba(255,255,255,0.03)_inset,0_0_0_1px_rgba(0,0,0,0.1),0_2px_2px_0_rgba(0,0,0,0.1),0_4px_4px_0_rgba(0,0,0,0.1),0_8px_8px_0_rgba(0,0,0,0.1)] dark:bg-[#161716]/50"
+              className="inset-0 z-0 border-spacing-1  rounded-r-xl rounded-l-sm border-r-2   border-r-red-300/60 bg-main-background-300 shadow-[0_1px_0_0_rgba(255,255,255,0.03)_inset,0_0_0_1px_rgba(255,255,255,0.03)_inset,0_0_0_1px_rgba(0,0,0,0.1),0_2px_2px_0_rgba(0,0,0,0.1),0_4px_4px_0_rgba(0,0,0,0.1),0_8px_8px_0_rgba(0,0,0,0.1)] dark:bg-[#161716]/50"
             >
               <button
                 className="inline-flex h-10 items-center justify-center whitespace-nowrap rounded-md px-3 text-sm font-medium  transition-colors duration-150   focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50"
