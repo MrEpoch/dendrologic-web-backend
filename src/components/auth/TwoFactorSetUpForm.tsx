@@ -63,7 +63,10 @@ export function TwoFactorSetUpForm({ encodedTOTPKey }) {
           </Link>
         </>
       ) : (
-        <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8 flex flex-col items-center">
+        <form
+          onSubmit={form.handleSubmit(onSubmit)}
+          className="space-y-8 flex flex-col items-center"
+        >
           <CustomFieldCode
             control={form.control}
             name="code"

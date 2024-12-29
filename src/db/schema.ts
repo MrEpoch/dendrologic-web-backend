@@ -105,8 +105,10 @@ export function lower(email: AnyPgColumn): SQL {
 
 export const geoRequestTable = pgTable("geo_request", {
   id: uuid("id").defaultRandom().primaryKey().unique(),
-  userId: uuid("user_id").notNull().references(() => userTable.id),
-  geodata: json()
+  userId: uuid("user_id")
+    .notNull()
+    .references(() => userTable.id),
+  geodata: json(),
 });
 
 const insertUserSchema = createInsertSchema(userTable, {

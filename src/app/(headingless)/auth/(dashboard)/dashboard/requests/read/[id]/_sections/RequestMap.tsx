@@ -20,41 +20,33 @@ import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
 import { transform } from "ol/proj";
 import { Check, Pen } from "lucide-react";
-import {
-  Popover,
-  PopoverContent,
-  PopoverTrigger,
-} from "@/components/ui/popover"
+import Link from "next/link";
 
-
-export default function DrawingMap() {
+export default function RequestMap({ requestJSON }: { requestJSON: { geodata: any, id: string } }) {
   const mapStateRef = React.useRef<any>(null);
-  const [circling, setCircling] = React.useState<boolean>(false);
-  const drawRef = React.useRef<any>(null);
   const sourceRef = React.useRef<any>(null);
   const [selectedFeature, setSelectedFeature] = React.useState<any>(null);
   const mapSelectedFeatureRef = React.useRef<any>(null);
 
   useEffect(() => {
-    function addInteraction() {
-      drawRef.current = new Draw({
-        source: sourceRef.current,
-        type: "Circle",
-        freehand: true,
-      });
-      mapStateRef.current?.addInteraction(drawRef.current);
-    }
-
-    /**
-     * Handle change event.
-     */
-
     if (mapStateRef.current === null) {
       const raster = new TileLayer({
         source: new OSM(),
       });
 
-      sourceRef.current = new VectorSource({ wrapX: false });
+      console.log(requestJSON);
+
+      const geojson = new GeoJSON();
+      sourceRef.current = new VectorSource({
+        features: geojson.readFeatures(
+          requestJSON.geodata,
+          {
+            dataProjection: "EPSG:4326",
+            featureProjection: "EPSG:3857",
+          }
+        ),
+      });
+
 
       const vector = new VectorLayer({
         source: sourceRef.current,
@@ -80,19 +72,10 @@ export default function DrawingMap() {
       mapStateRef.current.addInteraction(mapSelectedFeatureRef.current);
       mapSelectedFeatureRef.current.on("select", function (e) {
         e.preventDefault();
-        if (e.selected instanceof VectorSource) {
-          setSelectedFeature(null);
-          return;
-        }
         setSelectedFeature(e?.selected[0]);
       });
-    } else if (circling === true) {
-      addInteraction();
-    } else if (circling === false) {
-      mapStateRef.current.removeInteraction(drawRef.current);
-      drawRef.current = null;
-    }
-  }, [circling]);
+    } 
+  }, []);
 
   function selectedFeatureToNull() {
     setSelectedFeature(null);
@@ -131,23 +114,17 @@ export default function DrawingMap() {
     const geoJSONdata = mapStateRef.current
       .getLayers()
       .getArray()
-      .filter((layer: any) => {
-        const source = layer.getSource();
-        return source instanceof VectorSource;
-      })
       .map((layer: any) => {
         const source = layer.getSource();
-        const features = source.getFeatures();
-        const geojsonFormat = new GeoJSON();
-        const geojsonfeatures = features.map((feature: any) => {
-          geojsonFormat.writeFeatureObject(feature);
-        });
-        return {
-          type: "FeatureCollection",
-          features: geojsonfeatures,
+        if (source instanceof VectorSource) {
+          const features = source.getFeatures();
+          const geojsonFormat = new GeoJSON();
+          features.forEach((feature: any) => {
+            geojsonFormat.writeFeatureObject(feature);
+          });
+          return JSON.stringify(geojsonFormat);
         }
       });
-    
 
     const res = await fetch("/api/geojson/requests", {
       method: "POST",
@@ -155,7 +132,7 @@ export default function DrawingMap() {
         "Content-Type": "application/json",
       },
       body: JSON.stringify({
-        georequest: JSON.stringify(geoJSONdata),
+        georequest: geoJSONdata[1],
       }),
     });
 
@@ -171,13 +148,12 @@ export default function DrawingMap() {
       <div id="map" className="h-96 w-full" />
       <div className="flex gap-2 justify-between items-center">
         <Label htmlFor="circling">Vybrat oblast</Label>
-        <Button
-          className={`h-4 w-4 p-4 rounded border ${circling ? "bg-main-background-300" : "bg-main-background-100"}`}
-          variant="outline"
-          onClick={() => setCircling((prev) => !prev)}
+        <Link
+    href={`/auth/dashboard/requests/edit/${requestJSON.id}`}
+    className={`h-4 w-4 p-4 rounded border hover:bg-main-background-300 bg-main-background-100`}
         >
           <Pen />
-        </Button>
+        </Link>
       </div>
       <div className="flex gap-2 justify-between items-center">
         <Label htmlFor="circling">Vytvořit žádost</Label>
