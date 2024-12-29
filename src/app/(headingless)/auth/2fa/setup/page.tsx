@@ -39,7 +39,7 @@ export default async function Page() {
   const totpKey = new Uint8Array(20);
   crypto.getRandomValues(totpKey);
   const encodedTOTPKey = encodeBase64(totpKey);
-  const keyURI = createTOTPKeyURI("Demo", user.username, totpKey, 30, 6);
+  const keyURI = createTOTPKeyURI("Dendree", user.username, totpKey, 30, 6);
   const qrcode = renderSVG(keyURI);
   return (
     <div className="relative flex h-full min-h-screen">

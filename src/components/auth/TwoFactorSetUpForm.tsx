@@ -63,7 +63,7 @@ export function TwoFactorSetUpForm({ encodedTOTPKey }) {
           </Link>
         </>
       ) : (
-        <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
+        <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8 flex flex-col items-center">
           <CustomFieldCode
             control={form.control}
             name="code"
@@ -72,7 +72,6 @@ export function TwoFactorSetUpForm({ encodedTOTPKey }) {
               <Input type="text" value={field.value} {...field} />
             )}
           />
-          <Button type="submit">Ověřit</Button>
           <Button
             className={`bg-main-background-300 px-10 ${museoModerno.className} font-medium border py-5 text-main-text-100 hover:bg-transparent hover:text-black hover:border-main-100 hover:border rounded-[--radius] text-lg shadow`}
             type="submit"

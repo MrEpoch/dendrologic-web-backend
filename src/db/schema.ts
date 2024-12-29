@@ -9,6 +9,7 @@ import {
   AnyPgColumn,
   customType,
   integer,
+  json,
 } from "drizzle-orm/pg-core";
 import { createInsertSchema } from "drizzle-zod";
 import { z } from "zod";
@@ -86,7 +87,7 @@ export const emailVerificationRequestTable = pgTable(
   },
 );
 
-export const passwordResetSessionTable = pgTable("password_reset_session", {
+export const passwordResetSessionTable = pgTable("session_password_reset", {
   id: text("id").primaryKey().unique(),
   userId: uuid("user_id")
     .notNull()
@@ -101,6 +102,12 @@ export const passwordResetSessionTable = pgTable("password_reset_session", {
 export function lower(email: AnyPgColumn): SQL {
   return sql`lower(${email})`;
 }
+
+export const geoRequestTable = pgTable("geo_request", {
+  id: uuid("id").defaultRandom().primaryKey().unique(),
+  userId: uuid("user_id").notNull().references(() => userTable.id),
+  geodata: json()
+});
 
 const insertUserSchema = createInsertSchema(userTable, {
   id: (schema) => schema.id.uuid(),
