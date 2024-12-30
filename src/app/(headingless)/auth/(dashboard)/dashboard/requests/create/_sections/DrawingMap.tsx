@@ -24,8 +24,11 @@ import {
   Popover,
   PopoverContent,
   PopoverTrigger,
-} from "@/components/ui/popover"
-
+} from "@/components/ui/popover";
+import Feature from "ol/Feature";
+import { Drag } from "./Dragger";
+import { defaults as defaultInteractions, Modify } from "ol/interaction";
+import { useRouter } from "next/navigation";
 
 export default function DrawingMap() {
   const mapStateRef = React.useRef<any>(null);
@@ -34,6 +37,7 @@ export default function DrawingMap() {
   const sourceRef = React.useRef<any>(null);
   const [selectedFeature, setSelectedFeature] = React.useState<any>(null);
   const mapSelectedFeatureRef = React.useRef<any>(null);
+  const router = useRouter();
 
   useEffect(() => {
     function addInteraction() {
@@ -61,6 +65,7 @@ export default function DrawingMap() {
       });
 
       mapStateRef.current = new Map({
+        interactions: defaultInteractions().extend([new Drag()]),
         layers: [raster, vector],
         target: "map",
         view: new View({
@@ -72,6 +77,10 @@ export default function DrawingMap() {
           zoom: 7,
         }),
       });
+
+      mapStateRef.current.addInteraction(
+        new Modify({ source: sourceRef.current }),
+      );
 
       mapSelectedFeatureRef.current = new Select({
         condition: click,
@@ -138,16 +147,26 @@ export default function DrawingMap() {
       .map((layer: any) => {
         const source = layer.getSource();
         const features = source.getFeatures();
-        const geojsonFormat = new GeoJSON();
-        const geojsonfeatures = features.map((feature: any) => {
-          geojsonFormat.writeFeatureObject(feature);
+        const featureCollection = features.map((feature) => {
+          const properties = feature.getProperties();
+          const geometry = feature.getGeometry();
+
+          if (!geometry) {
+            return null;
+          }
+
+          return {
+            type: "Feature",
+            geometry: new GeoJSON().writeGeometryObject(geometry),
+            properties: { ...properties },
+          };
         });
         return {
           type: "FeatureCollection",
-          features: geojsonfeatures,
-        }
-      });
-    
+          features: featureCollection,
+        };
+      })
+      .filter(Boolean);
 
     const res = await fetch("/api/geojson/requests", {
       method: "POST",
@@ -160,10 +179,10 @@ export default function DrawingMap() {
     });
 
     const data = await res.json();
-
+    if (data.success) {
+      router.push(`/auth/dashboard/requests/read/${data.georequests.id}`);
+    }
     console.log(data);
-
-    console.log(geoJSONdata[1]);
   }
 
   return (

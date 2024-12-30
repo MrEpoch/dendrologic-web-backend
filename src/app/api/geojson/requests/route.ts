@@ -25,7 +25,8 @@ export async function GET(req: NextRequest) {
       return NextResponse.json({ success: false, error: "UNAUTHORIZED" });
     }
 
-    const limit = parseInt(req.nextUrl.searchParams.get("limit") || ""), offset = parseInt(req.nextUrl.searchParams.get("offset") || "");
+    const limit = parseInt(req.nextUrl.searchParams.get("limit") || ""),
+      offset = parseInt(req.nextUrl.searchParams.get("offset") || "");
 
     const requests = await db
       .select()
@@ -36,7 +37,10 @@ export async function GET(req: NextRequest) {
     return NextResponse.json({ success: true, data: requests });
   } catch (e) {
     console.log(e);
-    return NextResponse.json({ success: false, error: "INTERNAL_SERVER_ERROR" });
+    return NextResponse.json({
+      success: false,
+      error: "INTERNAL_SERVER_ERROR",
+    });
   }
 }
 
@@ -77,10 +81,13 @@ export async function POST(request: NextRequest) {
     }
 
     console.log(validateUser.user.id);
-    const geoRequest = await db.insert(geoRequestTable).values({
-      geodata: validated.data.georequest,
-      userId: validateUser.user.id,
-    });
+    const geoRequest = await db
+      .insert(geoRequestTable)
+      .values({
+        geodata: validated.data.georequest,
+        userId: validateUser.user.id,
+      })
+      .returning();
 
     return NextResponse.json({ success: true, geoRequest });
   } catch (e) {

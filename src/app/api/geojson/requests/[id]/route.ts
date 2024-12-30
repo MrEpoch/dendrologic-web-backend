@@ -41,6 +41,9 @@ export async function GET(req: NextRequest, { params }) {
     return NextResponse.json({ success: true, georequest: request });
   } catch (e) {
     console.log(e);
-    return NextResponse.json({ success: false, error: "INTERNAL_SERVER_ERROR" });
+    return NextResponse.json({
+      success: false,
+      error: "INTERNAL_SERVER_ERROR",
+    });
   }
 }
