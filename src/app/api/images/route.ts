@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { z } from "zod";
 import { RefillingTokenBucket } from "@/lib/rate-limit";
-import { globalGETRateLimit, globalPOSTRateLimit } from "@/lib/request";
+import { globalPOSTRateLimit } from "@/lib/request";
 import { getCurrentSession } from "@/lib/sessionTokens";
 import { InsertImageIntoBucket } from "@/lib/storeFile";
 import { addDendrologicImage } from "@/lib/dendrologic-image";

@@ -25,6 +25,7 @@
     "dotenv": "^16.4.5",
     "drizzle-orm": "^0.35.3",
     "drizzle-zod": "^0.5.1",
+    "esprima": "^4.0.1",
     "geojson-validation": "^1.0.2",
     "input-otp": "^1.4.1",
     "jotai": "^2.11.0",
@@ -44,7 +45,8 @@
     "tailwindcss-animate": "^1.0.7",
     "three": "^0.171.0",
     "uqr": "^0.1.2",
-    "zod": "^3.23.8"
+    "zod": "^3.23.8",
+    "zod-to-json-schema": "^3.24.1"
   },
   "devDependencies": {
     "@types/node": "^20",

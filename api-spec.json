@@ -1,0 +1,1184 @@
+{
+  "$ref": "#/definitions/API_ROUTES_SCHEMA",
+  "definitions": {
+    "API_ROUTES_SCHEMA": {
+      "type": "object",
+      "properties": {
+        "POST": {
+          "type": "object",
+          "properties": {
+            "REGISTER": {
+              "type": "object",
+              "properties": {
+                "route": { "type": "string", "const": "/api/auth/register" },
+                "json_data": {
+                  "type": "object",
+                  "properties": {
+                    "email": {
+                      "type": "string",
+                      "format": "email",
+                      "minLength": 1
+                    },
+                    "username": {
+                      "type": "string",
+                      "maxLength": 255,
+                      "minLength": 3
+                    },
+                    "password": {
+                      "type": "string",
+                      "minLength": 8,
+                      "maxLength": 255
+                    }
+                  },
+                  "required": ["email", "username", "password"],
+                  "additionalProperties": false
+                },
+                "required": {
+                  "type": "string",
+                  "enum": ["IP_ADDRESS", "JSON", "REQ_ORIGIN"]
+                },
+                "response_success": {
+                  "type": "object",
+                  "properties": {
+                    "success": { "type": "boolean", "const": true },
+                    "error": { "type": "object" },
+                    "redirect": {
+                      "type": "string",
+                      "const": "/auth/verify-email"
+                    },
+                    "emailRequestId": { "type": "string" },
+                    "sessionToken": { "type": "string" }
+                  },
+                  "required": [
+                    "success",
+                    "error",
+                    "redirect",
+                    "emailRequestId",
+                    "sessionToken"
+                  ],
+                  "additionalProperties": false
+                }
+              },
+              "required": [
+                "route",
+                "json_data",
+                "required",
+                "response_success"
+              ],
+              "additionalProperties": false
+            },
+            "LOGIN": {
+              "type": "object",
+              "properties": {
+                "route": { "type": "string", "const": "/api/auth/login" },
+                "json_data": {
+                  "type": "object",
+                  "properties": {
+                    "email": {
+                      "type": "string",
+                      "format": "email",
+                      "minLength": 1
+                    },
+                    "password": {
+                      "type": "string",
+                      "minLength": 8,
+                      "maxLength": 255
+                    }
+                  },
+                  "required": ["email", "password"],
+                  "additionalProperties": false
+                },
+                "required": {
+                  "type": "string",
+                  "enum": ["IP_ADDRESS", "JSON", "REQ_ORIGIN"]
+                },
+                "response_success": {
+                  "type": "object",
+                  "properties": {
+                    "success": { "type": "boolean", "const": true },
+                    "error": { "type": "object" },
+                    "redirect": { "type": "string", "const": "/auth/2fa" },
+                    "sessionToken": { "type": "string" }
+                  },
+                  "required": ["success", "error", "redirect", "sessionToken"],
+                  "additionalProperties": false
+                }
+              },
+              "required": [
+                "route",
+                "json_data",
+                "required",
+                "response_success"
+              ],
+              "additionalProperties": false
+            },
+            "FORGOT_PASSWORD": {
+              "type": "object",
+              "properties": {
+                "route": {
+                  "type": "string",
+                  "const": "/api/auth/forgot-password"
+                },
+                "json_data": {
+                  "type": "object",
+                  "properties": {
+                    "email": {
+                      "type": "string",
+                      "format": "email",
+                      "minLength": 1
+                    }
+                  },
+                  "required": ["email"],
+                  "additionalProperties": false
+                },
+                "required": {
+                  "type": "string",
+                  "enum": ["IP_ADDRESS", "JSON", "REQ_ORIGIN"]
+                },
+                "response_success": {
+                  "type": "object",
+                  "properties": {
+                    "success": { "type": "boolean", "const": true },
+                    "error": { "type": "object" },
+                    "redirect": {
+                      "type": "string",
+                      "const": "/auth/reset-password/verify-email"
+                    },
+                    "sessionToken": { "type": "string" }
+                  },
+                  "required": ["success", "error", "redirect", "sessionToken"],
+                  "additionalProperties": false
+                }
+              },
+              "required": [
+                "route",
+                "json_data",
+                "required",
+                "response_success"
+              ],
+              "additionalProperties": false
+            },
+            "VERIFY_EMAIL": {
+              "type": "object",
+              "properties": {
+                "route": {
+                  "type": "string",
+                  "const": "/api/auth/verify-email"
+                },
+                "json_data": {
+                  "type": "object",
+                  "properties": {
+                    "code": { "type": "string", "minLength": 8, "maxLength": 8 }
+                  },
+                  "required": ["code"],
+                  "additionalProperties": false
+                },
+                "response_success": {
+                  "type": "object",
+                  "properties": {
+                    "redirect": {
+                      "type": "string",
+                      "enum": ["/auth/settings", "/auth/2fa/setup"]
+                    },
+                    "success": { "type": "boolean", "const": true }
+                  },
+                  "required": ["redirect", "success"],
+                  "additionalProperties": false
+                },
+                "required": {
+                  "type": "string",
+                  "enum": ["REQ_ORIGIN", "IP_ADDRESS", "SESSION"]
+                }
+              },
+              "required": [
+                "route",
+                "json_data",
+                "response_success",
+                "required"
+              ],
+              "additionalProperties": false
+            },
+            "VERIFY_EMAIL_RESEND": {
+              "type": "object",
+              "properties": {
+                "route": {
+                  "type": "string",
+                  "const": "/api/auth/verify-email/resend"
+                },
+                "json_data": {
+                  "type": "object",
+                  "properties": {},
+                  "additionalProperties": false
+                },
+                "required": {
+                  "type": "string",
+                  "enum": ["REQ_ORIGIN", "SESSION", "IP_ADDRESS", "TWO_FACTOR"]
+                },
+                "response_success": {
+                  "type": "object",
+                  "properties": {
+                    "success": { "type": "boolean", "const": true },
+                    "message": { "type": "string" },
+                    "emailRequestId": { "type": "string" }
+                  },
+                  "required": ["success", "message", "emailRequestId"],
+                  "additionalProperties": false
+                }
+              },
+              "required": [
+                "route",
+                "json_data",
+                "required",
+                "response_success"
+              ],
+              "additionalProperties": false
+            },
+            "2FA": {
+              "type": "object",
+              "properties": {
+                "route": { "type": "string", "const": "/api/auth/2fa" },
+                "json_data": {
+                  "type": "object",
+                  "properties": {
+                    "code": { "type": "string", "minLength": 6, "maxLength": 6 }
+                  },
+                  "required": ["code"],
+                  "additionalProperties": false
+                },
+                "required": {
+                  "type": "string",
+                  "enum": ["REQ_ORIGIN", "SESSION", "IP_ADDRESS", "TWO_FACTOR"]
+                },
+                "response_success": {
+                  "type": "object",
+                  "properties": {
+                    "success": { "type": "boolean", "const": true },
+                    "redirect": { "type": "string", "const": "/auth/settings" }
+                  },
+                  "required": ["success", "redirect"],
+                  "additionalProperties": false
+                }
+              },
+              "required": [
+                "route",
+                "json_data",
+                "required",
+                "response_success"
+              ],
+              "additionalProperties": false
+            },
+            "2FA-SETUP": {
+              "type": "object",
+              "properties": {
+                "route": { "type": "string", "const": "/api/auth/2fa/setup" },
+                "json_data": {
+                  "type": "object",
+                  "properties": {
+                    "key": {
+                      "type": "string",
+                      "minLength": 28,
+                      "maxLength": 28
+                    },
+                    "code": { "type": "string", "minLength": 1 }
+                  },
+                  "required": ["key", "code"],
+                  "additionalProperties": false
+                },
+                "required": {
+                  "type": "string",
+                  "enum": ["REQ_ORIGIN", "SESSION", "IP_ADDRESS"]
+                },
+                "response_success": {
+                  "type": "object",
+                  "properties": {
+                    "success": { "type": "boolean", "const": true },
+                    "recoveryCode": { "type": "string" }
+                  },
+                  "required": ["success", "recoveryCode"],
+                  "additionalProperties": false
+                }
+              },
+              "required": [
+                "route",
+                "json_data",
+                "required",
+                "response_success"
+              ],
+              "additionalProperties": false
+            },
+            "2FA-RESET": {
+              "type": "object",
+              "properties": {
+                "route": { "type": "string", "const": "/api/auth/2fa/reset" },
+                "json_data": {
+                  "type": "object",
+                  "properties": {
+                    "code": { "type": "string", "minLength": 1 }
+                  },
+                  "required": ["code"],
+                  "additionalProperties": false
+                },
+                "required": {
+                  "type": "string",
+                  "enum": ["REQ_ORIGIN", "SESSION", "IP_ADDRESS"]
+                },
+                "response_success": {
+                  "type": "object",
+                  "properties": {
+                    "success": { "type": "boolean", "const": true },
+                    "redirect": { "type": "string", "const": "/auth/2fa/setup" }
+                  },
+                  "required": ["success", "redirect"],
+                  "additionalProperties": false
+                }
+              },
+              "required": [
+                "route",
+                "json_data",
+                "required",
+                "response_success"
+              ],
+              "additionalProperties": false
+            },
+            "SETTINGS_REGENERATE_RECOVERY_CODE": {
+              "type": "object",
+              "properties": {
+                "route": {
+                  "type": "string",
+                  "const": "/api/auth/settings/regenerate-recovery-code"
+                },
+                "json_data": {
+                  "type": "object",
+                  "properties": {},
+                  "additionalProperties": false
+                },
+                "required": {
+                  "type": "string",
+                  "enum": ["REQ_ORIGIN", "SESSION", "IP_ADDRESS"]
+                },
+                "response_success": {
+                  "type": "object",
+                  "properties": {
+                    "success": { "type": "boolean", "const": true },
+                    "recoveryCode": { "type": "string" }
+                  },
+                  "required": ["success", "recoveryCode"],
+                  "additionalProperties": false
+                }
+              },
+              "required": [
+                "route",
+                "json_data",
+                "required",
+                "response_success"
+              ],
+              "additionalProperties": false
+            },
+            "SETTINGS_UPDATE_PASSWORD": {
+              "type": "object",
+              "properties": {
+                "route": {
+                  "type": "string",
+                  "const": "/api/auth/settings/update-password"
+                },
+                "json_data": {
+                  "type": "object",
+                  "properties": {
+                    "password": {
+                      "type": "string",
+                      "minLength": 8,
+                      "maxLength": 255
+                    },
+                    "newPassword": {
+                      "type": "string",
+                      "minLength": 8,
+                      "maxLength": 255
+                    }
+                  },
+                  "required": ["password", "newPassword"],
+                  "additionalProperties": false
+                },
+                "required": {
+                  "type": "string",
+                  "enum": ["REQ_ORIGIN", "SESSION", "IP_ADDRESS"]
+                },
+                "response_success": {
+                  "type": "object",
+                  "properties": {
+                    "success": { "type": "boolean", "const": true },
+                    "error": { "type": "object" },
+                    "sessionToken": { "type": "string" }
+                  },
+                  "required": ["success", "error", "sessionToken"],
+                  "additionalProperties": false
+                }
+              },
+              "required": [
+                "route",
+                "json_data",
+                "required",
+                "response_success"
+              ],
+              "additionalProperties": false
+            },
+            "SETTINGS_UPDATE_EMAIL": {
+              "type": "object",
+              "properties": {
+                "route": {
+                  "type": "string",
+                  "const": "/api/auth/settings/update-email"
+                },
+                "json_data": {
+                  "type": "object",
+                  "properties": {
+                    "email": {
+                      "type": "string",
+                      "format": "email",
+                      "minLength": 1
+                    }
+                  },
+                  "required": ["email"],
+                  "additionalProperties": false
+                },
+                "required": {
+                  "type": "string",
+                  "enum": ["REQ_ORIGIN", "SESSION", "IP_ADDRESS"]
+                },
+                "response_success": {
+                  "type": "object",
+                  "properties": {
+                    "success": { "type": "boolean", "const": true },
+                    "emailVerificationRequestId": { "type": "string" },
+                    "message": { "type": "string" },
+                    "redirect": {
+                      "type": "string",
+                      "const": "/auth/verify-email"
+                    }
+                  },
+                  "required": [
+                    "success",
+                    "emailVerificationRequestId",
+                    "message",
+                    "redirect"
+                  ],
+                  "additionalProperties": false
+                }
+              },
+              "required": [
+                "route",
+                "json_data",
+                "required",
+                "response_success"
+              ],
+              "additionalProperties": false
+            },
+            "RESET_PASSWORD": {
+              "type": "object",
+              "properties": {
+                "route": {
+                  "type": "string",
+                  "const": "/api/auth/reset-password"
+                },
+                "json_data": {
+                  "type": "object",
+                  "properties": {
+                    "password": {
+                      "type": "string",
+                      "minLength": 8,
+                      "maxLength": 255
+                    }
+                  },
+                  "required": ["password"],
+                  "additionalProperties": false
+                },
+                "required": {
+                  "type": "string",
+                  "enum": ["REQ_ORIGIN", "SESSION", "IP_ADDRESS"]
+                },
+                "response_success": {
+                  "type": "object",
+                  "properties": {
+                    "success": { "type": "boolean", "const": true },
+                    "error": { "type": "object" },
+                    "sessionToken": { "type": "string" }
+                  },
+                  "required": ["success", "error", "sessionToken"],
+                  "additionalProperties": false
+                }
+              },
+              "required": [
+                "route",
+                "json_data",
+                "required",
+                "response_success"
+              ],
+              "additionalProperties": false
+            },
+            "RESET_PASSWORD_VERIFY_EMAIL": {
+              "type": "object",
+              "properties": {
+                "route": {
+                  "type": "string",
+                  "const": "/api/auth/reset-password/verify-email"
+                },
+                "json_data": {
+                  "type": "object",
+                  "properties": {
+                    "code": { "type": "string", "minLength": 1 }
+                  },
+                  "required": ["code"],
+                  "additionalProperties": false
+                },
+                "required": {
+                  "type": "string",
+                  "enum": ["REQ_ORIGIN", "SESSION", "IP_ADDRESS"]
+                },
+                "response_success": {
+                  "type": "object",
+                  "properties": {
+                    "success": { "type": "boolean", "const": true },
+                    "redirect": {
+                      "type": "string",
+                      "const": "/auth/reset-password/2fa"
+                    }
+                  },
+                  "required": ["success", "redirect"],
+                  "additionalProperties": false
+                }
+              },
+              "required": [
+                "route",
+                "json_data",
+                "required",
+                "response_success"
+              ],
+              "additionalProperties": false
+            },
+            "RESET_PASSWORD_2FA_WITH_RECOVERY_CODE": {
+              "type": "object",
+              "properties": {
+                "route": {
+                  "type": "string",
+                  "const": "/api/auth/reset-password/2fa/2fa-with-recovery-code"
+                },
+                "json_data": {
+                  "type": "object",
+                  "properties": {
+                    "code": { "type": "string", "minLength": 1 }
+                  },
+                  "required": ["code"],
+                  "additionalProperties": false
+                },
+                "required": {
+                  "type": "string",
+                  "enum": ["REQ_ORIGIN", "SESSION", "IP_ADDRESS"]
+                },
+                "response_success": {
+                  "type": "object",
+                  "properties": {
+                    "success": { "type": "boolean", "const": true },
+                    "redirect": {
+                      "type": "string",
+                      "const": "/auth/reset-password"
+                    }
+                  },
+                  "required": ["success", "redirect"],
+                  "additionalProperties": false
+                }
+              },
+              "required": [
+                "route",
+                "json_data",
+                "required",
+                "response_success"
+              ],
+              "additionalProperties": false
+            },
+            "RESET_PASSWORD_2FA_TOTP_RESET": {
+              "type": "object",
+              "properties": {
+                "route": {
+                  "type": "string",
+                  "const": "/api/auth/reset-password/2fa/2fa-with-recovery-code"
+                },
+                "json_data": {
+                  "type": "object",
+                  "properties": {
+                    "code": { "type": "string", "minLength": 1 }
+                  },
+                  "required": ["code"],
+                  "additionalProperties": false
+                },
+                "required": {
+                  "type": "string",
+                  "enum": ["REQ_ORIGIN", "SESSION", "IP_ADDRESS"]
+                },
+                "response_success": {
+                  "type": "object",
+                  "properties": {
+                    "success": { "type": "boolean", "const": true },
+                    "redirect": {
+                      "type": "string",
+                      "const": "/auth/reset-password"
+                    }
+                  },
+                  "required": ["success", "redirect"],
+                  "additionalProperties": false
+                }
+              },
+              "required": [
+                "route",
+                "json_data",
+                "required",
+                "response_success"
+              ],
+              "additionalProperties": false
+            },
+            "IMAGES": {
+              "type": "object",
+              "properties": {
+                "route": { "type": "string", "const": "/api/images" },
+                "json_data": {
+                  "type": "object",
+                  "properties": {
+                    "image": { "type": "string" },
+                    "kod": { "type": "string", "minLength": 1 }
+                  },
+                  "required": ["image", "kod"],
+                  "additionalProperties": false
+                },
+                "required": {
+                  "type": "string",
+                  "enum": ["REQ_ORIGIN", "SESSION", "IP_ADDRESS"]
+                },
+                "response_success": {
+                  "type": "object",
+                  "properties": {
+                    "success": { "type": "boolean", "const": true },
+                    "images": {
+                      "type": "object",
+                      "properties": {
+                        "kod": { "type": "string" },
+                        "id": { "type": "string" },
+                        "images": {
+                          "type": "array",
+                          "items": { "type": "string" }
+                        },
+                        "created_at": {
+                          "type": "string",
+                          "format": "date-time"
+                        },
+                        "updated_at": {
+                          "type": "string",
+                          "format": "date-time"
+                        }
+                      },
+                      "required": [
+                        "kod",
+                        "id",
+                        "images",
+                        "created_at",
+                        "updated_at"
+                      ],
+                      "additionalProperties": false
+                    }
+                  },
+                  "required": ["success", "images"],
+                  "additionalProperties": false
+                }
+              },
+              "required": [
+                "route",
+                "json_data",
+                "required",
+                "response_success"
+              ],
+              "additionalProperties": false
+            }
+          },
+          "required": [
+            "REGISTER",
+            "LOGIN",
+            "FORGOT_PASSWORD",
+            "VERIFY_EMAIL",
+            "VERIFY_EMAIL_RESEND",
+            "2FA",
+            "2FA-SETUP",
+            "2FA-RESET",
+            "SETTINGS_REGENERATE_RECOVERY_CODE",
+            "SETTINGS_UPDATE_PASSWORD",
+            "SETTINGS_UPDATE_EMAIL",
+            "RESET_PASSWORD",
+            "RESET_PASSWORD_VERIFY_EMAIL",
+            "RESET_PASSWORD_2FA_WITH_RECOVERY_CODE",
+            "RESET_PASSWORD_2FA_TOTP_RESET",
+            "IMAGES"
+          ],
+          "additionalProperties": false
+        },
+        "GET": {
+          "type": "object",
+          "properties": {
+            "LOGOUT": {
+              "type": "object",
+              "properties": {
+                "route": { "type": "string", "const": "/api/auth/logout" },
+                "json_data": {
+                  "type": "object",
+                  "properties": {},
+                  "additionalProperties": false
+                },
+                "required": {
+                  "type": "string",
+                  "enum": ["IP_ADDRESS", "REQ_ORIGIN", "SESSION"]
+                },
+                "response_success": {
+                  "type": "object",
+                  "properties": {
+                    "success": { "type": "boolean", "const": true },
+                    "redirect": { "type": "string", "const": "/" }
+                  },
+                  "required": ["success", "redirect"],
+                  "additionalProperties": false
+                }
+              },
+              "required": [
+                "route",
+                "json_data",
+                "required",
+                "response_success"
+              ],
+              "additionalProperties": false
+            },
+            "VERIFY_EMAIL": {
+              "type": "object",
+              "properties": {
+                "route": {
+                  "type": "string",
+                  "const": "/api/auth/verify-email"
+                },
+                "json_data": {
+                  "type": "object",
+                  "properties": {},
+                  "additionalProperties": false
+                },
+                "required": {
+                  "type": "string",
+                  "enum": ["REQ_ORIGIN", "IP_ADDRESS", "SESSION"]
+                },
+                "response_success": {
+                  "type": "object",
+                  "properties": {
+                    "success": { "type": "boolean", "const": true },
+                    "verificationRequest": {
+                      "type": "object",
+                      "properties": {
+                        "id": { "type": "string" },
+                        "userId": { "type": "string" },
+                        "code": { "type": "string" },
+                        "email": { "type": "string", "format": "email" },
+                        "expiresAt": { "type": "string", "format": "date-time" }
+                      },
+                      "required": [
+                        "id",
+                        "userId",
+                        "code",
+                        "email",
+                        "expiresAt"
+                      ],
+                      "additionalProperties": false
+                    },
+                    "user": {
+                      "type": "object",
+                      "properties": {
+                        "id": { "type": "string" },
+                        "email": {
+                          "type": "string",
+                          "format": "email",
+                          "minLength": 1
+                        },
+                        "username": {
+                          "type": "string",
+                          "maxLength": 255,
+                          "minLength": 3
+                        },
+                        "emailVerified": { "type": "boolean" },
+                        "registered2FA": { "type": "boolean" }
+                      },
+                      "required": [
+                        "id",
+                        "email",
+                        "username",
+                        "emailVerified",
+                        "registered2FA"
+                      ],
+                      "additionalProperties": false
+                    },
+                    "emailRequestId": { "type": "string" }
+                  },
+                  "required": [
+                    "success",
+                    "verificationRequest",
+                    "user",
+                    "emailRequestId"
+                  ],
+                  "additionalProperties": false
+                }
+              },
+              "required": [
+                "route",
+                "json_data",
+                "required",
+                "response_success"
+              ],
+              "additionalProperties": false
+            },
+            "SETTINGS": {
+              "type": "object",
+              "properties": {
+                "route": { "type": "string", "const": "/api/auth/settings" },
+                "json_data": {
+                  "type": "object",
+                  "properties": {
+                    "success": { "type": "boolean", "const": true },
+                    "recoveryCode": { "type": "string" },
+                    "user": {
+                      "type": "object",
+                      "properties": {
+                        "id": {
+                          "$ref": "#/definitions/API_ROUTES_SCHEMA/properties/GET/properties/VERIFY_EMAIL/properties/response_success/properties/user/properties/id"
+                        },
+                        "email": {
+                          "$ref": "#/definitions/API_ROUTES_SCHEMA/properties/GET/properties/VERIFY_EMAIL/properties/response_success/properties/user/properties/email"
+                        },
+                        "username": {
+                          "$ref": "#/definitions/API_ROUTES_SCHEMA/properties/GET/properties/VERIFY_EMAIL/properties/response_success/properties/user/properties/username"
+                        },
+                        "emailVerified": {
+                          "$ref": "#/definitions/API_ROUTES_SCHEMA/properties/GET/properties/VERIFY_EMAIL/properties/response_success/properties/user/properties/emailVerified"
+                        },
+                        "registered2FA": {
+                          "$ref": "#/definitions/API_ROUTES_SCHEMA/properties/GET/properties/VERIFY_EMAIL/properties/response_success/properties/user/properties/registered2FA"
+                        }
+                      },
+                      "required": [
+                        "id",
+                        "email",
+                        "username",
+                        "emailVerified",
+                        "registered2FA"
+                      ],
+                      "additionalProperties": false
+                    },
+                    "session": {
+                      "type": "object",
+                      "properties": {
+                        "twoFactorVerified": { "type": "boolean" },
+                        "id": { "type": "string" },
+                        "userId": { "type": "string" },
+                        "expiresAt": {
+                          "type": "string",
+                          "format": "date-time"
+                        },
+                        "twoFaVerified": { "type": "boolean" }
+                      },
+                      "required": [
+                        "twoFactorVerified",
+                        "id",
+                        "userId",
+                        "expiresAt",
+                        "twoFaVerified"
+                      ],
+                      "additionalProperties": false
+                    }
+                  },
+                  "required": ["success", "recoveryCode", "user", "session"],
+                  "additionalProperties": false
+                },
+                "required": {
+                  "type": "string",
+                  "enum": ["REQ_ORIGIN", "SESSION", "IP_ADDRESS"]
+                },
+                "response_success": {
+                  "type": "object",
+                  "properties": {
+                    "success": { "type": "boolean", "const": true },
+                    "redirect": { "type": "string", "const": "/auth/2fa/setup" }
+                  },
+                  "required": ["success", "redirect"],
+                  "additionalProperties": false
+                }
+              },
+              "required": [
+                "route",
+                "json_data",
+                "required",
+                "response_success"
+              ],
+              "additionalProperties": false
+            },
+            "2FA": {
+              "type": "object",
+              "properties": {
+                "route": { "type": "string", "const": "/api/auth/2fa" },
+                "json_data": {
+                  "type": "object",
+                  "properties": {},
+                  "additionalProperties": false
+                },
+                "required": {
+                  "type": "string",
+                  "enum": ["REQ_ORIGIN", "SESSION", "IP_ADDRESS", "TWO_FACTOR"]
+                },
+                "response_success": {
+                  "type": "object",
+                  "properties": {
+                    "success": { "type": "boolean", "const": true }
+                  },
+                  "required": ["success"],
+                  "additionalProperties": false
+                }
+              },
+              "required": [
+                "route",
+                "json_data",
+                "required",
+                "response_success"
+              ],
+              "additionalProperties": false
+            },
+            "2FA-SETUP": {
+              "type": "object",
+              "properties": {
+                "route": { "type": "string", "const": "/api/auth/2fa/setup" },
+                "json_data": {
+                  "type": "object",
+                  "properties": {},
+                  "additionalProperties": false
+                },
+                "required": {
+                  "type": "string",
+                  "enum": ["REQ_ORIGIN", "SESSION", "IP_ADDRESS"]
+                },
+                "response_success": {
+                  "type": "object",
+                  "properties": {
+                    "success": { "type": "boolean", "const": true },
+                    "keyURI": { "type": "string" },
+                    "qrCode": { "type": "string" },
+                    "encodedTOTPKey": { "type": "string" }
+                  },
+                  "required": ["success", "keyURI", "qrCode", "encodedTOTPKey"],
+                  "additionalProperties": false
+                }
+              },
+              "required": [
+                "route",
+                "json_data",
+                "required",
+                "response_success"
+              ],
+              "additionalProperties": false
+            },
+            "2FA-RESET": {
+              "type": "object",
+              "properties": {
+                "route": { "type": "string", "const": "/api/auth/2fa/reset" },
+                "json_data": {
+                  "type": "object",
+                  "properties": {},
+                  "additionalProperties": false
+                },
+                "required": {
+                  "type": "string",
+                  "enum": ["REQ_ORIGIN", "SESSION", "IP_ADDRESS"]
+                },
+                "response_success": {
+                  "type": "object",
+                  "properties": {
+                    "success": { "type": "boolean", "const": true }
+                  },
+                  "required": ["success"],
+                  "additionalProperties": false
+                }
+              },
+              "required": [
+                "route",
+                "json_data",
+                "required",
+                "response_success"
+              ],
+              "additionalProperties": false
+            },
+            "RESET_PASSWORD": {
+              "type": "object",
+              "properties": {
+                "route": {
+                  "type": "string",
+                  "const": "/api/auth/reset-password"
+                },
+                "json_data": {
+                  "type": "object",
+                  "properties": {},
+                  "additionalProperties": false
+                },
+                "required": {
+                  "type": "string",
+                  "enum": ["REQ_ORIGIN", "SESSION", "IP_ADDRESS"]
+                },
+                "response_success": {
+                  "type": "object",
+                  "properties": {
+                    "success": { "type": "boolean", "const": true }
+                  },
+                  "required": ["success"],
+                  "additionalProperties": false
+                }
+              },
+              "required": [
+                "route",
+                "json_data",
+                "required",
+                "response_success"
+              ],
+              "additionalProperties": false
+            },
+            "RESET_PASSWORD_VERIFY_EMAIL": {
+              "type": "object",
+              "properties": {
+                "route": {
+                  "type": "string",
+                  "const": "/api/auth/reset-password/verify-email"
+                },
+                "json_data": {
+                  "type": "object",
+                  "properties": {},
+                  "additionalProperties": false
+                },
+                "required": {
+                  "type": "string",
+                  "enum": ["REQ_ORIGIN", "SESSION", "IP_ADDRESS"]
+                },
+                "response_success": {
+                  "type": "object",
+                  "properties": {
+                    "success": { "type": "boolean", "const": true },
+                    "session": {
+                      "type": "object",
+                      "properties": {
+                        "twoFactorVerified": {
+                          "$ref": "#/definitions/API_ROUTES_SCHEMA/properties/GET/properties/SETTINGS/properties/json_data/properties/session/properties/twoFactorVerified"
+                        },
+                        "id": {
+                          "$ref": "#/definitions/API_ROUTES_SCHEMA/properties/GET/properties/SETTINGS/properties/json_data/properties/session/properties/id"
+                        },
+                        "userId": {
+                          "$ref": "#/definitions/API_ROUTES_SCHEMA/properties/GET/properties/SETTINGS/properties/json_data/properties/session/properties/userId"
+                        },
+                        "expiresAt": {
+                          "$ref": "#/definitions/API_ROUTES_SCHEMA/properties/GET/properties/SETTINGS/properties/json_data/properties/session/properties/expiresAt"
+                        },
+                        "twoFaVerified": {
+                          "$ref": "#/definitions/API_ROUTES_SCHEMA/properties/GET/properties/SETTINGS/properties/json_data/properties/session/properties/twoFaVerified"
+                        }
+                      },
+                      "required": [
+                        "twoFactorVerified",
+                        "id",
+                        "userId",
+                        "expiresAt",
+                        "twoFaVerified"
+                      ],
+                      "additionalProperties": false
+                    }
+                  },
+                  "required": ["success", "session"],
+                  "additionalProperties": false
+                }
+              },
+              "required": [
+                "route",
+                "json_data",
+                "required",
+                "response_success"
+              ],
+              "additionalProperties": false
+            },
+            "IMAGES_ID": {
+              "type": "object",
+              "properties": {
+                "route": { "type": "string", "const": "/api/images/:id" },
+                "json_data": {
+                  "type": "object",
+                  "properties": {},
+                  "additionalProperties": false
+                },
+                "required": {
+                  "type": "string",
+                  "enum": ["REQ_ORIGIN", "SESSION", "IP_ADDRESS"]
+                },
+                "response_success": {
+                  "type": "object",
+                  "properties": {
+                    "success": { "type": "boolean", "const": true },
+                    "images": {
+                      "type": "object",
+                      "properties": {
+                        "kod": { "type": "string" },
+                        "id": { "type": "string" },
+                        "images": {
+                          "type": "array",
+                          "items": { "type": "string" }
+                        },
+                        "created_at": {
+                          "type": "string",
+                          "format": "date-time"
+                        },
+                        "updated_at": {
+                          "type": "string",
+                          "format": "date-time"
+                        }
+                      },
+                      "required": [
+                        "kod",
+                        "id",
+                        "images",
+                        "created_at",
+                        "updated_at"
+                      ],
+                      "additionalProperties": false
+                    }
+                  },
+                  "required": ["success", "images"],
+                  "additionalProperties": false
+                }
+              },
+              "required": [
+                "route",
+                "json_data",
+                "required",
+                "response_success"
+              ],
+              "additionalProperties": false
+            }
+          },
+          "required": [
+            "LOGOUT",
+            "VERIFY_EMAIL",
+            "SETTINGS",
+            "2FA",
+            "2FA-SETUP",
+            "2FA-RESET",
+            "RESET_PASSWORD",
+            "RESET_PASSWORD_VERIFY_EMAIL",
+            "IMAGES_ID"
+          ],
+          "additionalProperties": false
+        }
+      },
+      "required": ["POST", "GET"],
+      "additionalProperties": false
+    }
+  },
+  "$schema": "http://json-schema.org/draft-07/schema#"
+}
