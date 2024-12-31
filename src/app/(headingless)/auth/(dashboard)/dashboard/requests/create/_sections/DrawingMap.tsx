@@ -20,15 +20,11 @@ import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
 import { transform } from "ol/proj";
 import { Check, Pen } from "lucide-react";
-import {
-  Popover,
-  PopoverContent,
-  PopoverTrigger,
-} from "@/components/ui/popover";
 import Feature from "ol/Feature";
 import { Drag } from "./Dragger";
 import { defaults as defaultInteractions, Modify } from "ol/interaction";
 import { useRouter } from "next/navigation";
+import { fromCircle } from "ol/geom/Polygon";
 
 export default function DrawingMap() {
   const mapStateRef = React.useRef<any>(null);
@@ -146,25 +142,15 @@ export default function DrawingMap() {
       })
       .map((layer: any) => {
         const source = layer.getSource();
-        const features = source.getFeatures();
-        const featureCollection = features.map((feature) => {
-          const properties = feature.getProperties();
-          const geometry = feature.getGeometry();
-
-          if (!geometry) {
-            return null;
-          }
-
-          return {
-            type: "Feature",
-            geometry: new GeoJSON().writeGeometryObject(geometry),
-            properties: { ...properties },
-          };
+        const features = source.getFeatures().map((feature) => {
+          const circle = feature.getGeometry();
+          return new Feature({
+            geometry: fromCircle(circle, 16),
+            name: "Circle",
+          });
         });
-        return {
-          type: "FeatureCollection",
-          features: featureCollection,
-        };
+        const featureCollectionJson = new GeoJSON().writeFeatures(features);
+        return featureCollectionJson;
       })
       .filter(Boolean);
 
@@ -180,9 +166,8 @@ export default function DrawingMap() {
 
     const data = await res.json();
     if (data.success) {
-      router.push(`/auth/dashboard/requests/read/${data.georequests.id}`);
+      router.push(`/auth/dashboard/requests/read/${data.geoRequests.id}`);
     }
-    console.log(data);
   }
 
   return (

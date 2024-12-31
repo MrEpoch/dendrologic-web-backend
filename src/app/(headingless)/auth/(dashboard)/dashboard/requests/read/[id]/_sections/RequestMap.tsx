@@ -1,6 +1,5 @@
 "use client";
 import React, { useEffect } from "react";
-import Draw from "ol/interaction/Draw.js";
 import Map from "ol/Map.js";
 import View from "ol/View.js";
 import { OSM, Vector as VectorSource } from "ol/source.js";
@@ -21,8 +20,6 @@ import { Button } from "@/components/ui/button";
 import { transform } from "ol/proj";
 import { Check, Pen } from "lucide-react";
 import Link from "next/link";
-import { Circle, Polygon } from "ol/geom";
-import { fromCircle } from "ol/geom/Polygon";
 
 export default function RequestMap({
   requestJSON,
@@ -40,69 +37,11 @@ export default function RequestMap({
         source: new OSM(),
       });
 
-      console.log(requestJSON.geodata[0].features);
-
       const geojson = new GeoJSON();
-      const transformedData = requestJSON.geodata[0].features
-        .map((feature: any) => {
-          const flatCoordinates = feature.properties.geometry.flatCoordinates;
-
-          if (flatCoordinates.length === 2) {
-            return {
-              type: "Feature",
-              geometry: {
-                type: "Point",
-                coordinates: flatCoordinates,
-              },
-              properties: {},
-            };
-          } else if (flatCoordinates.length > 2) {
-            const coordinates = [];
-
-            for (let i = 0; i < flatCoordinates.length; i += 2) {
-              coordinates.push([flatCoordinates[i], flatCoordinates[i + 1]]);
-            }
-
-            const centerX = (flatCoordinates[0] + flatCoordinates[2]) / 2;
-            const centerY = (flatCoordinates[1] + flatCoordinates[3]) / 2;
-
-            const radius =
-              Math.sqrt(
-                Math.pow(flatCoordinates[2] - flatCoordinates[0], 2) +
-                  Math.pow(flatCoordinates[3] - flatCoordinates[1], 2),
-              ) / 2;
-
-            const circle = new Circle([centerX, centerY], radius);
-            const polygon = fromCircle(circle, 28);
-
-            return {
-              type: "Feature",
-              geometry: JSON.parse(
-                new GeoJSON().writeGeometry(polygon, {
-                  dataProjection: "EPSG:4326",
-                  featureProjection: "EPSG:3857",
-                }),
-              ),
-              properties: {},
-            };
-          }
-
-          return null;
-        })
-        .filter(Boolean);
-
-      const transformedGeoJson = {
-        type: "FeatureCollection",
-        features: transformedData,
-      };
-
-      console.log(transformedGeoJson);
+      const transformedData = JSON.parse(requestJSON.geodata[0]);
 
       sourceRef.current = new VectorSource({
-        features: geojson.readFeatures(transformedGeoJson, {
-          dataProjection: "EPSG:4326",
-          featureProjection: "EPSG:3857",
-        }),
+        features: geojson.readFeatures(transformedData),
       });
 
       const vector = new VectorLayer({
@@ -174,9 +113,9 @@ export default function RequestMap({
         <Label htmlFor="circling">Vybrat oblast</Label>
         <Link
           href={`/auth/dashboard/requests/edit/${requestJSON.id}`}
-          className={`h-4 w-4 p-4 rounded border hover:bg-main-background-300 bg-main-background-100`}
+          className={`h-4 flex relative items-center justify-center w-4 p-4 rounded border hover:bg-main-background-300 bg-main-background-100`}
         >
-          <Pen />
+          <Pen className="min-h-4 min-w-4 justify-self-center z-10" />
         </Link>
       </div>
       <div className="flex gap-2 justify-between items-center">
