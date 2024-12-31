@@ -9,39 +9,17 @@ import {
 import { Plus, RepeatIcon } from "lucide-react";
 import Link from "next/link";
 
-const initialState = [
-  {
-    text: "Gather Data",
-    checked: false,
-    id: 1,
-    description:
-      "Collect relevant marketing copy from the user's website and competitor sites to understand the current market positioning and identify potential areas for improvement.",
-  },
-  {
-    text: "Analyze Copy",
-    checked: false,
-    id: 2,
-    description:
-      "As an AI language model, analyze the collected marketing copy for clarity, persuasiveness, and alignment with the user's brand voice and target audience. Identify strengths, weaknesses, and opportunities for optimization.",
-  },
-  {
-    text: "Create Suggestions",
-    checked: false,
-    id: 3,
-    description:
-      "Using natural language generation techniques, create alternative versions of the marketing copy that address the identified weaknesses and leverage the opportunities for improvement. Ensure the generated copy is compelling, on-brand, and optimized for the target audience.",
-  },
-  {
-    text: "Recommendations",
-    checked: false,
-    id: 5,
-    description:
-      "Present the AI-generated marketing copy suggestions to the user, along with insights on why these changes were recommended. Provide a user-friendly interface for the user to review, edit, and implement the optimized copy on their website.",
-  },
-];
-
-export function SortableListRequests() {
-  const [items, setItems] = React.useState<Item[]>(initialState);
+export function SortableListRequests({ georequests }) {
+  const [items, setItems] = React.useState<Item[]>(
+    georequests.map((georequest, i) => {
+      return {
+        text: georequest.requestName,
+        checked: false,
+        id: i + 1,
+        link: georequest.id,
+      };
+    }),
+  );
 
   const handleCompleteItem = (id: number) => {
     setItems((prevItems) =>
@@ -49,22 +27,6 @@ export function SortableListRequests() {
         item.id === id ? { ...item, checked: !item.checked } : item,
       ),
     );
-  };
-
-  const handleAddItem = () => {
-    setItems((prevItems) => [
-      ...prevItems,
-      {
-        text: `Item ${prevItems.length + 1}`,
-        checked: false,
-        id: Date.now(),
-        description: "",
-      },
-    ]);
-  };
-
-  const handleResetItems = () => {
-    setItems(initialState);
   };
 
   const handleCloseOnDrag = React.useCallback(() => {
@@ -84,7 +46,7 @@ export function SortableListRequests() {
     item: Item,
     order: number,
     onCompleteItem: (id: number) => void,
-    onRemoveItem: (id: number) => void,
+    onDeleteItem: (id: string) => void,
   ) => {
     return (
       <SortableListItem
@@ -92,12 +54,29 @@ export function SortableListRequests() {
         order={order}
         key={item.id}
         onCompleteItem={onCompleteItem}
-        onRemoveItem={onRemoveItem}
+        onDeleteItem={onDeleteItem}
         handleDrag={handleCloseOnDrag}
         className="my-2 "
       />
     );
   };
+
+  async function deleteItem(link: string) {
+    try {
+      const response = await fetch(`/api/geojson/requests/${link}`, {
+        method: "DELETE",
+        headers: {
+          "Content-Type": "application/json",
+        },
+      });
+
+      console.log(response);
+      const data = await response.json();
+      console.log(data);
+    } catch (e) {
+      console.log(e);
+    }
+  }
 
   return (
     <div className="w-full">
@@ -109,7 +88,7 @@ export function SortableListRequests() {
                 <Plus className="dark:text-netural-100 h-5 w-5 text-main-text-200 hover:text-main-text-100" />
               </Link>
               <div data-tip="Reset task list">
-                <button onClick={handleResetItems}>
+                <button>
                   <RepeatIcon className="h-4 w-4 text-main-text-200 hover:text-main-text-100" />
                 </button>
               </div>
@@ -119,6 +98,7 @@ export function SortableListRequests() {
               setItems={setItems}
               onCompleteItem={handleCompleteItem}
               renderItem={renderListItem}
+              deleteItem={deleteItem}
             />
           </div>
         </div>

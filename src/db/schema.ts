@@ -12,7 +12,6 @@ import {
   json,
 } from "drizzle-orm/pg-core";
 import { createInsertSchema } from "drizzle-zod";
-import { z } from "zod";
 
 const bytea = customType<{ data: Uint8Array }>({
   dataType() {
@@ -109,6 +108,7 @@ export const geoRequestTable = pgTable("geo_request", {
     .notNull()
     .references(() => userTable.id),
   geodata: json(),
+  requestName: text("request_name").notNull(),
 });
 
 const insertUserSchema = createInsertSchema(userTable, {

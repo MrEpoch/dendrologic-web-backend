@@ -1,5 +1,5 @@
 "use client";
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import Draw from "ol/interaction/Draw.js";
 import Map from "ol/Map.js";
 import View from "ol/View.js";
@@ -25,6 +25,7 @@ import { Drag } from "./Dragger";
 import { defaults as defaultInteractions, Modify } from "ol/interaction";
 import { useRouter } from "next/navigation";
 import { fromCircle } from "ol/geom/Polygon";
+import { Input } from "@/components/ui/input";
 
 export default function DrawingMap() {
   const mapStateRef = React.useRef<any>(null);
@@ -34,6 +35,7 @@ export default function DrawingMap() {
   const [selectedFeature, setSelectedFeature] = React.useState<any>(null);
   const mapSelectedFeatureRef = React.useRef<any>(null);
   const router = useRouter();
+  const [geoRequestName, setGeoRequestName] = useState<string>("");
 
   useEffect(() => {
     function addInteraction() {
@@ -161,12 +163,14 @@ export default function DrawingMap() {
       },
       body: JSON.stringify({
         georequest: JSON.stringify(geoJSONdata),
+        georequest_name: geoRequestName,
       }),
     });
 
     const data = await res.json();
+    console.log(data);
     if (data.success) {
-      router.push(`/auth/dashboard/requests/read/${data.geoRequests.id}`);
+      router.push(`/auth/dashboard/requests/read/${data.geoRequest.id}`);
     }
   }
 
@@ -182,6 +186,10 @@ export default function DrawingMap() {
         >
           <Pen />
         </Button>
+      </div>
+      <div className="flex gap-2 justify-between items-center">
+        <Label htmlFor="circling">Název žádosti* (3-255)</Label>
+        <Input onChange={(e) => setGeoRequestName(e.target.value)} />
       </div>
       <div className="flex gap-2 justify-between items-center">
         <Label htmlFor="circling">Vytvořit žádost</Label>

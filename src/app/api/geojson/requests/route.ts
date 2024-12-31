@@ -29,7 +29,11 @@ export async function GET(req: NextRequest) {
       offset = parseInt(req.nextUrl.searchParams.get("offset") || "");
 
     const requests = await db
-      .select()
+      .select({
+        id: geoRequestTable.id,
+        userId: geoRequestTable.userId,
+        requestName: geoRequestTable.requestName,
+      })
       .from(geoRequestTable)
       .offset(offset ?? 0)
       .limit(limit ?? 10);
@@ -68,6 +72,7 @@ export async function POST(request: NextRequest) {
 
     const validationSchema = z.object({
       georequest: z.string(),
+      georequest_name: z.string().max(255).min(3),
     });
 
     // It can fail if JSON is missing
@@ -80,12 +85,12 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ success: false, error: "BAD_REQUEST" });
     }
 
-    console.log(validateUser.user.id);
     const geoRequest = await db
       .insert(geoRequestTable)
       .values({
         geodata: validated.data.georequest,
         userId: validateUser.user.id,
+        requestName: validated.data.georequest_name,
       })
       .returning();
 

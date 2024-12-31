@@ -21,14 +21,14 @@ export type Item = {
   text: string;
   checked: boolean;
   id: number;
-  description: string;
+  link: string;
 };
 
 interface SortableListItemProps {
   item: Item;
   order: number;
   onCompleteItem: (id: number) => void;
-  onRemoveItem: (id: number) => void;
+  onDeleteItem: (id: string) => void;
   renderExtra?: (item: Item) => React.ReactNode;
   isExpanded?: boolean;
   className?: string;
@@ -39,7 +39,7 @@ function SortableListItem({
   item,
   order,
   onCompleteItem,
-  onRemoveItem,
+  onDeleteItem,
   renderExtra,
   handleDrag,
   isExpanded,
@@ -128,7 +128,7 @@ function SortableListItem({
                   >
                     <Link
                       className="flex text-main-text-200 items-center p-4"
-                      href={`/auth/dashboard/requests/read/${item.id}`}
+                      href={`/auth/dashboard/requests/read/${item.link}`}
                     >
                       <LocateFixed />
                     </Link>
@@ -237,7 +237,7 @@ function SortableListItem({
             >
               <button
                 className="inline-flex h-10 items-center justify-center whitespace-nowrap rounded-md px-3 text-sm font-medium  transition-colors duration-150   focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50"
-                onClick={() => onRemoveItem(item.id)}
+                onClick={() => onDeleteItem(item.link)}
               >
                 <Trash className="h-4 w-4 text-red-400 transition-colors duration-150 fill-red-400/60 " />
               </button>
@@ -259,8 +259,9 @@ interface SortableListProps {
     item: Item,
     order: number,
     onCompleteItem: (id: number) => void,
-    onRemoveItem: (id: number) => void,
+    onDeleteItem: (link: string) => void,
   ) => ReactNode;
+  deleteItem: (link: string) => void;
 }
 
 function SortableList({
@@ -268,6 +269,7 @@ function SortableList({
   setItems,
   onCompleteItem,
   renderItem,
+  deleteItem,
 }: SortableListProps) {
   if (items) {
     return (
@@ -280,9 +282,7 @@ function SortableList({
         >
           <AnimatePresence>
             {items?.map((item, index) =>
-              renderItem(item, index, onCompleteItem, (id: number) =>
-                setItems((items) => items.filter((item) => item.id !== id)),
-              ),
+              renderItem(item, index, onCompleteItem, deleteItem),
             )}
           </AnimatePresence>
         </Reorder.Group>
