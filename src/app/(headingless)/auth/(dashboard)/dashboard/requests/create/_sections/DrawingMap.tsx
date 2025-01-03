@@ -24,8 +24,9 @@ import Feature from "ol/Feature";
 import { Drag } from "./Dragger";
 import { defaults as defaultInteractions, Modify } from "ol/interaction";
 import { useRouter } from "next/navigation";
-import { fromCircle } from "ol/geom/Polygon";
 import { Input } from "@/components/ui/input";
+import stromy from "@/assets/stromy-geo.json";
+import { Point, Polygon } from "ol/geom";
 
 export default function DrawingMap() {
   const mapStateRef = React.useRef<any>(null);
@@ -41,7 +42,7 @@ export default function DrawingMap() {
     function addInteraction() {
       drawRef.current = new Draw({
         source: sourceRef.current,
-        type: "Circle",
+        type: "Polygon",
         freehand: true,
       });
       mapStateRef.current?.addInteraction(drawRef.current);
@@ -123,18 +124,31 @@ export default function DrawingMap() {
             }),
           );
 
-          /*
-        if (featureExists) {
-          source.removeFeature(featureExists);
-        }
-          */
+          if (featureExists) {
+            source.removeFeature(featureExists);
+          }
           selectedFeatureToNull();
           return;
         }
       });
   }
 
+  function isPointInsidePolygon(pointCoords, polygon) {
+    const point = new Point(pointCoords);
+    const geometry = polygon.getGeometry();
+    if (geometry.getType() === "Polygon") {
+      const transformedCoords = transform(
+        point.getCoordinates(),
+        "EPSG:4326",
+        "EPSG:3857",
+      );
+      return geometry.intersectsCoordinate(transformedCoords);
+    }
+    return false;
+  }
+
   async function saveRequest() {
+    let purified;
     const geoJSONdata = mapStateRef.current
       .getLayers()
       .getArray()
@@ -145,16 +159,29 @@ export default function DrawingMap() {
       .map((layer: any) => {
         const source = layer.getSource();
         const features = source.getFeatures().map((feature) => {
+          purified = stromy;
+          purified.features = stromy.features.filter((point) => {
+            const pointCoords = point.geometry.coordinates;
+            return isPointInsidePolygon(pointCoords, feature);
+          });
+
+          source.addFeatures(
+            new GeoJSON().readFeatures(purified, {
+              featureProjection: "EPSG:3857",
+            }),
+          );
+
           const circle = feature.getGeometry();
           return new Feature({
-            geometry: fromCircle(circle, 16),
-            name: "Circle",
+            geometry: circle,
+            name: "Polygon",
           });
         });
         const featureCollectionJson = new GeoJSON().writeFeatures(features);
         return featureCollectionJson;
       })
       .filter(Boolean);
+    /*
 
     const res = await fetch("/api/geojson/requests", {
       method: "POST",
@@ -170,8 +197,9 @@ export default function DrawingMap() {
     const data = await res.json();
     console.log(data);
     if (data.success) {
-      router.push(`/auth/dashboard/requests/read/${data.geoRequest.id}`);
+      router.push(`/auth/dashboard/requests/read/${data.geoRequest[0].id}`);
     }
+      */
   }
 
   return (

@@ -1,3 +1,4 @@
+"use client";
 import {
   Pointer as PointerInteraction,
   defaults as defaultInteractions,
