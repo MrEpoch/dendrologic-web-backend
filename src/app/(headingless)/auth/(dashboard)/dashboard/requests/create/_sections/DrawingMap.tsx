@@ -19,7 +19,7 @@ import {
 import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
 import { transform } from "ol/proj";
-import { Check, Pen } from "lucide-react";
+import { Check, Circle, CircleDot, Pen, Trees } from "lucide-react";
 import Feature from "ol/Feature";
 import { Drag } from "./Dragger";
 import { defaults as defaultInteractions, Modify } from "ol/interaction";
@@ -147,9 +147,9 @@ export default function DrawingMap() {
     return false;
   }
 
-  async function saveRequest() {
-    let purified;
-    const geoJSONdata = mapStateRef.current
+  function showSelected() {
+    console.log("called 0");
+    mapStateRef.current
       .getLayers()
       .getArray()
       .filter((layer: any) => {
@@ -158,11 +158,27 @@ export default function DrawingMap() {
       })
       .map((layer: any) => {
         const source = layer.getSource();
+        let purified;
+        let object_id_container = [];
         const features = source.getFeatures().map((feature) => {
-          purified = stromy;
-          purified.features = stromy.features.filter((point) => {
+          if (feature.getGeometry().getType() !== "Polygon") {
+            return feature;
+          }
+          purified = JSON.parse(JSON.stringify(stromy));
+          purified.features = purified.features.filter((point) => {
+            if (object_id_container.includes(point.properties.OBJECTID)) {
+              return false;
+            }
             const pointCoords = point.geometry.coordinates;
-            return isPointInsidePolygon(pointCoords, feature);
+            console.log(point);
+            const isPointInsidePolygonVar = isPointInsidePolygon(
+              pointCoords,
+              feature,
+            );
+            if (isPointInsidePolygonVar) {
+              object_id_container.push(point.properties.OBJECTID);
+            }
+            return isPointInsidePolygonVar;
           });
 
           source.addFeatures(
@@ -179,9 +195,33 @@ export default function DrawingMap() {
         });
         const featureCollectionJson = new GeoJSON().writeFeatures(features);
         return featureCollectionJson;
+      });
+  }
+
+  async function saveRequest() {
+    const geoJSONdata = mapStateRef.current
+      .getLayers()
+      .getArray()
+      .filter((layer: any) => {
+        const source = layer.getSource();
+        return source instanceof VectorSource;
+      })
+      .map((layer: any) => {
+        const source = layer.getSource();
+        const features = source
+          .getFeatures()
+          .filter((feature) => feature.getGeometry().getType() === "Polygon")
+          .map((feature) => {
+            const circle = feature.getGeometry();
+            return new Feature({
+              geometry: circle,
+              name: "Polygon",
+            });
+          });
+        const featureCollectionJson = new GeoJSON().writeFeatures(features);
+        return featureCollectionJson;
       })
       .filter(Boolean);
-    /*
 
     const res = await fetch("/api/geojson/requests", {
       method: "POST",
@@ -199,7 +239,6 @@ export default function DrawingMap() {
     if (data.success) {
       router.push(`/auth/dashboard/requests/read/${data.geoRequest[0].id}`);
     }
-      */
   }
 
   return (
@@ -218,6 +257,26 @@ export default function DrawingMap() {
       <div className="flex gap-2 justify-between items-center">
         <Label htmlFor="circling">Název žádosti* (3-255)</Label>
         <Input onChange={(e) => setGeoRequestName(e.target.value)} />
+      </div>
+      <div className="flex gap-2 justify-between items-center">
+        <Label htmlFor="circling">Ukázat vybrané</Label>
+        <Button
+          className={`h-4 w-4 p-4 rounded border`}
+          variant="outline"
+          onClick={showSelected}
+        >
+          <CircleDot />
+        </Button>
+      </div>
+      <div className="flex gap-2 justify-between items-center">
+        <Label htmlFor="circling">Přidat záznam</Label>
+        <Button
+          className={`h-4 w-4 p-4 rounded border`}
+          variant="outline"
+          onClick={() => {}}
+        >
+          <Trees />
+        </Button>
       </div>
       <div className="flex gap-2 justify-between items-center">
         <Label htmlFor="circling">Vytvořit žádost</Label>
