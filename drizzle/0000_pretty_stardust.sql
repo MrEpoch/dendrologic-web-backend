@@ -7,6 +7,17 @@ CREATE TABLE IF NOT EXISTS "email_verification_request" (
 	CONSTRAINT "email_verification_request_id_unique" UNIQUE("id")
 );
 --> statement-breakpoint
+CREATE TABLE IF NOT EXISTS "feature" (
+	"id" uuid PRIMARY KEY DEFAULT gen_random_uuid() NOT NULL,
+	"created_at" timestamp DEFAULT now() NOT NULL,
+	"updated_at" timestamp DEFAULT now() NOT NULL,
+	"geometry_type" text NOT NULL,
+	"geometry_coordinates" "point" NOT NULL,
+	"nazev" text NOT NULL,
+	"pocet" integer NOT NULL,
+	CONSTRAINT "feature_id_unique" UNIQUE("id")
+);
+--> statement-breakpoint
 CREATE TABLE IF NOT EXISTS "geo_image" (
 	"id" uuid PRIMARY KEY DEFAULT gen_random_uuid() NOT NULL,
 	"kod" text NOT NULL,

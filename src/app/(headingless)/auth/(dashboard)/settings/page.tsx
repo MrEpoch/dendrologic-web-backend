@@ -3,10 +3,12 @@ import {
   EmailUpdateForm,
   PasswordUpdateForm,
 } from "@/components/auth/UpdateForm";
+import { deleteSessionCookie } from "@/lib/Actions";
 import { globalGETRateLimitNext } from "@/lib/request";
 import { getCurrentSession } from "@/lib/sessionTokens";
 import { getUserRecoveryCode } from "@/lib/user";
 import { MuseoModerno } from "next/font/google";
+import { headers } from "next/headers";
 import Link from "next/link";
 import { redirect } from "next/navigation";
 import React from "react";
@@ -21,9 +23,10 @@ export default async function Page() {
   if (!(await globalGETRateLimitNext())) {
     return <div>Too many requests</div>;
   }
+
   const { session, user } = await getCurrentSession();
   if (session === null) {
-    return redirect("/auth/login");
+    return redirect("/auth/login?delete-session=true");
   }
   if (user.registered2FA && !session.twoFactorVerified) {
     return redirect("/auth/2fa");

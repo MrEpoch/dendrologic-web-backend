@@ -19,14 +19,31 @@ import {
 import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
 import { transform } from "ol/proj";
-import { Check, Circle, CircleDot, Pen, Trees } from "lucide-react";
+import { Check, Circle, CircleDot, Lock, LockOpen, Pen, Trees } from "lucide-react";
 import Feature from "ol/Feature";
 import { Drag } from "./Dragger";
-import { defaults as defaultInteractions, Modify } from "ol/interaction";
 import { useRouter } from "next/navigation";
 import { Input } from "@/components/ui/input";
 import stromy from "@/assets/stromy-geo.json";
 import { Point, Polygon } from "ol/geom";
+import { z } from "zod";
+import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { Form, FormControl, FormField, FormItem, FormLabel } from "@/components/ui/form";
+
+
+export const formSchema = z
+  .object({
+    NAZEV: z
+      .string()
+      .min(3, { message: "Musi být nejkratě 1 znak" })
+      .max(255, { message: "Musi být měně než 255 znaků" }),
+    POCET: z
+      .coerce
+      .number({ required_error: "Musi být číslo" })
+      .max(100)
+  });
+
 
 export default function DrawingMap() {
   const mapStateRef = React.useRef<any>(null);
@@ -37,6 +54,14 @@ export default function DrawingMap() {
   const mapSelectedFeatureRef = React.useRef<any>(null);
   const router = useRouter();
   const [geoRequestName, setGeoRequestName] = useState<string>("");
+  const dragRef = React.useRef<any>(null);
+  const [addNewPoint, setAddNewPoint] = useState<boolean>(false);
+
+  const form = useForm<z.infer<typeof formSchema>>({
+    resolver: zodResolver(formSchema),
+    defaultValues: { NAZEV: "", POCET: 1 },
+  });
+
 
   useEffect(() => {
     function addInteraction() {
@@ -46,6 +71,11 @@ export default function DrawingMap() {
         freehand: true,
       });
       mapStateRef.current?.addInteraction(drawRef.current);
+    }
+
+    function addDragInteraction() {
+      dragRef.current = new Drag();
+      mapStateRef.current?.addInteraction(dragRef.current);
     }
 
     /**
@@ -64,7 +94,6 @@ export default function DrawingMap() {
       });
 
       mapStateRef.current = new Map({
-        interactions: defaultInteractions().extend([new Drag()]),
         layers: [raster, vector],
         target: "map",
         view: new View({
@@ -77,9 +106,7 @@ export default function DrawingMap() {
         }),
       });
 
-      mapStateRef.current.addInteraction(
-        new Modify({ source: sourceRef.current }),
-      );
+      addDragInteraction();
 
       mapSelectedFeatureRef.current = new Select({
         condition: click,
@@ -241,6 +268,57 @@ export default function DrawingMap() {
     }
   }
 
+  const [isDragActive, setIsDragActive] = useState(false);
+
+  function lockDrag() {
+    dragRef.current?.setActive(false);
+    setIsDragActive(false);
+  }
+
+  function unlockDrag() {
+    dragRef.current?.setActive(true);
+    setIsDragActive(true);
+  }
+
+  // Function which will geojson point with properties this will be saved into db
+  function addPoint(values: z.infer<typeof formSchema>) {
+    const geoJsonPoints = [];
+
+    for (let i = 0; i < values.POCET; i++) {
+      geoJsonPoints.push(new Feature({
+        geometry: new Point(
+          transform(
+          [15.243629268374999 + (i / 10), 49.272716766783859 + (i / 10)],
+            "EPSG:4326",
+            "EPSG:3857",
+          )
+        ),
+        properties: {
+          NAZEV: values.NAZEV,
+          POCET: values.POCET,
+          FROM_APP: true
+        },
+      }));
+    }
+
+    const source = mapStateRef.current
+      .getLayers()
+      .getArray()
+      .filter((layer: any) => {
+        const source = layer.getSource();
+        return source instanceof VectorSource;
+      })
+      .map((layer: any) => {
+        const source = layer.getSource();
+        geoJsonPoints.forEach((geoJsonPoint) => {
+          source.addFeature(geoJsonPoint);
+        })
+        return source;
+      });
+  }
+
+  console.log(selectedFeature);
+
   return (
     <div className="py-8 flex flex-col gap-4">
       <div id="map" className="h-96 w-full" />
@@ -273,9 +351,19 @@ export default function DrawingMap() {
         <Button
           className={`h-4 w-4 p-4 rounded border`}
           variant="outline"
-          onClick={() => {}}
+          onClick={() => setAddNewPoint(true)}
         >
           <Trees />
+        </Button>
+      </div>
+      <div className="flex gap-2 justify-between items-center">
+        <Label htmlFor="circling">{isDragActive ? "Uzamknout pohyb" : "Odemknout pohyb"}</Label>
+        <Button
+          className={`h-4 w-4 p-4 rounded border`}
+          variant="outline"
+    onClick={() => isDragActive ? lockDrag() : unlockDrag()}
+        >
+    {isDragActive ? <Lock /> : <LockOpen />}
         </Button>
       </div>
       <div className="flex gap-2 justify-between items-center">
@@ -291,16 +379,77 @@ export default function DrawingMap() {
       <Dialog onOpenChange={selectedFeatureToNull} open={!!selectedFeature}>
         <DialogContent>
           <DialogHeader className="flex flex-col gap-4">
-            <DialogTitle>Chcete smazat vybraný kruh?</DialogTitle>
+            <DialogTitle>Chcete smazat vybraný záznam?</DialogTitle>
             <DialogDescription>
-              Akce nelze navrátit, rozhodněte se zda chcete smazat vybraný kruh.
+              Akci nelze navrátit, rozhodněte se zda chcete smazat vybraný kruh.
             </DialogDescription>
           </DialogHeader>
+          <div className="flex flex-col p-4 gap-2 bg-main-background-200 rounded w-full overflow-x-auto">
+            <p className="flex items-center justify-between gap-2"><span>Název:</span><span>{selectedFeature?.values_.properties["NAZEV"]}</span></p>
+            <p className="flex items-center justify-between gap-2">
+              <span>Počet:</span>
+              <span>{selectedFeature?.values_.properties["POCET"]}</span></p>
+          </div>
           <Button onClick={deleteSelectedFeature} variant="destructive">
-            Smazat kruh
+            Smazat záznam
           </Button>
         </DialogContent>
       </Dialog>
+      <Dialog onOpenChange={() => setAddNewPoint(false)} open={!!addNewPoint}>
+        <DialogContent>
+          <DialogHeader className="flex flex-col gap-4">
+            <DialogTitle>Přidat nový záznam</DialogTitle>
+            <DialogDescription>
+              Vyplňte základní informace o záznamu
+            </DialogDescription>
+          </DialogHeader>
+              <Form {...form}>
+      <form
+        onSubmit={form.handleSubmit(addPoint)}
+        className="max-w-[500px] w-full flex flex-col items-center p-6 space-y-8"
+      >
+          <FormField
+      control={form.control}
+      name={"NAZEV"}
+      render={({ field }) => (
+        <FormItem className="w-full">
+          <FormLabel>Název záznamu (3-255 písmen)</FormLabel>
+          <FormControl>
+             <Input
+                type="text"
+                className="bg-main-background-100 shadow border border-main-accent-100"
+                {...field}
+              />
+          </FormControl>
+        </FormItem>
+      )}
+    />
+          <FormField
+      control={form.control}
+      name={"POCET"}
+      render={({ field }) => (
+        <FormItem className="w-full">
+          <FormLabel>Počet záznamů (max 100)</FormLabel>
+          <FormControl>
+             <Input
+                type="number"
+                className="bg-main-background-100 shadow border border-main-accent-100"
+                {...field}
+              />
+          </FormControl>
+        </FormItem>
+      )}
+    />
+
+         
+          <Button type="submit" variant="default">
+            Přidat záznam
+          </Button>
+        </form>
+      </Form>
+        </DialogContent>
+      </Dialog>
+
     </div>
   );
 }

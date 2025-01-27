@@ -37,6 +37,20 @@ export class Drag extends PointerInteraction {
      */
     this.previousCursor_ = undefined;
   }
+
+  setActive(active) {
+    if (active) {
+      this.set('handleDownEvent', handleDownEvent);
+      this.set('handleDragEvent', handleDragEvent);
+      this.set('handleMoveEvent', handleMoveEvent);
+      this.set('handleUpEvent', handleUpEvent);
+    } else {
+      this.set('handleDownEvent', null);
+      this.set('handleDragEvent', null);
+      this.set('handleMoveEvent', null);
+      this.set('handleUpEvent', null);
+    }
+  }
 }
 
 /**

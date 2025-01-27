@@ -40,17 +40,18 @@ body {
     --chart-5: 27 87% 67%;
     --radius: 0.3rem;
 
-    --primary-100: #272343;
-    --primary-200: #788e98;
-    --primary-300: #f0f5f9;
-    --accent-100: #788189;
-    --accent-200: #e1e4e6;
-    --text-100: #1e2022;
-    --text-200: #52616b;
-    --bg-100: #ffffff;
-    --bg-200: #e3f6f5;
-    --bg-300: #bae8e8;
+    --primary-100: #37462d; /* Deep Olive Green */
+    --primary-200: #708d57; /* Softer Moss Green */
+    --primary-300: #e9f3e1; /* Pale Green, airy and natural */
+    --accent-100: #b04e39; /* Earthy Brick Red */
+    --accent-200: #f2e4dc; /* Warm Beige, complementing */
+    --text-100: #2c2d1f; /* Deep Forest Green */
+    --text-200: #5a6a4f; /* Muted Olive Green */
+    --bg-100: #ffffef; /* Clean White */
+    --bg-200: #f4f6e7; /* Soft Warm Beige */
+    --bg-300: #d7e1c4; /* Light Sage Green */  
   }
+
   .dark {
     --background: 0 0% 3.9%;
     --foreground: 0 0% 98%;
@@ -76,6 +77,18 @@ body {
     --chart-3: 30 80% 55%;
     --chart-4: 280 65% 60%;
     --chart-5: 340 75% 55%;
+
+    --primary-100: #1d2917; /* Dark Forest Green */
+    --primary-200: #415738; /* Muted Green */
+    --primary-300: #c4d7a1; /* Soft Light Olive */
+    --accent-100: #8b3a2e; /* Rich Terracotta Red */
+    --accent-200: #dec2b7; /* Warm Sandstone Beige */
+    --text-100: #e6e8d9; /* Off-White for readability */
+    --text-200: #aeb39f; /* Muted Light Green-Gray */
+    --bg-100: #121212; /* Deep Charcoal */
+    --bg-200: #1c2615; /* Forest Green-Black */
+    --bg-300: #37462d; /* Dark Olive Green */
+
   }
 }
 

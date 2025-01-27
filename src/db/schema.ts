@@ -10,6 +10,7 @@ import {
   customType,
   integer,
   json,
+  geometry,
 } from "drizzle-orm/pg-core";
 import { createInsertSchema } from "drizzle-zod";
 
@@ -58,6 +59,18 @@ export const userTable = pgTable(
   }),
 );
 
+export const feature = pgTable("feature", {
+  id: uuid("id").defaultRandom().primaryKey().unique(),
+
+  created_at: timestamp("created_at").notNull().defaultNow(),
+  updated_at: timestamp("updated_at").notNull().defaultNow(),
+
+  geometry_type: text("geometry_type").notNull(),
+  geometry_coordinates: geometry("geometry_coordinates", { type: "point", mode: "xy", srid: 4326 }).notNull(),
+  nazev: text("nazev").notNull(),
+  pocet: integer("pocet").notNull(),
+})
+
 export const sessionTable = pgTable("session", {
   id: text("id").primaryKey().unique(),
   userId: uuid("user_id")
@@ -75,7 +88,7 @@ export const emailVerificationRequestTable = pgTable(
   {
     id: text("id").primaryKey().unique(),
     userId: uuid("user_id")
-      .notNull()
+    .notNull()
       .references(() => userTable.id),
     code: text("code").notNull(),
     email: text("email").notNull(),

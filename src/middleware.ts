@@ -35,7 +35,9 @@ export async function middleware(request: NextRequest): Promise<NextResponse> {
 
   res.headers.append("Access-Control-Allow-Credentials", "true");
 
-  if (request.method === "GET") {
+  if (request.url.includes("/login?delete-session=true")) {
+    res.cookies.delete("session");
+  } else if (request.method === "GET") {
     const token = request.cookies.get("session")?.value ?? null;
     if (token !== null) {
       // Only extend cookie expiration on GET requests since we can be sure
