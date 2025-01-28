@@ -58,9 +58,9 @@ export default function HeaderClient({ isLogged }) {
         {isLogged ? (
           <Link
             className="block rounded-md bg-main-background-300 border-transparent hover:border-black border hover:bg-transparent px-5 py-2.5 text-sm font-medium text-main-text-100 transition"
-            href="/auth/settings"
+            href="/auth/dashboard"
           >
-            Nastavení
+            Hlavní panel
           </Link>
         ) : (
           <div className="sm:flex sm:gap-4">

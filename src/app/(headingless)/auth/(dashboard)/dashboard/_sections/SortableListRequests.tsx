@@ -87,11 +87,6 @@ export function SortableListRequests({ georequests }) {
               <Link href="/auth/dashboard/requests/create">
                 <Plus className="dark:text-netural-100 h-5 w-5 text-main-text-200 hover:text-main-text-100" />
               </Link>
-              <div data-tip="Reset task list">
-                <button>
-                  <RepeatIcon className="h-4 w-4 text-main-text-200 hover:text-main-text-100" />
-                </button>
-              </div>
             </div>
             <SortableList
               items={items}

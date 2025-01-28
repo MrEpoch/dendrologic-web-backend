@@ -56,7 +56,7 @@ export default function Footer() {
             <ul className="mt-6 space-y-4 text-sm">
               <li>
                 <Link
-    href="/contact"
+                  href="/contact"
                   className="text-gray-700 transition hover:opacity-75"
                 >
                   {" "}
@@ -66,7 +66,7 @@ export default function Footer() {
 
               <li>
                 <Link
-    href="/about"
+                  href="/about"
                   className="text-gray-700 transition hover:opacity-75"
                 >
                   {" "}
@@ -76,7 +76,7 @@ export default function Footer() {
 
               <li>
                 <Link
-    href="/guide"
+                  href="/guide"
                   className="text-gray-700 transition hover:opacity-75"
                 >
                   {" "}
@@ -85,10 +85,10 @@ export default function Footer() {
               </li>
             </ul>
           </div>
-        <p className="text-xs text-gray-500">
-          &copy; 2022. Company Name. All rights reserved.
-        </p>
-      </div>
+          <p className="text-xs text-gray-500">
+            &copy; 2025. SOČ Alexandr Stenčuk. All rights reserved.
+          </p>
+        </div>
       </div>
     </footer>
   );

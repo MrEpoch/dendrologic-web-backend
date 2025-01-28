@@ -24,8 +24,10 @@ export default function Content() {
               <img
                 alt="content"
                 className="object-cover object-center h-full w-full"
-                src="https://dummyimage.com/1203x503"
+    src="/maps.jpg"
               />
+    Photo by <a href="https://unsplash.com/@anniespratt?utm_content=creditCopyText&utm_medium=referral&utm_source=unsplash">Annie Spratt</a> on <a href="https://unsplash.com/photos/white-and-green-state-maps-AFB6S2kibuk?utm_content=creditCopyText&utm_medium=referral&utm_source=unsplash">Unsplash</a>
+
             </div>
             <h2 className="text-xl font-medium title-font text-gray-900 mt-5">
               Databáze 10k+
@@ -54,9 +56,10 @@ export default function Content() {
               <img
                 alt="content"
                 className="object-cover object-center h-full w-full"
-                src="https://dummyimage.com/1204x504"
+    src="/trees-photo.jpg"
               />
             </div>
+            Photo by <a href="https://unsplash.com/@tbzr?utm_content=creditCopyText&utm_medium=referral&utm_source=unsplash">Arnaud Mesureur</a> on <a href="https://unsplash.com/photos/low-angle-photography-of-green-trees-7EqQ1s3wIAI?utm_content=creditCopyText&utm_medium=referral&utm_source=unsplash">Unsplash</a>
             <h2 className="text-xl font-medium title-font text-gray-900 mt-5">
               Ukládání obrázků stromů
             </h2>

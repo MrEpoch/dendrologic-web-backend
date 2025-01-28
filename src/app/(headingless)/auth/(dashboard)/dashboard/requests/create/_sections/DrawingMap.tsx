@@ -1,5 +1,5 @@
 "use client";
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import Draw from "ol/interaction/Draw.js";
 import Map from "ol/Map.js";
 import View from "ol/View.js";
@@ -48,7 +48,18 @@ import {
   FormLabel,
 } from "@/components/ui/form";
 import Image from "next/image";
-import { useToast } from "@/hooks/use-toast"
+import { useToast } from "@/hooks/use-toast";
+import { defaults as defaultInteractions, Modify } from "ol/interaction";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from "@/components/ui/alert-dialog";
 
 export const formSchema = z.object({
   NAZEV: z
@@ -59,20 +70,23 @@ export const formSchema = z.object({
 });
 
 export default function DrawingMap() {
-  const mapStateRef = React.useRef<any>(null);
-  const [circling, setCircling] = React.useState<boolean>(false);
-  const drawRef = React.useRef<any>(null);
-  const sourceRef = React.useRef<any>(null);
-  const [selectedFeature, setSelectedFeature] = React.useState<any>(null);
-  const mapSelectedFeatureRef = React.useRef<any>(null);
-  const router = useRouter();
+  const mapStateRef = useRef<any>(null);
+  const dragRef = useRef<any>(null);
+  const drawRef = useRef<any>(null);
+  const sourceRef = useRef<any>(null);
+  const modifyInteraction = useRef<any>(null);
+  const mapSelectedFeatureRef = useRef<any>(null);
+  const loading = useRef<boolean>(false);
+
+  const [selectedFeature, setSelectedFeature] = useState<any>(null);
   const [geoRequestName, setGeoRequestName] = useState<string>("");
-  const dragRef = React.useRef<any>(null);
   const [addNewPoint, setAddNewPoint] = useState<boolean>(false);
   const [allFeaturesData, setAllFeaturesData] = useState<any>(null);
-  const [loading, setLoading] = useState<boolean>(false);
-  const [newImage, setNewImage] = useState<string>("");
-  const { toast } = useToast()
+  const [circling, setCircling] = useState<boolean>(false);
+  const [isDragActive, setIsDragActive] = useState(false);
+
+  const { toast } = useToast();
+  const router = useRouter();
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
@@ -87,11 +101,6 @@ export default function DrawingMap() {
         freehand: true,
       });
       mapStateRef.current?.addInteraction(drawRef.current);
-    }
-
-    function addDragInteraction() {
-      dragRef.current = new Drag();
-      mapStateRef.current?.addInteraction(dragRef.current);
     }
 
     /**
@@ -115,8 +124,10 @@ export default function DrawingMap() {
       const vector = new VectorLayer({
         source: sourceRef.current,
       });
+      dragRef.current = new Drag();
 
       mapStateRef.current = new Map({
+        interactions: defaultInteractions().extend([dragRef.current]),
         layers: [raster, vector],
         target: "map",
         view: new View({
@@ -129,7 +140,9 @@ export default function DrawingMap() {
         }),
       });
 
-      addDragInteraction();
+      modifyInteraction.current = new Modify({
+        source: sourceRef.current,
+      });
 
       mapSelectedFeatureRef.current = new Select({
         condition: click,
@@ -159,39 +172,44 @@ export default function DrawingMap() {
 
   function deleteSelectedFeature() {
     try {
-      setLoading(true);
-    mapStateRef.current
-      .getLayers()
-      .getArray()
-      .forEach((layer: any) => {
-        const source = layer.getSource();
-        if (source instanceof VectorSource) {
-          const featureExists = source.getFeatures();
-          source.removeFeature(
-            featureExists.find((f: any) => {
-              return (
-                f.getProperties().geometry.ol_uid ===
-                selectedFeature?.getProperties().geometry.ol_uid
-              );
-            }),
-          );
+      loading.current = true;
+      mapStateRef.current
+        .getLayers()
+        .getArray()
+        .forEach((layer: any) => {
+          const source = layer.getSource();
+          if (source instanceof VectorSource) {
+            const featureExists = source.getFeatures();
+            source.removeFeature(
+              featureExists.find((f: any) => {
+                return (
+                  f.getProperties().geometry.ol_uid ===
+                  selectedFeature?.getProperties().geometry.ol_uid
+                );
+              }),
+            );
 
-          if (featureExists) {
-            source.removeFeature(featureExists);
+            if (featureExists) {
+              source.removeFeature(featureExists);
+            }
+            selectedFeatureToNull();
+            return;
           }
-          selectedFeatureToNull();
-          return;
-        }
-      });
+        });
       toast({
         title: "Záznam byl smazán",
         variant: "default",
         duration: 5000,
-      })
-      setLoading(false);
+      });
+      loading.current = false;
     } catch (e) {
       console.log(e);
-      setLoading(false);
+      toast({
+        title: "Nastala chyba",
+        variant: "destructive",
+        duration: 5000,
+      });
+      loading.current = false;
     }
   }
 
@@ -237,78 +255,78 @@ export default function DrawingMap() {
   }
 
   async function showSelected() {
+    loading.current = true;
     try {
-      setLoading(true);
-    mapStateRef.current
-      .getLayers()
-      .getArray()
-      .filter((layer: any) => {
-        const source = layer.getSource();
-        return source instanceof VectorSource;
-      })
-      .map(async (layer: any) => {
-        const source = layer.getSource();
-        let purified;
-        let object_id_container = [];
-        const features = source.getFeatures().map(async (feature) => {
-          if (feature.getGeometry().getType() !== "Polygon") {
-            return feature;
-          }
-          if (allFeaturesData === null) {
-            const geoData = await fetch(`/api/geojson/all`, {
-              method: "GET",
-              headers: {
-                "Content-Type": "application/json",
-              },
+      mapStateRef.current
+        .getLayers()
+        .getArray()
+        .filter((layer: any) => {
+          const source = layer.getSource();
+          return source instanceof VectorSource;
+        })
+        .map(async (layer: any) => {
+          const source = layer.getSource();
+          let purified;
+          let object_id_container = [];
+          const features = source.getFeatures().map(async (feature) => {
+            if (feature.getGeometry().getType() !== "Polygon") {
+              return feature;
+            }
+            if (allFeaturesData === null) {
+              const geoData = await fetch(`/api/geojson/all`, {
+                method: "GET",
+                headers: {
+                  "Content-Type": "application/json",
+                },
+              });
+              const stromy = await geoData.json();
+              setAllFeaturesData(await transformToGeoJson(stromy));
+              purified = await transformToGeoJson(stromy);
+            } else {
+              purified = allFeaturesData;
+            }
+            purified.features = purified.features.filter((point) => {
+              if (object_id_container.includes(point.properties.id)) {
+                return false;
+              }
+              const pointCoords = point.geometry.coordinates;
+              const isPointInsidePolygonVar = isPointInsidePolygon(
+                pointCoords,
+                feature,
+              );
+              if (isPointInsidePolygonVar) {
+                object_id_container.push(point.properties.id);
+              }
+              return isPointInsidePolygonVar;
             });
-            const stromy = await geoData.json();
-            setAllFeaturesData(await transformToGeoJson(stromy));
-            purified = await transformToGeoJson(stromy);
-          } else {
-            purified = allFeaturesData;
-          }
-          purified.features = purified.features.filter((point) => {
-            if (object_id_container.includes(point.properties.id)) {
-              return false;
-            }
-            const pointCoords = point.geometry.coordinates;
-            const isPointInsidePolygonVar = isPointInsidePolygon(
-              pointCoords,
-              feature,
+            source.addFeatures(
+              new GeoJSON().readFeatures(purified, {
+                featureProjection: "EPSG:3857",
+              }),
             );
-            if (isPointInsidePolygonVar) {
-              object_id_container.push(point.properties.id);
-            }
-            return isPointInsidePolygonVar;
-          });
-          source.addFeatures(
-            new GeoJSON().readFeatures(purified, {
-              featureProjection: "EPSG:3857",
-            }),
-          );
 
-          const circle = feature.getGeometry();
-          return new Feature({
-            geometry: circle,
-            name: "Polygon",
+            const circle = feature.getGeometry();
+            return new Feature({
+              geometry: circle,
+              name: "Polygon",
+            });
           });
+          const features_json = await Promise.all(features);
+          const featureCollectionJson = new GeoJSON().writeFeatures(
+            features_json,
+          );
+          return featureCollectionJson;
         });
-        const features_json = await Promise.all(features);
-        const featureCollectionJson = new GeoJSON().writeFeatures(
-          features_json,
-        );
-        return featureCollectionJson;
-      });
-      setLoading(false);
+      loading.current = false;
     } catch (e) {
       console.log(e);
-      setLoading(false);
+      loading.current = false;
     }
   }
 
   async function saveRequest() {
     try {
-      setLoading(true);
+      loading.current = true;
       const geoJSONdata = mapStateRef.current
         .getLayers()
         .getArray()
@@ -320,18 +338,79 @@ export default function DrawingMap() {
           const source = layer.getSource();
           const features = source
             .getFeatures()
-            .filter((feature) => feature.getGeometry().getType() === "Polygon")
+            .filter((feature) => {
+              if (feature.getGeometry().getType() === "Polygon") return true;
+              else if (
+                feature.getGeometry().getType() === "Point" &&
+                (feature.values_["FROM_APP"] || (feature.values_.properties && feature.values_.properties["FROM_APP"]))
+              ) {
+                return true;
+              }
+              return false;
+            })
             .map((feature) => {
-              const circle = feature.getGeometry();
-              return new Feature({
-                geometry: circle,
-                name: "Polygon",
-              });
+              console.log(feature);
+              const feature_geometry = feature.getGeometry();
+              if (feature_geometry.getType() === "Polygon") {
+                return new Feature({
+                  geometry: feature_geometry,
+                  name: "Polygon",
+                });
+              } else {
+                return new Feature({
+                  geometry: feature_geometry,
+                  name: "Point",
+                  properties: feature.values_.properties,
+                })
+              }
             });
           const featureCollectionJson = new GeoJSON().writeFeatures(features);
           return featureCollectionJson;
         })
         .filter(Boolean);
+
+      const newGeolocations = mapStateRef.current
+        .getLayers()
+        .getArray()
+        .filter((layer: any) => {
+          const source = layer.getSource();
+          return source instanceof VectorSource;
+        })
+        .map((layer: any) => {
+          const source = layer.getSource();
+          const features = source
+            .getFeatures()
+            .filter((feature) => {
+              if (
+                feature.getGeometry().getType() === "Point" &&
+                (feature.values_["FROM_APP"] || (feature.values_.properties && feature.values_.properties["FROM_APP"]))
+              ) {
+                return true;
+              }
+              return false;
+            })
+            .map((feature) => {
+              const feature_geometry = feature.getGeometry();
+              return new Feature({
+                geometry: feature_geometry,
+                name: "Point",
+                properties: feature.values_.properties,
+              })
+            });
+          const featureCollectionJson = new GeoJSON().writeFeatures(features);
+          return featureCollectionJson;
+        })
+        .filter(Boolean);
+
+      await fetch("/api/geojson/all", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          geolocations: JSON.parse(newGeolocations).features,
+        }),
+      })
 
       const res = await fetch("/api/geojson/requests", {
         method: "POST",
@@ -351,39 +430,36 @@ export default function DrawingMap() {
 
       toast({
         title: "Chyba ve vytváření žádosti",
-        description: data?.error,
         variant: "destructive",
         duration: 9000,
-      })
-      setLoading(false);
+      });
+      loading.current = false;
     } catch (error) {
       toast({
         title: "Chyba při vytváření žádosti",
         description: "Prosím zkuste znovu",
         variant: "destructive",
         duration: 9000,
-      })
+      });
       console.log(error);
-      setLoading(false);
+      loading.current = false;
     }
   }
 
-  const [isDragActive, setIsDragActive] = useState(false);
-
   function lockDrag() {
-    dragRef.current?.setActive(false);
+    mapStateRef.current.removeInteraction(modifyInteraction.current);
     setIsDragActive(false);
   }
 
   function unlockDrag() {
-    dragRef.current?.setActive(true);
+    mapStateRef.current.addInteraction(modifyInteraction.current);
     setIsDragActive(true);
   }
 
   // Function which will geojson point with properties this will be saved into db
   function addPoint(values: z.infer<typeof formSchema>) {
     try {
-      setLoading(true);
+      loading.current = true;
       const geoJsonPoints = [];
 
       for (let i = 0; i < values.POCET; i++) {
@@ -421,22 +497,22 @@ export default function DrawingMap() {
         });
 
       setAddNewPoint(false);
-      setLoading(false);
+      loading.current = false;
     } catch (error) {
       toast({
         title: "Chyba při přidávání bodu",
         description: "Prosím zkuste znovu",
         variant: "destructive",
         duration: 9000,
-      })
+      });
       console.log(error);
-      setLoading(false);
+      loading.current = false;
     }
   }
 
   function saveCurrentSnapshotToLocalStorage() {
     try {
-      setLoading(true);
+      loading.current = true;
       const geoJSONdata = mapStateRef.current
         .getLayers()
         .getArray()
@@ -462,16 +538,17 @@ export default function DrawingMap() {
         })
         .filter(Boolean);
       localStorage.setItem("geoJSONdata", JSON.stringify(geoJSONdata));
-      setLoading(false);
+
+      loading.current = false;
     } catch (error) {
       toast({
         title: "Chyba při ukládání žádosti",
         description: "Prosím zkuste znovu",
         variant: "destructive",
         duration: 9000,
-      })
+      });
       console.log(error);
-      setLoading(false);
+      loading.current = false;
     }
   }
 
@@ -488,7 +565,7 @@ export default function DrawingMap() {
           const source = layer.getSource();
           source.clear();
           return source;
-        })
+        });
       localStorage.removeItem("geoJSONdata");
     } catch (error) {
       toast({
@@ -496,13 +573,14 @@ export default function DrawingMap() {
         description: "Prosím zkuste znovu",
         variant: "destructive",
         duration: 9000,
-      })
+      });
       console.log(error);
     }
   }
 
   // Here will conversion to base64 happen
   async function addGeoImage(e) {
+    loading.current = true;
     try {
       const file = e.target.files[0];
       const reader = new FileReader();
@@ -511,15 +589,17 @@ export default function DrawingMap() {
       reader.onload = async () => {
         const imageJson = {
           image: reader.result,
-          id: selectedFeature.values_.properties ? selectedFeature.values_.properties["id"] : selectedFeature.values_["id"],
+          id: selectedFeature.values_.properties
+            ? selectedFeature.values_.properties["id"]
+            : selectedFeature.values_["id"],
         };
 
         const res_json = await fetch("/api/images", {
-            method: "POST",
-            body: JSON.stringify(imageJson),
-            headers: {
-              "Content-Type": "application/json",
-            },
+          method: "POST",
+          body: JSON.stringify(imageJson),
+          headers: {
+            "Content-Type": "application/json",
+          },
         });
         const res = await res_json.json();
         const data = res.data;
@@ -530,7 +610,7 @@ export default function DrawingMap() {
             description: "Prosím zkuste znovu",
             variant: "destructive",
             duration: 9000,
-          })
+          });
           return;
         } else {
           console.log(data);
@@ -542,60 +622,95 @@ export default function DrawingMap() {
               return source instanceof VectorSource;
             })
             .map((layer: any) => {
-        const source = layer.getSource();
-        if (source instanceof VectorSource) {
-          const featureExists = source.getFeatures();
-          featureExists.forEach((feature: any) => {
-            if (
-              feature.getProperties().geometry.ol_uid ===
-              selectedFeature?.getProperties().geometry.ol_uid
-            ) {
-              feature.setProperties({
-                images: [data.dendrologic_image],
-              });
-            }
-          })
+              const source = layer.getSource();
+              if (source instanceof VectorSource) {
+                const featureExists = source.getFeatures();
+                featureExists.forEach((feature: any) => {
+                  if (
+                    feature.getProperties().geometry.ol_uid ===
+                    selectedFeature?.getProperties().geometry.ol_uid
+                  ) {
+                    feature.setProperties({
+                      images: [...data.dendrologic_image[0].images],
+                    });
+                  }
+                });
 
-          if (featureExists) {
-            source.removeFeature(featureExists);
-          }
-          saveCurrentSnapshotToLocalStorage();
-          selectedFeatureToNull();
-          return;
-            }});
+                if (featureExists) {
+                  source.removeFeature(featureExists);
+                }
+                saveCurrentSnapshotToLocalStorage();
+                setSelectedFeature((prev) => {
+                  if (prev.values_.properties) {
+                    return {
+                      ...prev,
+                      values_: {
+                        ...prev.values_,
+                        properties: {
+                          ...prev.values_.properties,
+                          images: [...data.dendrologic_image[0].images],
+                        },
+                      },
+                    };
+                  } else {
+                    return {
+                      ...prev,
+                      values_: {
+                        ...prev.values_,
+                        images: [...data.dendrologic_image[0].images],
+                      },
+                    };
+                  }
+                });
+                return;
+              }
+            });
         }
-      }
+      };
     } catch (e) {
       console.error(e);
     }
+    loading.current = false;
   }
-
-  console.log(selectedFeature);
 
   return (
     <div className="py-8 flex flex-col gap-4">
-      {loading && (
-      <div className="z-[1000] flex items-center justify-center w-full h-full min-h-screen absolute top-0 left-0 right-0 bottom-0 bg-main-background-100 opacity-80">
-        <div className="loader"></div>
-      </div>
+      {loading.current && (
+        <div className="z-[1000] flex items-center justify-center w-full h-full min-h-screen absolute top-0 left-0 right-0 bottom-0 bg-main-background-100 opacity-80">
+          <div className="loader"></div>
+        </div>
       )}
       <div className="flex gap-2 justify-between items-center">
-      <Button
-        className="h-4 w-4 p-4 rounded border"
-        variant="outline"
-        onClick={saveCurrentSnapshotToLocalStorage}
-      >
-        <Save />
-      </Button>
-      <Button
-        className="h-4 w-4 p-4 rounded border"
-        variant="outline"
-        onClick={removeSavedSnapshotFromLocalStorage}
-      >
-        <SaveOff />
-      </Button>
+        <Button
+          className="h-4 w-4 p-4 rounded border"
+          variant="outline"
+          onClick={saveCurrentSnapshotToLocalStorage}
+        >
+          <Save />
+        </Button>
+        <AlertDialog>
+          <AlertDialogTrigger className="flex relative p-4 max-w-4 max-h-4 h-full w-full items-center justify-center  rounded border">
+            <SaveOff className="w-4 h-4 absolute" />
+          </AlertDialogTrigger>
+          <AlertDialogContent>
+            <AlertDialogHeader>
+              <AlertDialogTitle>
+                Chcete doopravdu smazet lokálně uložená data?
+              </AlertDialogTitle>
+            </AlertDialogHeader>
+            <AlertDialogFooter>
+              <AlertDialogCancel>Ne, nechci</AlertDialogCancel>
+              <AlertDialogAction onClick={removeSavedSnapshotFromLocalStorage}>
+                Pokračovat
+              </AlertDialogAction>
+            </AlertDialogFooter>
+          </AlertDialogContent>
+        </AlertDialog>
       </div>
-      <div id="map" className="h-96 w-full" />
+      <div
+        id="map"
+        className={`h-96 w-full ${isDragActive ? "border-main-100 border-[10px]" : "border-[10px] border-transparent"}`}
+      />
       <div className="flex gap-2 justify-between items-center">
         <Label htmlFor="circling">Vybrat oblast</Label>
         <Button
@@ -608,7 +723,7 @@ export default function DrawingMap() {
       </div>
       <div className="flex gap-2 justify-between items-center">
         <Label htmlFor="circling">Název žádosti* (3-255)</Label>
-        <Input onChange={(e) => setGeoRequestName(e.target.value)} />
+        <Input minLength={3} maxLength={255} onChange={(e) => setGeoRequestName(e.target.value)} />
       </div>
       <div className="flex gap-2 justify-between items-center">
         <Label htmlFor="circling">Ukázat vybrané</Label>
@@ -621,7 +736,7 @@ export default function DrawingMap() {
         </Button>
       </div>
       <div className="flex gap-2 justify-between items-center">
-        <Label htmlFor="circling">Přidat záznam</Label>
+        <Label htmlFor="novy-zaznam">Přidat záznam</Label>
         <Button
           className={`h-4 w-4 p-4 rounded border`}
           variant="outline"
@@ -631,7 +746,7 @@ export default function DrawingMap() {
         </Button>
       </div>
       <div className="flex gap-2 justify-between items-center">
-        <Label htmlFor="circling">
+      <Label htmlFor="dragovani">
           {isDragActive ? "Uzamknout pohyb" : "Odemknout pohyb"}
         </Label>
         <Button
@@ -643,7 +758,7 @@ export default function DrawingMap() {
         </Button>
       </div>
       <div className="flex gap-2 justify-between items-center">
-        <Label htmlFor="circling">Vytvořit žádost</Label>
+        <Label htmlFor="vytvor-zadosti">Vytvořit žádost</Label>
         <Button
           className={`h-4 w-4 p-4 rounded border`}
           variant="outline"
@@ -657,10 +772,14 @@ export default function DrawingMap() {
           <DialogHeader className="flex flex-col gap-4">
             <DialogTitle>Informace o záznamu</DialogTitle>
             <DialogDescription>
-              Akci nelze navrátit, rozhodněte se zda chcete smazat vybraný kruh.
+              Základní informace o záznamu, obrázek lze uložit pouze u odeslaných žádosti nebo u předchozích záznamů.
             </DialogDescription>
           </DialogHeader>
+          {selectedFeature && !((selectedFeature.values_ && selectedFeature.values_.properties && selectedFeature.values_.properties["FROM_APP"]) ||
+            (selectedFeature.values_ && selectedFeature.values_["FROM_APP"])) && (
           <Input onChange={addGeoImage} id="picture" type="file" />
+            )
+          }
           {selectedFeature &&
             selectedFeature.values_ &&
             ((selectedFeature.values_.properties &&
@@ -668,29 +787,31 @@ export default function DrawingMap() {
               selectedFeature.values_.properties["NAZEV"]) ||
               (selectedFeature.values_["NAZEV"] &&
                 selectedFeature.values_["POCET"])) && (
-              <div className="flex flex-col p-4 gap-2 bg-main-background-200 rounded w-full overflow-x-auto">
-                {(selectedFeature?.values_["images"] &&
+              <div className="flex h-full flex-col p-4 gap-2 bg-main-background-200 rounded w-full overflow-x-auto">
+                {((selectedFeature?.values_["images"] &&
                   selectedFeature?.values_["images"]?.length > 0) ||
-                  (
-                    selectedFeature?.values_?.properties &&
+                  (selectedFeature?.values_?.properties &&
                     selectedFeature?.values_?.properties["images"] &&
                     selectedFeature?.values_?.properties["images"]?.length >
-                      0 && (
-                      <div className="flex items-center w-full justify-center p-4 h-96 object-cover rounded">
-                        <Image
-                          src={
-                            selectedFeature?.values_["images"][0] ||
-                            selectedFeature?.values_?.properties["images"][0]
-                          }
-                          alt={
-                            selectedFeature.values_["NAZEV"] ||
-                            selectedFeature.values_.properties["NAZEV"]
-                          }
-                          fill
-                        />
-                      </div>
-                    ))}
-                <p className="flex items-center justify-between gap-2">
+                      0)) && (
+                  <div className="flex items-center h-full w-full justify-center p-4 rounded">
+                    <Image
+                      className="object-cover w-full h-full rounded"
+                      src={
+                        "https://minio.stencukpage.com/dendrologic-bucket/" +
+                        (selectedFeature?.values_["images"][0] ||
+                          selectedFeature?.values_?.properties["images"][0])
+                      }
+                      alt={
+                        selectedFeature.values_["NAZEV"] ||
+                        selectedFeature.values_.properties["NAZEV"]
+                      }
+                      width={1000}
+                      height={1000}
+                    />
+                  </div>
+                )}
+                <p className="flex h-full min-h-24 items-center justify-between gap-2">
                   <span>Název:</span>
                   <span>
                     {selectedFeature.values_.properties
@@ -698,7 +819,7 @@ export default function DrawingMap() {
                       : selectedFeature.values_["NAZEV"]}
                   </span>
                 </p>
-                <p className="flex items-center justify-between gap-2">
+                <p className="flex h-full min-h-24 items-center justify-between gap-2">
                   <span>Počet:</span>
                   <span>
                     {selectedFeature.values_.properties

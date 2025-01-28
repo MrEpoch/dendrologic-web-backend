@@ -52,20 +52,6 @@ export default function Page() {
               zkopířovaný klíč vložte do druhého pole "Váš klíč" a pak klikněte
               přidat.
             </li>
-            <li>
-              <h3 className="text-lg font-bold">Microsoft Authenticator</h3>
-              <br />
-              <p>
-                Klikněte na tlačitko plus dole v pravo, otevře se okéno možností
-                pokud se přihlašujete na počítači přes mobil, tak vyberte QR kód
-                skenování.
-              </p>
-              <br />V případě že se přihlašujete na mobile klikněte na možnost
-              Zadat klíč pro nastavení, pojmenujte Kódové označení Dendree, poté
-              běžte na aplikace Dendree a klikněte na tlačítko kopírovat klíč a
-              zkopířovaný klíč vložte do druhého pole "Váš klíč" a pak klikněte
-              přidat.
-            </li>
           </ul>
         </div>
       </div>

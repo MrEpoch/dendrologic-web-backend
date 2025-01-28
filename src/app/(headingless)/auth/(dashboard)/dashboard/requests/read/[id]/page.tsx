@@ -18,10 +18,11 @@ export default async function Page({ params }) {
   );
 
   const geoRequestDataJson = await geoRequestData.json();
-  console.log("data", geoRequestDataJson.georequest[0]);
+  console.log("data", geoRequestDataJson);
 
   return (
     <div className="max-w-container">
+      <h1 className="text-4xl">Žádost #{geoRequestDataJson.georequest[0].requestName}</h1>
       <RequestMap requestJSON={geoRequestDataJson.georequest[0]} />
     </div>
   );

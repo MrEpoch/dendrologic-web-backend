@@ -39,6 +39,8 @@ export class Drag extends PointerInteraction {
   }
 
   setActive(active) {
+    console.log(active);
+    /*
     if (active) {
       this.set("handleDownEvent", handleDownEvent);
       this.set("handleDragEvent", handleDragEvent);
@@ -50,6 +52,7 @@ export class Drag extends PointerInteraction {
       this.set("handleMoveEvent", null);
       this.set("handleUpEvent", null);
     }
+    */
   }
 }
 
