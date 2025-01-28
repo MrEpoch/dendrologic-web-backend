@@ -1,6 +1,6 @@
 {
-  "id": "8e0aff9f-c56f-4142-b16b-813b57069924",
-  "prevId": "00000000-0000-0000-0000-000000000000",
+  "id": "44e0e0ce-f8ed-4190-b7c8-0ada7fbe37cc",
+  "prevId": "8e0aff9f-c56f-4142-b16b-813b57069924",
   "version": "7",
   "dialect": "postgresql",
   "tables": {
@@ -94,7 +94,7 @@
         },
         "geometry_coordinates": {
           "name": "geometry_coordinates",
-          "type": "point",
+          "type": "geometry(point)",
           "primaryKey": false,
           "notNull": true
         },
@@ -109,50 +109,6 @@
           "type": "integer",
           "primaryKey": false,
           "notNull": true
-        }
-      },
-      "indexes": {},
-      "foreignKeys": {},
-      "compositePrimaryKeys": {},
-      "uniqueConstraints": {
-        "feature_id_unique": {
-          "name": "feature_id_unique",
-          "nullsNotDistinct": false,
-          "columns": ["id"]
-        }
-      },
-      "checkConstraints": {}
-    },
-    "public.geo_image": {
-      "name": "geo_image",
-      "schema": "",
-      "columns": {
-        "id": {
-          "name": "id",
-          "type": "uuid",
-          "primaryKey": true,
-          "notNull": true,
-          "default": "gen_random_uuid()"
-        },
-        "kod": {
-          "name": "kod",
-          "type": "text",
-          "primaryKey": false,
-          "notNull": true
-        },
-        "created_at": {
-          "name": "created_at",
-          "type": "timestamp",
-          "primaryKey": false,
-          "notNull": true,
-          "default": "now()"
-        },
-        "updated_at": {
-          "name": "updated_at",
-          "type": "timestamp",
-          "primaryKey": false,
-          "notNull": true,
-          "default": "now()"
         },
         "images": {
           "name": "images",
@@ -166,15 +122,10 @@
       "foreignKeys": {},
       "compositePrimaryKeys": {},
       "uniqueConstraints": {
-        "geo_image_id_unique": {
-          "name": "geo_image_id_unique",
+        "feature_id_unique": {
+          "name": "feature_id_unique",
           "nullsNotDistinct": false,
           "columns": ["id"]
-        },
-        "geo_image_kod_unique": {
-          "name": "geo_image_kod_unique",
-          "nullsNotDistinct": false,
-          "columns": ["kod"]
         }
       },
       "checkConstraints": {}

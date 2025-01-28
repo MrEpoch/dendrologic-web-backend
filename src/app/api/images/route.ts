@@ -35,7 +35,7 @@ export async function POST(request: NextRequest) {
 
     const validationSchema = z.object({
       image: z.any(),
-      kod: z.string().min(1),
+      id: z.string().min(1),
     });
 
     // It can fail if JSON is missing
@@ -65,7 +65,7 @@ export async function POST(request: NextRequest) {
     // Adds filename to database
 
     const savedImage = await addDendrologicImage(
-      validated.data.kod,
+      validated.data.id,
       file.fileName,
     );
     console.log(savedImage);

@@ -1,5 +1,5 @@
 import { db } from "@/db";
-import { geoImageTable } from "@/db/schema";
+import { feature } from "@/db/schema";
 import { RefillingTokenBucket } from "@/lib/rate-limit";
 import { globalGETRateLimit } from "@/lib/request";
 import { eq } from "drizzle-orm";
@@ -32,8 +32,8 @@ export async function GET(
 
     const images = await db
       .select()
-      .from(geoImageTable)
-      .where(eq(geoImageTable.kod, validated_params.data));
+      .from(feature)
+      .where(eq(feature.id, validated_params.data));
 
     if (!images) {
       return NextResponse.json({ success: false, error: "IMAGES_NOT_FOUND" });

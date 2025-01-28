@@ -49,7 +49,7 @@ body {
     --text-200: #5a6a4f; /* Muted Olive Green */
     --bg-100: #ffffef; /* Clean White */
     --bg-200: #f4f6e7; /* Soft Warm Beige */
-    --bg-300: #d7e1c4; /* Light Sage Green */  
+    --bg-300: #d7e1c4; /* Light Sage Green */
   }
 
   .dark {
@@ -88,7 +88,6 @@ body {
     --bg-100: #121212; /* Deep Charcoal */
     --bg-200: #1c2615; /* Forest Green-Black */
     --bg-300: #37462d; /* Dark Olive Green */
-
   }
 }
 
@@ -101,3 +100,13 @@ body {
     @apply mx-auto max-w-screen-xl w-full container sm:px-6 lg:px-8 py-24;
   }
 }
+
+.loader {
+  width: 50px;
+  aspect-ratio: 1;
+  border-radius: 50%;
+  border: 8px solid;
+  border-color: #000 #0000;
+  animation: l1 1s infinite;
+}
+@keyframes l1 {to{transform: rotate(.5turn)}}
