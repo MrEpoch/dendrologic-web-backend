@@ -342,7 +342,9 @@ export default function DrawingMap() {
               if (feature.getGeometry().getType() === "Polygon") return true;
               else if (
                 feature.getGeometry().getType() === "Point" &&
-                (feature.values_["FROM_APP"] || (feature.values_.properties && feature.values_.properties["FROM_APP"]))
+                (feature.values_["FROM_APP"] ||
+                  (feature.values_.properties &&
+                    feature.values_.properties["FROM_APP"]))
               ) {
                 return true;
               }
@@ -361,7 +363,7 @@ export default function DrawingMap() {
                   geometry: feature_geometry,
                   name: "Point",
                   properties: feature.values_.properties,
-                })
+                });
               }
             });
           const featureCollectionJson = new GeoJSON().writeFeatures(features);
@@ -383,7 +385,9 @@ export default function DrawingMap() {
             .filter((feature) => {
               if (
                 feature.getGeometry().getType() === "Point" &&
-                (feature.values_["FROM_APP"] || (feature.values_.properties && feature.values_.properties["FROM_APP"]))
+                (feature.values_["FROM_APP"] ||
+                  (feature.values_.properties &&
+                    feature.values_.properties["FROM_APP"]))
               ) {
                 return true;
               }
@@ -395,7 +399,7 @@ export default function DrawingMap() {
                 geometry: feature_geometry,
                 name: "Point",
                 properties: feature.values_.properties,
-              })
+              });
             });
           const featureCollectionJson = new GeoJSON().writeFeatures(features);
           return featureCollectionJson;
@@ -410,7 +414,7 @@ export default function DrawingMap() {
         body: JSON.stringify({
           geolocations: JSON.parse(newGeolocations).features,
         }),
-      })
+      });
 
       const res = await fetch("/api/geojson/requests", {
         method: "POST",
@@ -425,6 +429,7 @@ export default function DrawingMap() {
 
       const data = await res.json();
       if (data.success) {
+        await localStorage.deleteItem("geoJSONdata");
         router.push(`/auth/dashboard/requests/read/${data.geoRequest[0].id}`);
       }
 
@@ -723,7 +728,11 @@ export default function DrawingMap() {
       </div>
       <div className="flex gap-2 justify-between items-center">
         <Label htmlFor="circling">Název žádosti* (3-255)</Label>
-        <Input minLength={3} maxLength={255} onChange={(e) => setGeoRequestName(e.target.value)} />
+        <Input
+          minLength={3}
+          maxLength={255}
+          onChange={(e) => setGeoRequestName(e.target.value)}
+        />
       </div>
       <div className="flex gap-2 justify-between items-center">
         <Label htmlFor="circling">Ukázat vybrané</Label>
@@ -746,7 +755,7 @@ export default function DrawingMap() {
         </Button>
       </div>
       <div className="flex gap-2 justify-between items-center">
-      <Label htmlFor="dragovani">
+        <Label htmlFor="dragovani">
           {isDragActive ? "Uzamknout pohyb" : "Odemknout pohyb"}
         </Label>
         <Button
@@ -772,14 +781,17 @@ export default function DrawingMap() {
           <DialogHeader className="flex flex-col gap-4">
             <DialogTitle>Informace o záznamu</DialogTitle>
             <DialogDescription>
-              Základní informace o záznamu, obrázek lze uložit pouze u odeslaných žádosti nebo u předchozích záznamů.
+              Základní informace o záznamu, obrázek lze uložit pouze u
+              odeslaných žádosti nebo u předchozích záznamů.
             </DialogDescription>
           </DialogHeader>
-          {selectedFeature && !((selectedFeature.values_ && selectedFeature.values_.properties && selectedFeature.values_.properties["FROM_APP"]) ||
-            (selectedFeature.values_ && selectedFeature.values_["FROM_APP"])) && (
-          <Input onChange={addGeoImage} id="picture" type="file" />
-            )
-          }
+          {selectedFeature &&
+            !(
+              (selectedFeature.values_ &&
+                selectedFeature.values_.properties &&
+                selectedFeature.values_.properties["FROM_APP"]) ||
+              (selectedFeature.values_ && selectedFeature.values_["FROM_APP"])
+            ) && <Input onChange={addGeoImage} id="picture" type="file" />}
           {selectedFeature &&
             selectedFeature.values_ &&
             ((selectedFeature.values_.properties &&

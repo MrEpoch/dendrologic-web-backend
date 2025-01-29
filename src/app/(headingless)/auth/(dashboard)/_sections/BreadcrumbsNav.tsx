@@ -7,7 +7,7 @@ import {
   BreadcrumbPage,
   BreadcrumbSeparator,
 } from "@/components/ui/breadcrumb";
-import { Cog, Search } from "lucide-react";
+import { Cog } from "lucide-react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import React from "react";
@@ -43,16 +43,6 @@ export default function BreadcrumbsNav() {
           )}
           {pathname.startsWith("/auth/dashboard/requests") && (
             <>
-              <BreadcrumbSeparator />
-              <BreadcrumbItem>
-                {pathname.split("/").length === 4 ? (
-                  <BreadcrumbPage>Žádosti</BreadcrumbPage>
-                ) : (
-                  <BreadcrumbLink href="/auth/dashboard/requests">
-                    Žádosti
-                  </BreadcrumbLink>
-                )}
-              </BreadcrumbItem>
               {pathname.split("/")[4] === "create" && (
                 <>
                   <BreadcrumbSeparator />
@@ -82,12 +72,9 @@ export default function BreadcrumbsNav() {
         </BreadcrumbList>
       </Breadcrumb>
       <div className="flex gap-4">
-        <button className="p-2 bg-main-100 rounded text-white">
-          <Search />
-        </button>
         <Link
           href="/auth/settings"
-          className="p-2 bg-main-100 rounded text-white"
+          className="p-2 bg-main-200 rounded-xl text-white"
         >
           <Cog />
         </Link>

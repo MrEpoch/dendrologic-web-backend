@@ -69,26 +69,23 @@ export async function POST(request: NextRequest) {
     // Schema of request JSON data
 
     const validationSchema = z.object({
-      geolocations: z
-        .array(
-          z.object({
-            geometry: z.object({
-              type: z.string().refine((value) => value === "Point"),
-              coordinates: z
-                .array(z.number())
-                .length(2)
-            }),
-            properties: z.object({
-              properties: z.object({
-                NAZEV: z.string(),
-                POCET: z.number().positive().max(100),
-                FROM_APP: z.boolean().refine((value) => value === true),
-              }),
-              name: z.string().refine((value) => value === "Point"),
-            }),
-            type: z.string().refine((value) => value === "Feature"),
+      geolocations: z.array(
+        z.object({
+          geometry: z.object({
+            type: z.string().refine((value) => value === "Point"),
+            coordinates: z.array(z.number()).length(2),
           }),
-        )
+          properties: z.object({
+            properties: z.object({
+              NAZEV: z.string(),
+              POCET: z.number().positive().max(100),
+              FROM_APP: z.boolean().refine((value) => value === true),
+            }),
+            name: z.string().refine((value) => value === "Point"),
+          }),
+          type: z.string().refine((value) => value === "Feature"),
+        }),
+      ),
     });
 
     // It can fail if JSON is missing
@@ -101,17 +98,20 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ success: false, error: "BAD_REQUEST" });
     }
 
-    await Promise.all(validated.data.geolocations.map(async (element) => {
-      await db
-        .insert(feature)
-        .values({
+    await Promise.all(
+      validated.data.geolocations.map(async (element) => {
+        await db.insert(feature).values({
           pocet: element.properties.properties.POCET,
           nazev: element.properties.properties.NAZEV,
           geometry_type: element.geometry.type,
-          geometry_coordinates: { x: element.geometry.coordinates[0], y: element.geometry.coordinates[1] },
-        })
-    }))
-    
+          geometry_coordinates: {
+            x: element.geometry.coordinates[0],
+            y: element.geometry.coordinates[1],
+          },
+        });
+      }),
+    );
+
     return NextResponse.json({ success: true });
   } catch (e) {
     console.error(e);

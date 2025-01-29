@@ -6,7 +6,6 @@ Dendrologické mapování stromů
 
 ## Základní informace
 
-
 ## Technologie použité
 
 - NextJS
@@ -17,6 +16,7 @@ Dendrologické mapování stromů
 - Drizzle ORM
 - Openlayers (práce s mapami)
 - Authentikace
+- Authentikace s T
 - Shadcn UI (komponentová knihovna)
 - Nodemailer (emailová zasílání)
 - Docker (organizace kontainerů služeb)

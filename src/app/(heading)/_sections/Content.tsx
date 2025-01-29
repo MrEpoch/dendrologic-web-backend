@@ -24,11 +24,17 @@ export default function Content() {
               <img
                 alt="content"
                 className="object-cover object-center h-full w-full"
-    src="/maps.jpg"
+                src="/library.webp"
               />
-    Photo by <a href="https://unsplash.com/@anniespratt?utm_content=creditCopyText&utm_medium=referral&utm_source=unsplash">Annie Spratt</a> on <a href="https://unsplash.com/photos/white-and-green-state-maps-AFB6S2kibuk?utm_content=creditCopyText&utm_medium=referral&utm_source=unsplash">Unsplash</a>
-
             </div>
+            Photo by{" "}
+            <a href="https://unsplash.com/@tofi?utm_content=creditCopyText&utm_medium=referral&utm_source=unsplash">
+              Tobias Fischer
+            </a>{" "}
+            on{" "}
+            <a href="https://unsplash.com/photos/photo-of-5-story-library-building-PkbZahEG2Ng?utm_content=creditCopyText&utm_medium=referral&utm_source=unsplash">
+              Unsplash
+            </a>
             <h2 className="text-xl font-medium title-font text-gray-900 mt-5">
               Databáze 10k+
             </h2>
@@ -56,10 +62,17 @@ export default function Content() {
               <img
                 alt="content"
                 className="object-cover object-center h-full w-full"
-    src="/trees-photo.jpg"
+                src="/trees-photo.webp"
               />
             </div>
-            Photo by <a href="https://unsplash.com/@tbzr?utm_content=creditCopyText&utm_medium=referral&utm_source=unsplash">Arnaud Mesureur</a> on <a href="https://unsplash.com/photos/low-angle-photography-of-green-trees-7EqQ1s3wIAI?utm_content=creditCopyText&utm_medium=referral&utm_source=unsplash">Unsplash</a>
+            Photo by{" "}
+            <a href="https://unsplash.com/@tbzr?utm_content=creditCopyText&utm_medium=referral&utm_source=unsplash">
+              Arnaud Mesureur
+            </a>{" "}
+            on{" "}
+            <a href="https://unsplash.com/photos/low-angle-photography-of-green-trees-7EqQ1s3wIAI?utm_content=creditCopyText&utm_medium=referral&utm_source=unsplash">
+              Unsplash
+            </a>
             <h2 className="text-xl font-medium title-font text-gray-900 mt-5">
               Ukládání obrázků stromů
             </h2>
@@ -87,9 +100,17 @@ export default function Content() {
               <img
                 alt="content"
                 className="object-cover object-center h-full w-full"
-                src="https://dummyimage.com/1205x505"
+                src="/interface.webp"
               />
             </div>
+            Photo by{" "}
+            <a href="https://unsplash.com/@kellysikkema?utm_content=creditCopyText&utm_medium=referral&utm_source=unsplash">
+              Kelly Sikkema
+            </a>{" "}
+            on{" "}
+            <a href="https://unsplash.com/photos/a-couple-of-pieces-of-glass-sitting-on-top-of-a-table-wxvz-g1nM_k?utm_content=creditCopyText&utm_medium=referral&utm_source=unsplash">
+              Unsplash
+            </a>
             <h2 className="text-xl font-medium title-font text-gray-900 mt-5">
               Uživatelské funkce
             </h2>

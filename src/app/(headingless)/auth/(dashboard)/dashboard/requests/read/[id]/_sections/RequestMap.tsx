@@ -307,15 +307,15 @@ export default function RequestMap({
         <DialogContent>
           <DialogHeader className="flex flex-col gap-4">
             <DialogTitle>Informace o záznamu</DialogTitle>
-            <DialogDescription>
-              Základní informace o záznamu.
-            </DialogDescription>
+            <DialogDescription>Základní informace o záznamu.</DialogDescription>
           </DialogHeader>
-          {selectedFeature && !((selectedFeature.values_ && selectedFeature.values_.properties && selectedFeature.values_.properties["FROM_APP"]) ||
-            (selectedFeature.values_ && selectedFeature.values_["FROM_APP"])) && (
-          <Input onChange={addGeoImage} id="picture" type="file" />
-            )
-          }
+          {selectedFeature &&
+            !(
+              (selectedFeature.values_ &&
+                selectedFeature.values_.properties &&
+                selectedFeature.values_.properties["FROM_APP"]) ||
+              (selectedFeature.values_ && selectedFeature.values_["FROM_APP"])
+            ) && <Input onChange={addGeoImage} id="picture" type="file" />}
           {selectedFeature &&
             selectedFeature.values_ &&
             ((selectedFeature.values_.properties &&
@@ -367,7 +367,6 @@ export default function RequestMap({
             )}
         </DialogContent>
       </Dialog>
-
     </div>
   );
 }

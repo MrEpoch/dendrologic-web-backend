@@ -22,7 +22,9 @@ export default async function Page({ params }) {
 
   return (
     <div className="max-w-container">
-      <h1 className="text-4xl">Žádost #{geoRequestDataJson.georequest[0].requestName}</h1>
+      <h1 className="text-4xl">
+        Žádost #{geoRequestDataJson.georequest[0].requestName}
+      </h1>
       <RequestMap requestJSON={geoRequestDataJson.georequest[0]} />
     </div>
   );

@@ -55,7 +55,7 @@ export default async function Page() {
         </p>
       </Link>
       <img
-        src="/forest.jpg"
+        src="/forest.webp"
         alt="forest"
         width={1920}
         height={1080}
