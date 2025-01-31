@@ -1,7 +1,20 @@
 import sharp from "sharp";
 import { writeIntoBucket } from "./minio";
+import { db } from "@/db";
+import { feature } from "@/db/schema";
+import { eq } from "drizzle-orm";
 
-export async function InsertImageIntoBucket(file) {
+export async function InsertImageIntoBucket(file, id) {
+  const check_if_exists = await db
+    .select({
+      images: feature.images,
+    })
+    .from(feature)
+    .where(eq(feature.id, id));
+  if (check_if_exists[0] && check_if_exists[0].images.length > 0) {
+    return { success: false };
+  }
+
   const replacedFile = file.replace(/^data:image\/\w+;base64,/, "");
   const validatedFile = { data: replacedFile, success: true };
   /*      fileSchema.safeParse(

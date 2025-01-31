@@ -51,7 +51,10 @@ export async function POST(request: NextRequest) {
 
     // Writes file into storage bucket and returns filename
 
-    const file = await InsertImageIntoBucket(validated.data.image);
+    const file = await InsertImageIntoBucket(
+      validated.data.image,
+      validated.data.id,
+    );
     console.log("after upload");
 
     if (!file.success) {

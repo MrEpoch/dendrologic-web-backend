@@ -26,13 +26,14 @@ export default async function Page() {
     return <div>Too many requests</div>;
   }
   const { session, user } = await getCurrentSession();
+  console.log(session, user);
   if (session === null) {
     return redirect("/auth/login");
   }
-  if (!user.emailVerified) {
+  if (!user?.emailVerified) {
     return redirect("/auth/verify-email");
   }
-  if (user.registered2FA && !session.twoFactorVerified) {
+  if (user?.registered2FA && !session.twoFactorVerified) {
     return redirect("/auth/2fa");
   }
 

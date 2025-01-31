@@ -86,88 +86,88 @@ export default function ContactForm() {
             </p>
           </div>
           <div className="w-full flex justify-center items-center">
-          <Form {...form}>
-            <form
-              onSubmit={form.handleSubmit(onSubmit)}
-              className="max-w-[500px] w-full justify-center flex flex-col items-center p-6 space-y-8"
-            >
-              <div className="flex flex-wrap -m-2">
-                <div className="p-2 w-1/2">
-                  <div className="relative">
-                    <FormField
-                      control={form.control}
-                      name={"subject"}
-                      render={({ field }) => (
-                        <FormItem className="w-full">
-                          <FormLabel>Subjekt (3-90 znaků)*</FormLabel>
-                          <FormControl>
-                            <Input
-                              type="text"
-                      className="w-full bg-gray-100 bg-opacity-50 rounded border border-gray-300 focus:border-green-500 focus:bg-white focus:ring-2 focus:ring-green-200 text-base outline-none text-gray-700 py-1 px-3 resize-none leading-6 transition-colors duration-200 ease-in-out"
-                              {...field}
-                            />
-                          </FormControl>
-                        </FormItem>
-                      )}
-                    />
+            <Form {...form}>
+              <form
+                onSubmit={form.handleSubmit(onSubmit)}
+                className="max-w-[500px] w-full justify-center flex flex-col items-center p-6 space-y-8"
+              >
+                <div className="flex flex-wrap -m-2">
+                  <div className="p-2 w-1/2">
+                    <div className="relative">
+                      <FormField
+                        control={form.control}
+                        name={"subject"}
+                        render={({ field }) => (
+                          <FormItem className="w-full">
+                            <FormLabel>Subjekt (3-90 znaků)*</FormLabel>
+                            <FormControl>
+                              <Input
+                                type="text"
+                                className="w-full bg-gray-100 bg-opacity-50 rounded border border-gray-300 focus:border-green-500 focus:bg-white focus:ring-2 focus:ring-green-200 text-base outline-none text-gray-700 py-1 px-3 resize-none leading-6 transition-colors duration-200 ease-in-out"
+                                {...field}
+                              />
+                            </FormControl>
+                          </FormItem>
+                        )}
+                      />
+                    </div>
+                  </div>
+                  <div className="p-2 w-1/2">
+                    <div className="relative">
+                      <FormField
+                        control={form.control}
+                        name={"email"}
+                        render={({ field }) => (
+                          <FormItem className="w-full">
+                            <FormLabel>Email*</FormLabel>
+                            <FormControl>
+                              <Input
+                                type="email"
+                                className="w-full bg-gray-100 bg-opacity-50 rounded border border-gray-300 focus:border-green-500 focus:bg-white focus:ring-2 focus:ring-green-200 text-base outline-none text-gray-700 py-1 px-3 resize-none leading-6 transition-colors duration-200 ease-in-out"
+                                {...field}
+                              />
+                            </FormControl>
+                          </FormItem>
+                        )}
+                      />
+                    </div>
+                  </div>
+                  <div className="p-2 w-full">
+                    <div className="relative">
+                      <FormField
+                        control={form.control}
+                        name={"body"}
+                        render={({ field }) => (
+                          <FormItem className="w-full">
+                            <FormLabel>Obsah zprávy (3-1000 znaků)*</FormLabel>
+                            <FormControl>
+                              <Textarea
+                                className="w-full bg-gray-100 bg-opacity-50 rounded border border-gray-300 focus:border-green-500 focus:bg-white focus:ring-2 focus:ring-green-200 h-32 text-base outline-none text-gray-700 py-1 px-3 resize-none leading-6 transition-colors duration-200 ease-in-out"
+                                {...field}
+                              />
+                            </FormControl>
+                          </FormItem>
+                        )}
+                      />
+                    </div>
+                  </div>
+                  <div className="p-2 w-full">
+                    <button
+                      type="submit"
+                      className="flex mx-auto text-main-text-200 bg-main-background-300 shadow py-2 px-8 focus:outline-none hover:bg-transparent border-gray-200 border rounded text-lg"
+                    >
+                      Poslat
+                    </button>
+                  </div>
+                  <div className="p-2 w-full pt-8 mt-8 border-t border-gray-200 text-center">
+                    <a className="text-main-text-200">
+                      dendrologic@stencukpage.com
+                    </a>
                   </div>
                 </div>
-                <div className="p-2 w-1/2">
-                  <div className="relative">
-                    <FormField
-                      control={form.control}
-                      name={"email"}
-                      render={({ field }) => (
-                        <FormItem className="w-full">
-                          <FormLabel>Email*</FormLabel>
-                          <FormControl>
-                            <Input
-                              type="email"
-                      className="w-full bg-gray-100 bg-opacity-50 rounded border border-gray-300 focus:border-green-500 focus:bg-white focus:ring-2 focus:ring-green-200 text-base outline-none text-gray-700 py-1 px-3 resize-none leading-6 transition-colors duration-200 ease-in-out"
-                              {...field}
-                            />
-                          </FormControl>
-                        </FormItem>
-                      )}
-                    />
-                  </div>
-                </div>
-                <div className="p-2 w-full">
-                  <div className="relative">
-                    <FormField
-                      control={form.control}
-                      name={"body"}
-                      render={({ field }) => (
-                        <FormItem className="w-full">
-                          <FormLabel>Obsah zprávy  (3-1000 znaků)*</FormLabel>
-                          <FormControl>
-                            <Textarea
-                      className="w-full bg-gray-100 bg-opacity-50 rounded border border-gray-300 focus:border-green-500 focus:bg-white focus:ring-2 focus:ring-green-200 h-32 text-base outline-none text-gray-700 py-1 px-3 resize-none leading-6 transition-colors duration-200 ease-in-out"
-                              {...field}
-                            />
-                          </FormControl>
-                        </FormItem>
-                      )}
-                    />
-                  </div>
-                </div>
-                <div className="p-2 w-full">
-                  <button
-                    type="submit"
-                    className="flex mx-auto text-main-text-200 bg-main-background-300 shadow py-2 px-8 focus:outline-none hover:bg-transparent border-gray-200 border rounded text-lg"
-                  >
-                    Poslat
-                  </button>
-                </div>
-                <div className="p-2 w-full pt-8 mt-8 border-t border-gray-200 text-center">
-                  <a className="text-main-text-200">
-                    dendrologic@stencukpage.com
-                  </a>
-                </div>
-              </div>
-            </form>
-          </Form>
-        </div>
+              </form>
+            </Form>
+          </div>
         </div>
       </section>
     </div>

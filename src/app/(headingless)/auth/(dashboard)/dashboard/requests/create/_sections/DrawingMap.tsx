@@ -429,7 +429,7 @@ export default function DrawingMap() {
 
       const data = await res.json();
       if (data.success) {
-        await localStorage.deleteItem("geoJSONdata");
+        await localStorage.removeItem("geoJSONdata");
         router.push(`/auth/dashboard/requests/read/${data.geoRequest[0].id}`);
       }
 

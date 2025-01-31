@@ -19,6 +19,7 @@ export async function GET(request: NextRequest) {
       return NextResponse.json({ success: false, error: "TOO_MANY_REQUESTS" });
     }
     const { session, user } = await getCurrentSession();
+    console.log(session, user);
     if (session === null) {
       return NextResponse.json({
         success: false,

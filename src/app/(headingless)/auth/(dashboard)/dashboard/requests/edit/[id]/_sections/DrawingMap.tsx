@@ -79,7 +79,9 @@ export default function DrawingMap({ requestInfo }) {
   const loading = useRef<boolean>(false);
 
   const [selectedFeature, setSelectedFeature] = useState<any>(null);
-  const [geoRequestName, setGeoRequestName] = useState<string>(requestInfo.requestName);
+  const [geoRequestName, setGeoRequestName] = useState<string>(
+    requestInfo.requestName,
+  );
   const [addNewPoint, setAddNewPoint] = useState<boolean>(false);
   const [allFeaturesData, setAllFeaturesData] = useState<any>(null);
   const [circling, setCircling] = useState<boolean>(false);
@@ -230,7 +232,9 @@ export default function DrawingMap({ requestInfo }) {
       });
 
       if (localStorage.getItem("geoJSONdata-" + requestInfo.id)) {
-        const geoJSONdata = JSON.parse(localStorage.getItem("geoJSONdata-" + requestInfo.id)!);
+        const geoJSONdata = JSON.parse(
+          localStorage.getItem("geoJSONdata-" + requestInfo.id)!,
+        );
         console.log(geoJSONdata);
         sourceRef.current.addFeatures(
           new GeoJSON().readFeatures(geoJSONdata[0]),
@@ -551,7 +555,10 @@ export default function DrawingMap({ requestInfo }) {
           return JSON.parse(geojson);
         })
         .filter(Boolean);
-      localStorage.setItem("geoJSONdata-" + requestInfo.id, JSON.stringify(geoJSONdata));
+      localStorage.setItem(
+        "geoJSONdata-" + requestInfo.id,
+        JSON.stringify(geoJSONdata),
+      );
 
       loading.current = false;
     } catch (error) {
@@ -739,7 +746,7 @@ export default function DrawingMap({ requestInfo }) {
         <Label htmlFor="circling">Název žádosti* (3-255)</Label>
         <Input
           minLength={3}
-    value={geoRequestName}
+          value={geoRequestName}
           maxLength={255}
           onChange={(e) => setGeoRequestName(e.target.value)}
         />

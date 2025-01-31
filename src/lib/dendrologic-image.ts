@@ -11,7 +11,7 @@ export async function addDendrologicImage(id: string, image_url: string) {
       .from(feature)
       .where(eq(feature.id, id));
 
-    if (!(check_if_exists[0] && check_if_exists[0].images.length > 0)) {
+    if (check_if_exists[0] && !(check_if_exists[0].images.length > 0)) {
       const dendrologic_image = await db
         .update(feature)
         .set({
@@ -24,7 +24,7 @@ export async function addDendrologicImage(id: string, image_url: string) {
         return { success: false, error: "ERROR_ADDING_GEO_IMAGE" };
       }
       return { success: true, dendrologic_image };
-    } else {
+    } else if (check_if_exists[0] && check_if_exists[0].images.length > 0) {
       const dendrologic_image = await db
         .update(feature)
         .set({
@@ -37,6 +37,8 @@ export async function addDendrologicImage(id: string, image_url: string) {
         return { success: false, error: "ERROR_ADDING_GEO_IMAGE" };
       }
       return { success: true, dendrologic_image };
+    } else {
+      return { success: false, error: "ERROR_ADDING_GEO_IMAGE" };
     }
   } catch (e) {
     console.log(e);

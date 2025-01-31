@@ -108,10 +108,6 @@ export const passwordResetSessionTable = pgTable("session_password_reset", {
   expiresAt: integer("expires_at").notNull(),
 });
 
-export function lower(email: AnyPgColumn): SQL {
-  return sql`lower(${email})`;
-}
-
 export const geoRequestTable = pgTable("geo_request", {
   id: uuid("id").defaultRandom().primaryKey().unique(),
   userId: uuid("user_id")
@@ -120,6 +116,10 @@ export const geoRequestTable = pgTable("geo_request", {
   geodata: json(),
   requestName: text("request_name").notNull(),
 });
+
+export function lower(email: AnyPgColumn): SQL {
+  return sql`lower(${email})`;
+}
 
 export type User = InferSelectModel<typeof userTable>;
 export type Session = InferSelectModel<typeof sessionTable>;

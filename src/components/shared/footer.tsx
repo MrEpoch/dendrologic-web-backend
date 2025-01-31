@@ -85,9 +85,7 @@ export default function Footer() {
               </li>
             </ul>
           </div>
-          <p className="text-xs text-gray-500">
-            &copy; 2025. SOČ Alexandr Stenčuk. All rights reserved.
-          </p>
+          <p className="text-xs text-gray-500">2025. SOČ Alexandr Stenčuk.</p>
         </div>
       </div>
     </footer>

@@ -21,7 +21,9 @@ export default async function page({ params }: { params: { id: string } }) {
 
   return (
     <div className="max-w-container">
-      <h1 className="text-3xl">Upravit žádost #{geoRequestDataJson.georequest[0].requestName}</h1>
+      <h1 className="text-3xl">
+        Upravit žádost #{geoRequestDataJson.georequest[0].requestName}
+      </h1>
       <DrawingMap requestInfo={geoRequestDataJson.georequest[0]} />
     </div>
   );

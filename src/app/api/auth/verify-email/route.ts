@@ -11,6 +11,7 @@ import { ExpiringTokenBucket } from "@/lib/rate-limit";
 import { globalGETRateLimit, globalPOSTRateLimit } from "@/lib/request";
 import { getCurrentSession } from "@/lib/sessionTokens";
 import { updateUserEmailAndSetEmailAsVerified } from "@/lib/user";
+import { revalidatePath } from "next/cache";
 import { NextRequest, NextResponse } from "next/server";
 import { z } from "zod";
 
@@ -166,6 +167,8 @@ export async function POST(request: NextRequest) {
       verificationRequest.email,
     );
     await deleteEmailRequestCookie();
+  revalidatePath("/auth/2fa/setup");
+  revalidatePath("/");
 
     if (!user.registered2FA) {
       return NextResponse.json({ success: true, redirect: "/auth/2fa/setup" });

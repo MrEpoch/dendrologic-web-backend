@@ -10,12 +10,14 @@ export default function HeaderClient({ isLogged }) {
   }
 
   return (
-    <div className="flex flex-1 items-center justify-end md:justify-between">
+    <div className="flex md:p-0 p-4 gap-6 flex-col-reverse md:flex-row min-h-full flex-1 items-center justify-end md:justify-between">
       <nav
         aria-label="Global"
-        className={`${menuOpen ? "flex flex-col" : "hidden"} md:block`}
+        className={`${menuOpen ? "flex md:flex-row flex-col max-[700px]:w-full max-[700px]:h-full" : "hidden"} md:block`}
       >
-        <ul className="flex items-center gap-6 text-sm">
+        <ul
+          className={`${menuOpen ? "max-[700px]:w-full max-[700px]:h-full flex md:flex-row flex-col bg-main-background-200 rounded-lg max-[700px]:p-4" : ""} sm:bg-transparent flex items-center gap-6 text-sm`}
+        >
           <li>
             <a
               className="text-gray-500 transition hover:text-gray-500/75"
@@ -57,7 +59,7 @@ export default function HeaderClient({ isLogged }) {
       <div className="flex items-center gap-4">
         {isLogged ? (
           <Link
-            className="block rounded-md bg-main-background-300 border-transparent hover:border-black border hover:bg-transparent px-5 py-2.5 text-sm font-medium text-main-text-100 transition"
+            className="block w-full rounded-md bg-main-background-300 border-transparent hover:border-black border hover:bg-transparent px-5 py-2.5 text-sm font-medium text-main-text-100 transition"
             href="/auth/dashboard"
           >
             Hlavní panel
@@ -82,7 +84,7 @@ export default function HeaderClient({ isLogged }) {
 
         <button
           onClick={toggleMenu}
-          className="block rounded bg-gray-100 p-2.5 text-gray-600 transition hover:text-gray-600/75 md:hidden"
+          className="block rounded bg-gray-100 p-2.5 text-gray-600 transition hover:text-gray-600/75 md:h-0 md:w-0 md:absolute md:hidden"
         >
           <span className="sr-only">Toggle menu</span>
           <svg

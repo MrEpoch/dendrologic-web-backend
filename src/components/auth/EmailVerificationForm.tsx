@@ -1,12 +1,12 @@
 "use client";
 
-import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { Button } from "../ui/button";
 import { MuseoModerno } from "next/font/google";
 import { Input } from "../ui/input";
 import { InputOTP, InputOTPGroup, InputOTPSlot } from "../ui/input-otp";
 import { REGEXP_ONLY_DIGITS_AND_CHARS } from "input-otp";
+import { useRouter } from "next/navigation";
 
 const museoModerno = MuseoModerno({
   subsets: ["latin"],
@@ -22,6 +22,7 @@ export function EmailVerificationForm() {
   const router = useRouter();
 
   async function onSubmit(e) {
+    setSubmitting(true);
     e.preventDefault();
     const response = await fetch("/api/auth/verify-email", {
       method: "POST",
@@ -45,7 +46,7 @@ export function EmailVerificationForm() {
     if (data.success) {
       console.log(data);
       if (data.redirect) return router.push(data.redirect);
-      return router.push("/auth/2fa");
+      return router.push("/auth/2fa/setup");
     } else {
       if (data.redirect) {
         return router.push(data.redirect);
@@ -82,6 +83,7 @@ export function EmailVerificationForm() {
       <br />
       <div className="flex gap-2">
         <Button
+          disabled={submitting}
           className={`bg-main-background-300 px-10 ${museoModerno.className} font-medium border py-5 text-main-text-100 hover:bg-transparent hover:text-black hover:border-main-100 hover:border rounded-[--radius] text-lg shadow`}
           type="submit"
         >
