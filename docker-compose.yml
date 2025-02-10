@@ -10,5 +10,5 @@ services:
       - .env
     volumes:
       - ./src:/app/src
-      - ./public:/app/public
+      - ./public:/public
       - /node_modules
