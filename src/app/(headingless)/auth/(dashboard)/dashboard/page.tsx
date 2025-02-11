@@ -17,8 +17,6 @@ export default async function Page() {
 
   const jsonData = await geoRequestsData.json();
 
-  console.log(jsonData);
-
   return (
     <div className="max-w-container">
       <h1 className="text-3xl">Hlavní panel</h1>

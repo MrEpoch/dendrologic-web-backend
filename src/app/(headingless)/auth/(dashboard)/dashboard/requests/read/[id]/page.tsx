@@ -4,9 +4,7 @@ import RequestMap from "./_sections/RequestMap";
 
 export default async function Page({ params }) {
   const geoRequestData = await fetch(
-    (process.env.NODE_ENV === "development"
-      ? "http://localhost:3752"
-      : "https://dendrologic-web.stencukpage.com") +
+      "http://localhost:3752" +
       `/api/geojson/requests/${params.id}`,
     {
       method: "GET",
