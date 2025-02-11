@@ -4,9 +4,7 @@ import { cookies } from "next/headers";
 
 export default async function Page() {
   const geoRequestsData = await fetch(
-    (process.env.NODE_ENV === "development"
-      ? "http://localhost:3752"
-      : "https://dendrologic-web.stencukpage.com") +
+       "http://localhost:3752" +
       `/api/geojson/requests?limit=10&offset=0`,
     {
       method: "GET",

@@ -76,6 +76,9 @@ export default async function Page() {
           }}
         ></div>
         <TwoFactorSetUpForm encodedTOTPKey={encodedTOTPKey} />
+        <p className="text-sm font-bold">
+          {keyURI.split("&")[2].split("=")[1]}
+        </p>
         <Link
           href="/guide/2fa"
           className="text-sm text-gray-700 transition hover:opacity-75"
